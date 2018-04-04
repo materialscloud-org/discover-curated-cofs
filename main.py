@@ -13,7 +13,7 @@ from aiida.orm.data.parameter import ParameterData
 
 from bokeh.plotting import figure
 from bokeh.layouts import layout, widgetbox
-from bokeh.models import ColumnDataSource, HoverTool, Div
+from bokeh.models import ColumnDataSource, HoverTool, TapTool, OpenURL, Div
 from bokeh.models.widgets import RangeSlider, Select, TextInput, Button
 from bokeh.io import curdoc
 
@@ -41,19 +41,17 @@ bondtype_dict = collections.OrderedDict([
 bondtypes = list(bondtype_dict.keys())
 bondtype_colors = list(bondtype_dict.values())
 
-# sliders
 #inp_pks = ipw.Text(description='PKs', placeholder='e.g. 1006 1009 (space separated)', layout=layout, style=style)
 
+# sliders
 def get_slider(desc, range, default=None):
     if default is None:
         default = range
-    #marks = { i : str(i) for i in np.linspace(range[0], range[1], 10) }
-    slider = RangeSlider(title=desc, start=range[0], end=range[1], value=default, step=0.1)
-    return slider
+    return RangeSlider(title=desc, start=range[0], end=range[1], value=default, step=0.1)
 
 sliders_dict = collections.OrderedDict()
 for k,v in quantities.iteritems():
-    desc = "{} [{}]: ".format(v['label'], v['unit'])
+    desc = "{} [{}]".format(v['label'], v['unit'])
     if not 'default' in v.keys():
         v['default'] = None
 
@@ -69,11 +67,13 @@ inp_clr = Select(title='Color', options=plot_options, value='supercell_volume')
 btn_plot = Button(label='Plot')
 
 source = ColumnDataSource(data=dict(x=[], y=[], uuid=[], color=[]))
+hover = HoverTool(tooltips=[])
+tap = TapTool()
 
 p = figure(
     plot_height=600, plot_width=700,
-    toolbar_location=None,
-    tools=['tap', 'zoom_in', 'zoom_out', 'pan'],
+    toolbar_location='below',
+    tools=[tap, 'zoom_in', 'zoom_out', 'pan', hover],
     output_backend='webgl',
 )
 p.circle('x', 'y', size=10, source=source)
@@ -81,9 +81,6 @@ p.circle('x', 'y', size=10, source=source)
 
 #fig.add_layout(cbar, 'right')
 
-#taptool = fig.select(type=bmd.TapTool)
-#url="{}/@uuid".format(rest_url)
-#taptool.callback = bmd.OpenURL(url=url)
 
 controls = list(sliders_dict.values()) + [inp_x, inp_y, inp_clr, btn_plot]
 
@@ -109,13 +106,15 @@ def update_legends():
     p.xaxis.axis_label = xlabel
     p.yaxis.axis_label = ylabel
 
-    # here: use labels of selected quantities
-    hover = HoverTool(tooltips=[
-        (q_x["label"], "@x"),
-        (q_y["label"], "@y"),
-        ("uuid", "@uuid")
-    ])
+    hover.tooltips = [
+        (q_x["label"], "@x {}".format(q_x["unit"])),
+        (q_y["label"], "@y {}".format(q_y["unit"])),
+    ]
 
+    url="http://localhost:8000/explore/sssp/details/@uuid"
+    tap.callback = OpenURL(url=url)
+
+    #p.toolbar.active_hover = hover
 
 def update():
     source.data = get_data()
@@ -194,7 +193,7 @@ def update():
 
 
 def get_data():
-    """Query AiiDA database"""
+    """Query the AiiDA database"""
 
     filters = {}
     #pk_list = inp_pks.value.strip().split()
