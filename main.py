@@ -71,7 +71,8 @@ btn_plot = Button(label='Plot')
 info_block = PreText(text='', width=500, height=100)
 plot_info = PreText(text='', width=300, height=100)
 
-source = bmd.ColumnDataSource(data=dict(x=[], y=[], uuid=[], color=[], name=[]))
+data_empty = dict(x=[0], y=[0], uuid=['1234'], color=[0], name=['no data'])
+source = bmd.ColumnDataSource(data=data_empty)
 hover = bmd.HoverTool(tooltips=[])
 tap = bmd.TapTool()
 
@@ -223,7 +224,7 @@ def get_data():
     nresults = qb.count()
     if nresults == 0:
         plot_info.text = "No matching COFs found."
-        return
+        return data_empty
 
     plot_info.text = "{} COFs found. Plotting...".format(nresults)
 
