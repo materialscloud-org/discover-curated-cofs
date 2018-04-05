@@ -5,11 +5,9 @@ FROM mc-docker-stack:discover
 # Copy COF database
 USER root
 WORKDIR /opt/cofdb
-#RUN base_url=http://archive.materialscloud.org/file/2018.0003/v1;  \
-#    wget ${base_url}/cof-database.aiida;                           \
-#    chown -R root:root /opt/cofdb/;                                \
-#    chmod -R +r /opt/cofdb/
-COPY cof-database.aiida .
+RUN base_url=http://archive.materialscloud.org/file/2018.0003/v1;  \
+    wget ${base_url}/cof-database.aiida;
+#COPY cof-database.aiida .
 COPY import-cofdb.sh .
 RUN  chown -R root:root /opt/cofdb/;                                \
      chmod -R +r /opt/cofdb/;                                       \
