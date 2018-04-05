@@ -13,18 +13,19 @@ from aiida.orm.data.parameter import ParameterData
 
 from bokeh.plotting import figure
 from bokeh.layouts import layout, widgetbox
-from bokeh.models import ColumnDataSource, HoverTool, TapTool, OpenURL, Div
-from bokeh.models.widgets import RangeSlider, Select, TextInput, Button
+import bokeh.models as bmd
+from bokeh.palettes import Viridis256, Viridis5
+from bokeh.models.widgets import RangeSlider, Select, TextInput, Button, PreText
 from bokeh.io import curdoc
 
 import numpy as np
 
-html = Div(text=open(join(dirname(__file__), "description.html")).read(), width=800)
+html = bmd.Div(text=open(join(dirname(__file__), "description.html")).read(), width=800)
 
 # quantities
 quantities = collections.OrderedDict([
-    ('density', dict(label='Density', range=[10.0,1200.0], default=[1000.0,1200.0], unit='kg/m^3')),
-    ('deliverable_capacity', dict(label='Deliverable capacity', range=[0.0,300.0], unit='v STP/v')),
+    ('density', dict(label='Density', range=[10.0,1200.0], unit='kg/m^3')),
+    ('deliverable_capacity', dict(label='Deliverable capacity', range=[0.0,300.0], default=[175,300], unit='v STP/v')),
     ('absolute_methane_uptake_high_P', dict(label='CH4 uptake High-P', range=[0.0,200.0], unit='mol/kg')),
     ('absolute_methane_uptake_low_P', dict(label='CH4 uptake Low-P', range=[0.0,200.0], unit='mol/kg')),
     ('heat_desorption_high_P', dict(label='CH4 heat of desorption High-P', range=[0.0,30.0], unit='kJ/mol')),
@@ -62,62 +63,116 @@ for k,v in quantities.iteritems():
 plot_options = [ (k, v['label']) for k,v in quantities.iteritems() ]
 inp_x = Select(title='X', options=plot_options, value='density')
 inp_y = Select(title='Y', options=plot_options, value='deliverable_capacity')
-inp_clr = Select(title='Color', options=plot_options, value='supercell_volume')
+inp_clr = Select(title='Color', options=plot_options, value='surface_area')
+#inp_clr = Select(title='Color', options=plot_options + [('bond_type', 'Bond type')], value='surface_area')
 
+# plot button, output, graph
 btn_plot = Button(label='Plot')
+info_block = PreText(text='', width=500, height=100)
+plot_info = PreText(text='', width=300, height=100)
 
-source = ColumnDataSource(data=dict(x=[], y=[], uuid=[], color=[]))
-hover = HoverTool(tooltips=[])
-tap = TapTool()
+source = bmd.ColumnDataSource(data=dict(x=[], y=[], uuid=[], color=[], name=[]))
+hover = bmd.HoverTool(tooltips=[])
+tap = bmd.TapTool()
+
 
 p = figure(
     plot_height=600, plot_width=700,
     toolbar_location='below',
-    tools=[tap, 'zoom_in', 'zoom_out', 'pan', hover],
+    tools=['pan', 'wheel_zoom', 'save', 'reset', 'zoom_in', 'zoom_out', hover, tap],
+    active_scroll = 'wheel_zoom',
     output_backend='webgl',
+    title='',
+    title_location='right',
 )
-p.circle('x', 'y', size=10, source=source)
-#p.circle('x', 'y', size=10, source=source, fill_color={'field':'color', 'transform':cmap})
 
-#fig.add_layout(cbar, 'right')
+# cbar
+cmap = bmd.LinearColorMapper(palette=Viridis256)
+cbar = bmd.ColorBar(color_mapper=cmap, location=(0, 0))
+p.add_layout(cbar, 'right')
+# misusing plot title for cbar label
+# https://stackoverflow.com/a/49517401
+p.title.align = 'center'
+p.title.text_font_size = '10pt'
+p.title.text_font_style = 'italic'
 
+# graph
+p.circle('x', 'y', size=10, source=source, 
+        fill_color={'field':'color', 'transform':cmap})
 
-controls = list(sliders_dict.values()) + [inp_x, inp_y, inp_clr, btn_plot]
+controls = list(sliders_dict.values()) + [inp_x, inp_y, inp_clr, btn_plot, plot_info]
 
 sizing_mode = 'fixed'
 inputs = widgetbox(*controls, sizing_mode=sizing_mode)
 l = layout([
-    [html],
-    [inputs, p],],
+        [html],
+        [inputs, p],
+        [info_block],
+    ],
     sizing_mode = sizing_mode)
+
+#def update_tap(source=source, window=None):
+#    info_block.text = "here"
+#    print("here")
+#    print(source)
+#    print(cb_obj.value)
 
 
 def update_legends():
 
     q_x = quantities[inp_x.value]
     q_y = quantities[inp_y.value]
-    q_clr = quantities[inp_clr.value]
 
     title = "{} vs {}".format(q_x["label"], q_y["label"])
     xlabel = "{} [{}]".format(q_x["label"], q_x["unit"])
     ylabel = "{} [{}]".format(q_y["label"], q_y["unit"])
+    xhover = (q_x["label"], "@x {}".format(q_x["unit"]))
+    yhover = (q_y["label"], "@y {}".format(q_y["unit"]))
+
+    #if inp_clr.value == 'bond_type':
+    #    clr_label = "Bond type"
+    #    hover.tooltips = [
+    #        ("name", "@name"), xhover, yhover
+    #    ]
+    #else:
+    q_clr = quantities[inp_clr.value]
     clr_label = "{} [{}]".format(q_clr["label"], q_clr["unit"])
+    hover.tooltips = [
+        ("name", "@name"), xhover, yhover,
+        (q_clr["label"], "@color {}".format(q_clr["unit"])),
+    ]
 
     p.xaxis.axis_label = xlabel
     p.yaxis.axis_label = ylabel
 
-    hover.tooltips = [
-        (q_x["label"], "@x {}".format(q_x["unit"])),
-        (q_y["label"], "@y {}".format(q_y["unit"])),
-    ]
+    #cbar.title = clr_label
+    p.title.text = clr_label
+
 
     url="http://localhost:8000/explore/sssp/details/@uuid"
-    tap.callback = OpenURL(url=url)
+    tap.callback = bmd.OpenURL(url=url)
+    #tap.callback = bmd.CustomJS.from_py_func(update_tap)
+    #tap.callback = bmd.CustomJS(code="""console.info("hello TapTool")""")
 
     #p.toolbar.active_hover = hover
 
 def update():
     source.data = get_data()
+
+    #if inp_clr.value == 'bond_type':
+
+    #    cmap = bmd.CategoricalColorMapper(
+    #            palette=bondtype_colors, factors = bondtypes)
+    #    #cmap = bmd.LinearColorMapper(palette=Viridis5)
+    #    #cbar.ticker = bmd.BasicTicker(desired_num_ticks=5)
+    #    #colorbar.set_ticklabels(bondtypes)
+    #    p.legend = 'bond_type'
+
+    #else:
+    #    cmap = bmd.LinearColorMapper(palette=Viridis256)
+    cmap.low = min(source.data['color'])
+    cmap.high = max(source.data['color'])
+
     update_legends()
     return
 
@@ -142,54 +197,6 @@ def update():
 #        s += " * {}: {}\n".format(k,v)
 #
 #    return s
-#
-##@app.callback(
-##    dash.dependencies.Output('url_bar', 'pathname'),
-##    [dash.dependencies.Input('scatter_plot', 'clickData')])
-##def update_url(figure, hoverData):
-##    if hoverData is None:
-##        return 
-##
-##    point = clickData['points'][0]
-##
-##    uuid = point['customdata']
-##    rest_url = 'http://localhost:8000/explore/sssp/details'
-##
-##    return rest_url + uuid
-#
-##@app.callback(
-##    dash.dependencies.Output('scatter_plot', 'figure'),
-##    [dash.dependencies.Input('scatter_plot', 'figure'), 
-##     dash.dependencies.Input('scatter_plot', 'hoverData')])
-##def update_annotation(figure, hoverData):
-##    if hoverData is None:
-##        return figure
-##
-##    point = hoverData['points'][0]
-##
-##    uuid = point['customdata']
-##    rest_url = 'http://localhost:8000/explore/sssp/details'
-##
-##    annotation = dict(x=point['x'], y=point['y'], 
-##            text='<a href="{}/{}">o</a>'.format(rest_url, uuids))
-##
-##    figure['layout']['annotations'] = [annotation]
-##    return figure
-#
-#@app.callback(
-#    dash.dependencies.Output('click_info', 'children'),
-#    [dash.dependencies.Input('scatter_plot', 'clickData')])
-#def display_click_data(clickData):
-#    if clickData is None:
-#        return ""
-#
-#    rest_url = 'http://localhost:8000/explore/sssp/details/'
-#    uuid = clickData['points'][0]['customdata']
-#
-#    #redirect(rest_url+uuid, code=302)
-#    #return "clicked" + uuid
-#    redirect_string="<script>window.location.href='{}';</script>".format(rest_url+uuid)
-#    return redirect_string
 
 
 def get_data():
@@ -210,28 +217,29 @@ def get_data():
     qb.append(ParameterData,
           filters=filters,
           project = ['attributes.'+inp_x.value, 'attributes.'+inp_y.value, 
-                     'attributes.'+inp_clr.value, 'uuid']
+                     'attributes.'+inp_clr.value, 'uuid', 'attributes.name']
     )
 
     nresults = qb.count()
-    print("Results: {}".format(nresults))
     if nresults == 0:
-        print("No results found.")
-        #query_message.value = "No results found."
+        plot_info.text = "No matching COFs found."
         return
 
-    #query_message.value = "{} results found. Plotting...".format(nresults)
+    plot_info.text = "{} COFs found. Plotting...".format(nresults)
 
     # x,y position
-    x, y, clrs, uuids = zip(*qb.all())
+    x, y, clrs, uuids, names = zip(*qb.all())
     x = map(float, x)
     y = map(float, y)
-
-    clrs = map(float, clrs)
-
     uuids = map(str, uuids)
 
-    return  dict(x=x, y=y, uuid=uuids, color=clrs)
+    #if inp_clr.value == 'bond_type':
+    #    #clrs = map(lambda clr: bondtypes.index(clr), clrs)
+    #    clrs = map(str, clrs)
+    #else:
+    clrs = map(float, clrs)
+
+    return  dict(x=x, y=y, uuid=uuids, color=clrs, name=names)
 
 # initial update
 btn_plot.on_click(update)
