@@ -7,7 +7,7 @@ set -x
 
 #===============================================================================
 # import COF database
-verdi import cof-database.aiida > import.log
+#verdi import cof-database.aiida > import.log
 
 # no need to keep the duplicate
 rm cof-database.aiida
