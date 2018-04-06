@@ -26,7 +26,7 @@ if [ $aiida_backend = "django" ]; then
 fi
 
 #===============================================================================
-bokeh serve --show lsmo-bokeh-app
+bokeh serve --show lsmo-bokeh-app --use-xheaders --port 5006
 ##start Jupyter notebook server
 #cd /project
 #/opt/matcloud-jupyterhub-singleuser                              \
