@@ -17,7 +17,6 @@ WORKDIR /project/lsmo-bokeh-app
 COPY README.md description.html main.py ./
 
 # start bokeh server
-WORKDIR /project
 EXPOSE 5006
 COPY start-singleuser.sh /opt/
 CMD ["/opt/start-singleuser.sh"]
