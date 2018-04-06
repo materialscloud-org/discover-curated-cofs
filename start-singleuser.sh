@@ -26,7 +26,9 @@ if [ $aiida_backend = "django" ]; then
 fi
 
 #===============================================================================
-bokeh serve . --port 5006 --log-level debug
+bokeh serve . --port 5006 --log-level debug --allow-websocket-origin discover.materialscloud.org --allow-websocket-origin localhost:5006
+#bokeh serve . --port 5006 --log-level debug --use-xheaders
+
 ##start Jupyter notebook server
 #cd /project
 #/opt/matcloud-jupyterhub-singleuser                              \
