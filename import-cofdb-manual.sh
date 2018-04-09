@@ -3,7 +3,7 @@ set -x
 
 #===============================================================================
 # start postgres
-. /opt/postgres.sh
+source /opt/postgres.sh
 
 #===============================================================================
 # import COF database
@@ -11,8 +11,11 @@ set -x
 
 #psql -h localhost -U mcloud -d coflsmo -f aiida-db-backup.psql
 psql -h localhost -d template1 -c "DROP DATABASE aiidadb;"
+psql -h localhost -d template1 -c "DROP EXTENSION plpgsql;"
 psql -h localhost -d template1 -c "CREATE DATABASE aiidadb OWNER aiida;"
 psql -h localhost -d aiidadb -U aiida -f aiida-db-backup.psql
+
+stop_psql
 
 #-c "CREATE USER aiida WITH PASSWORD 'aiida_db_passwd';"
 #   psql -h localhost -d template1 -c "CREATE DATABASE aiidadb OWNER aiida;"

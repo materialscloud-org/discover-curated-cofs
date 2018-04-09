@@ -20,6 +20,7 @@ RUN rm -rf /project/aiida_repository/repository/node; \
     mv nodes /project/aiida_repository/repository/node
 COPY import-cofdb-manual.sh /opt/
 COPY aiida-db-backup.psql /project
+COPY postgres.sh /opt/
 RUN /opt/import-cofdb-manual.sh
   
 # Copy bokeh app
