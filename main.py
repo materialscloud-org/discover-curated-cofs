@@ -10,6 +10,7 @@ if not is_dbenv_loaded():
 from aiida.orm import load_node
 from aiida.orm.querybuilder import QueryBuilder
 from aiida.orm.data.parameter import ParameterData
+from aiida.orm.data.cif import CifData
 
 from bokeh.plotting import figure
 from bokeh.layouts import layout, widgetbox
@@ -118,7 +119,6 @@ l = layout([
 #    print(source)
 #    print(cb_obj.value)
 
-
 def update_legends():
 
     q_x = quantities[inp_x.value]
@@ -149,8 +149,7 @@ def update_legends():
     #cbar.title = clr_label
     p.title.text = clr_label
 
-
-    url="http://localhost:8000/explore/sssp/details/@uuid"
+    url = explore_url + "/@uuid"
     tap.callback = bmd.OpenURL(url=url)
     #tap.callback = bmd.CustomJS.from_py_func(update_tap)
     #tap.callback = bmd.CustomJS(code="""console.info("hello TapTool")""")
@@ -176,8 +175,6 @@ def update():
 
     update_legends()
     return
-
-
 
 #@app.callback(
 #    dash.dependencies.Output('hover_info', 'children'),
@@ -209,16 +206,23 @@ def get_data():
     #    filters['id'] = {'in': pk_list}
 
     def add_range_filter(bounds, label):
-        filters['attributes.'+label] = {'and':[{'>=':bounds[0]}, {'<':bounds[1]}]}
+        # a bit of cheating until this is resolved
+        # https://github.com/aiidateam/aiida_core/issues/1389
+        #filters['attributes.'+label] = {'and':[{'>=':bounds[0]}, {'<':bounds[1]}]}
+        filters['attributes.'+label] = {'>=':bounds[0]}
 
     for k,v in sliders_dict.iteritems():
-        add_range_filter(v.value, k)
+        # Note: filtering is slow, avoid if possible
+        if not v.value == quantities[k]['range']:
+            add_range_filter(v.value, k)
 
     qb = QueryBuilder()
+    qb.append(CifData, project=['uuid'], tag='cifs')
     qb.append(ParameterData,
           filters=filters,
           project = ['attributes.'+inp_x.value, 'attributes.'+inp_y.value, 
-                     'attributes.'+inp_clr.value, 'uuid', 'attributes.name']
+                     'attributes.'+inp_clr.value, 'uuid', 'attributes.name'],
+          descendant_of='cifs',
     )
 
     nresults = qb.count()
@@ -229,9 +233,10 @@ def get_data():
     plot_info.text = "{} COFs found. Plotting...".format(nresults)
 
     # x,y position
-    x, y, clrs, uuids, names = zip(*qb.all())
+    cif_uuids, x, y, clrs, uuids, names = zip(*qb.all())
     x = map(float, x)
     y = map(float, y)
+    cif_uuids = map(str, cif_uuids)
     uuids = map(str, uuids)
 
     #if inp_clr.value == 'bond_type':
@@ -240,12 +245,26 @@ def get_data():
     #else:
     clrs = map(float, clrs)
 
-    return  dict(x=x, y=y, uuid=uuids, color=clrs, name=names)
+    return  dict(x=x, y=y, uuid=cif_uuids, color=clrs, name=names)
+
+btn_plot.on_click(update)
+
+#def valid_uri(uri):
+#    from urlparse import urlparse
+#    result = urlparse(uri)
+#    valid = result.scheme and result.netloc and result.path
+#    return uri
+
+# get explore_url from arguments
+args = curdoc().session_context.request.arguments
+try:
+    explore_url = args.get('explore_url')[0]
+except:
+    explore_url = 'https://dev-www.materialscloud.org/explore/cofs/details'
+
+curdoc().title = "Covalent Organic Frameworks"
+curdoc().add_root(l)
 
 # initial update
-btn_plot.on_click(update)
 update()
-
-curdoc().add_root(l)
-curdoc().title = "COF structures"
 
