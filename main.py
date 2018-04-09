@@ -266,5 +266,5 @@ curdoc().title = "Covalent Organic Frameworks"
 curdoc().add_root(l)
 
 # initial update
-#update()
+update()
 
