@@ -3,7 +3,8 @@ set -x
 
 #===============================================================================
 # start postgres
-source /opt/postgres.sh
+. /opt/postgres.sh
+psql_start
 
 #===============================================================================
 # import COF database
@@ -15,7 +16,7 @@ psql -h localhost -d template1 -c "DROP EXTENSION plpgsql;"
 psql -h localhost -d template1 -c "CREATE DATABASE aiidadb OWNER aiida;"
 psql -h localhost -d aiidadb -U aiida -f aiida-db-backup.psql
 
-stop_psql
+psql_stop
 
 #-c "CREATE USER aiida WITH PASSWORD 'aiida_db_passwd';"
 #   psql -h localhost -d template1 -c "CREATE DATABASE aiidadb OWNER aiida;"
