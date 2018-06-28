@@ -201,28 +201,25 @@ def get_data():
     """Query the AiiDA database"""
 
     filters = {}
-    #pk_list = inp_pks.value.strip().split()
-    #if pk_list:
-    #    filters['id'] = {'in': pk_list}
 
     def add_range_filter(bounds, label):
         # a bit of cheating until this is resolved
         # https://github.com/aiidateam/aiida_core/issues/1389
-        #filters['attributes.'+label] = {'and':[{'>=':bounds[0]}, {'<':bounds[1]}]}
-        filters['attributes.'+label] = {'>=':bounds[0]}
+        #filters['attributes.'+label] = {'>=':bounds[0]}
+        filters['attributes.'+label] = {'and':[{'>=':bounds[0]}, {'<':bounds[1]}]}
 
     for k,v in sliders_dict.iteritems():
-        # Note: filtering is slow, avoid if possible
+        # Note: filtering is costly, avoid if possible
         if not v.value == quantities[k]['range']:
             add_range_filter(v.value, k)
 
     qb = QueryBuilder()
-    qb.append(CifData, project=['uuid'], tag='cifs')
     qb.append(ParameterData,
           filters=filters,
           project = ['attributes.'+inp_x.value, 'attributes.'+inp_y.value, 
-                     'attributes.'+inp_clr.value, 'uuid', 'attributes.name'],
-          descendant_of='cifs',
+                     'attributes.'+inp_clr.value, 'uuid', 'attributes.name', 
+                     'extras.cif_uuid'
+                     ],
     )
 
     nresults = qb.count()
@@ -233,7 +230,8 @@ def get_data():
     plot_info.text = "{} COFs found. Plotting...".format(nresults)
 
     # x,y position
-    cif_uuids, x, y, clrs, uuids, names = zip(*qb.all())
+    x, y, clrs, uuids, names, cif_uuids = zip(*qb.all())
+    plot_info.text = "{} COFs queried".format(nresults)
     x = map(float, x)
     y = map(float, y)
     cif_uuids = map(str, cif_uuids)
