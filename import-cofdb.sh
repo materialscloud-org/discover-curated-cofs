@@ -8,10 +8,11 @@ psql_start
 
 #===============================================================================
 # import COF database
-verdi import cof-database.aiida > import.log
+verdi import data/parameters.aiida &> import_new.log
 
 # no need to keep the duplicate
 psql_stop
-rm cof-database.aiida
+rm parameters.aiida
+#rm cof-database.aiida
 
 #EOF

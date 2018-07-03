@@ -1,12 +1,13 @@
 # using https://github.com/materialscloud-org/mc-docker-stack/tree/discover
 #
-FROM mc-docker-stack:discover
+FROM mc-docker-stack:latest
 USER scientist
 
 # Download COF DB
 WORKDIR /project
-RUN base_url=http://archive.materialscloud.org/file/2018.0003/v2;  \
-    wget ${base_url}/cof-database.aiida;
+#RUN base_url=http://archive.materialscloud.org/file/2018.0003/v2;  \
+#    wget ${base_url}/cof-database.aiida;
+COPY data/parameters.aiida /project
 
 # Import COF DB
 COPY import-cofdb.sh /opt/
