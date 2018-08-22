@@ -1,6 +1,6 @@
 # using https://github.com/materialscloud-org/mc-docker-stack/tree/discover
 #
-FROM mc-docker-stack:latest
+FROM mc-docker-stack:discover
 USER scientist
 
 # Download COF DB
