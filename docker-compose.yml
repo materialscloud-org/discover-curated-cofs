@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+  app:
+    restart: always
+    build: .
+    image: lsmo-bokeh
+    command: ["/opt/serve-app.sh"]
+    environment:
+      PYTHONPATH: '/project'
+      SHELL: '/bin/bash'
+
+      #    volumes:
+      #     - '/home/ubuntu/nmr/data:/home/app/data'
+    ports:
+      - '3246:5006'
+
+  restapi:
+    restart: always
+    build: .
+    image: lsmo-bokeh
+    command: ["/opt/serve-restapi.sh"]
+    environment:
+      DEBUG : 'false'
+      FAST_DEV : 'false'
+      MSK : 'true'
+      REDIS_PORT : '3247'
+      PYTHONUNBUFFERED: 'true'
+
+      #    volumes:
+      #     - '/home/ubuntu/nmr/data:/home/app/data'
+    ports:
+      - '3247:5000'
+
+volumes:
+  redis:

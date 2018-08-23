@@ -24,26 +24,10 @@ import numpy as np
 html = bmd.Div(text=open(join(dirname(__file__), "description.html")).read(), width=800)
 
 # quantities
-quantities = collections.OrderedDict([
-    ('density', dict(label='Density', range=[10.0,1200.0], unit='kg/m^3')),
-    ('deliverable_capacity', dict(label='Deliverable capacity', range=[0.0,300.0], default=[175,300], unit='v STP/v')),
-    ('absolute_methane_uptake_high_P', dict(label='CH4 uptake High-P', range=[0.0,200.0], unit='mol/kg')),
-    ('absolute_methane_uptake_low_P', dict(label='CH4 uptake Low-P', range=[0.0,200.0], unit='mol/kg')),
-    ('heat_desorption_high_P', dict(label='CH4 heat of desorption High-P', range=[0.0,30.0], unit='kJ/mol')),
-    ('heat_desorption_low_P', dict(label='CH4 heat of desorption Low-P', range=[0.0,30.0], unit='kJ/mol')),    
-    ('supercell_volume', dict(label='Supercell volume', range=[0.0,1000000.0], unit='A^3')),
-    ('surface_area', dict(label='Geometric surface area', range=[0.0,12000.0], unit='m^2/g')),
-])
+from config import quantities, bondtype_dict
 nq = len(quantities)
-
-bondtype_dict = collections.OrderedDict([
-    ('amide', "#1f77b4"), ('amine', "#d62728"), ('imine', "#ff7f0e"),
-    ('CC', "#2ca02c"), ('mixed', "#778899"),
-])
-bondtypes = list(bondtype_dict.keys())
-bondtype_colors = list(bondtype_dict.values())
-
-#inp_pks = ipw.Text(description='PKs', placeholder='e.g. 1006 1009 (space separated)', layout=layout, style=style)
+#bondtypes = list(bondtype_dict.keys())
+#bondtype_colors = list(bondtype_dict.values())
 
 # sliders
 def get_slider(desc, range, default=None):
@@ -157,6 +141,7 @@ def update_legends():
     #p.toolbar.active_hover = hover
 
 def update():
+    update_legends()
     source.data = get_data()
 
     #if inp_clr.value == 'bond_type':
@@ -265,4 +250,3 @@ curdoc().add_root(l)
 
 # initial update
 update()
-
