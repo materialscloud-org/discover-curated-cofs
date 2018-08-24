@@ -23,6 +23,38 @@ import numpy as np
 
 html = bmd.Div(text=open(join(dirname(__file__), "description.html")).read(), width=800)
 
+
+from config import quantities, bondtype_dict, presets
+
+
+# get explore_url from arguments
+args = curdoc().session_context.request.arguments
+try:
+    explore_url = args.get('explore_url')[0]
+except:
+    explore_url = 'https://dev-www.materialscloud.org/explore/cofs/details'
+
+# presets
+# get preset for figure from arguments
+try:
+    preset_label = args.get('preset')[0]
+    preset = presets[preset_label]
+except:
+    preset_label = 'default'
+    preset = presets[preset_label]
+
+def load_preset(attr, old, new):
+    """Load preset and update sliders/plot accordingly"""
+    # get figure from arguments
+    preset = presets[new]
+    inp_x.value = preset['x']
+    inp_y.value = preset['y']
+    update()
+inp_preset = Select(title='Preset', options=presets.keys(), value=preset_label)
+inp_preset.on_change('value', load_preset)
+
+
+
 # quantities
 from config import quantities, bondtype_dict
 nq = len(quantities)
@@ -46,8 +78,8 @@ for k,v in quantities.iteritems():
 
 # selectors
 plot_options = [ (k, v['label']) for k,v in quantities.iteritems() ]
-inp_x = Select(title='X', options=plot_options, value='density')
-inp_y = Select(title='Y', options=plot_options, value='deliverable_capacity')
+inp_x = Select(title='X', options=plot_options, value=preset['x'])
+inp_y = Select(title='Y', options=plot_options, value=preset['y'])
 inp_clr = Select(title='Color', options=plot_options, value='surface_area')
 #inp_clr = Select(title='Color', options=plot_options + [('bond_type', 'Bond type')], value='surface_area')
 
@@ -238,15 +270,8 @@ btn_plot.on_click(update)
 #    valid = result.scheme and result.netloc and result.path
 #    return uri
 
-# get explore_url from arguments
-args = curdoc().session_context.request.arguments
-try:
-    explore_url = args.get('explore_url')[0]
-except:
-    explore_url = 'https://dev-www.materialscloud.org/explore/cofs/details'
-
-curdoc().title = "Covalent Organic Frameworks"
-curdoc().add_root(l)
-
-# initial update
-update()
+def tab_plot():
+    # Make a tab with the layout
+    update()
+    tab = bmd.Panel(child=l, title = 'Scatter plot')
+    return tab
