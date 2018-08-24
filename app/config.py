@@ -41,17 +41,21 @@ presets = {
     'default': {
         'x': 'density',
         'y': 'deliverable_capacity',
-        'clr': 'surface_area',
+        'clr': 'bond_type',
     },
     '3a': {
-        'structure_filter': '2d',
+        'dimension_filter': '2d',
         'x': 'density',
         'y': 'surface_area',
+        'x_min': 0,
+        'x_max': 800,
     },
     '3b': {
-        'structure_filter': '3d',
+        'dimension_filter': '3d',
         'x': 'density',
         'y': 'surface_area',
+        'x_min': 0,
+        'x_max': 800,
     },
     # x should be "delta heat of desorption
     #    '6b': {
@@ -72,22 +76,24 @@ presets = {
         'y': 'absolute_methane_uptake_high_P',
     },
     '8b': {
-        'structure_filter': '2d',
+        'dimension_filter': '2d',
         'x': 'density',
         'y': 'deliverable_capacity',
     },
     '9b': {
-        'structure_filter': '3d',
+        'dimension_filter': '3d',
         'x': 'density',
         'y': 'deliverable_capacity',
     },
     '10b': {
-        'x': 'largest_included_sphere',
+        'x': 'largest_included_sphere_diameter',
         'y': 'deliverable_capacity',
     },
     '11': {
         'x': 'surface_area',
         'y': 'deliverable_capacity',
+        'y_min': 0,
+        'y_max': 250,
     },
     '12a': {
         'bond_filter': 'amide',

@@ -16,7 +16,7 @@ from config import quantities, bondtype_dict, presets
 args = curdoc().session_context.request.arguments
 try:
     explore_url = args.get('explore_url')[0]
-except KeyError:
+except (TypeError, KeyError):
     explore_url = 'https://dev-www.materialscloud.org/explore/cofs/details'
 
 # presets
@@ -24,7 +24,7 @@ except KeyError:
 try:
     preset_label = args.get('preset')[0]
     preset = presets[preset_label]
-except KeyError:
+except (TypeError, KeyError):
     preset_label = 'default'
     preset = presets[preset_label]
 
@@ -39,7 +39,12 @@ def load_preset(attr, old, new):
 
     if 'clr' in preset.keys():
         inp_clr.value = preset['clr']
-    update()
+
+    slx = sliders_dict[preset['x']]
+    if 'x_min' in preset.keys():
+        slx.value = (preset['x_min'], slx.value[1])
+    if 'x_max' in preset.keys():
+        slx.value = (slx.value[0], preset['x_max'])
 
 
 inp_preset = Select(title='Preset', options=presets.keys(), value=preset_label)
@@ -136,8 +141,8 @@ def create_plot():
 
 p = create_plot()
 
-controls = list(
-    sliders_dict.values()) + [inp_x, inp_y, inp_clr, btn_plot, plot_info]
+controls = [inp_preset] + [v for k, v in sliders_dict.iteritems()
+                           ] + [inp_x, inp_y, inp_clr, btn_plot, plot_info]
 
 sizing_mode = 'fixed'
 inputs = widgetbox(*controls, sizing_mode=sizing_mode)
