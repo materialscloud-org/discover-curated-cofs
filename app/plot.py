@@ -1,37 +1,22 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=unsubscriptable-object, too-many-locals
 from __future__ import print_function
 import collections
-from os.path import dirname, join
-
-from aiida import load_dbenv, is_dbenv_loaded
-from aiida.backends import settings
-if not is_dbenv_loaded():
-    load_dbenv(profile=settings.AIIDADB_PROFILE)
-from aiida.orm import load_node
-from aiida.orm.querybuilder import QueryBuilder
-from aiida.orm.data.parameter import ParameterData
-from aiida.orm.data.cif import CifData
 
 from bokeh.plotting import figure
 from bokeh.layouts import layout, widgetbox
 import bokeh.models as bmd
-from bokeh.palettes import Viridis256, Viridis5
-from bokeh.models.widgets import RangeSlider, Select, TextInput, Button, PreText
+from bokeh.palettes import Viridis256, Spectral5
+from bokeh.models.widgets import RangeSlider, Select, Button, PreText
 from bokeh.io import curdoc
 
-import numpy as np
-
-html = bmd.Div(text=open(join(dirname(__file__), "description.html")).read(), width=800)
-
-
 from config import quantities, bondtype_dict, presets
-
 
 # get explore_url from arguments
 args = curdoc().session_context.request.arguments
 try:
     explore_url = args.get('explore_url')[0]
-except:
+except KeyError:
     explore_url = 'https://dev-www.materialscloud.org/explore/cofs/details'
 
 # presets
@@ -39,49 +24,59 @@ except:
 try:
     preset_label = args.get('preset')[0]
     preset = presets[preset_label]
-except:
+except KeyError:
     preset_label = 'default'
     preset = presets[preset_label]
 
+
+# pylint: disable=unused-argument
 def load_preset(attr, old, new):
     """Load preset and update sliders/plot accordingly"""
     # get figure from arguments
     preset = presets[new]
     inp_x.value = preset['x']
     inp_y.value = preset['y']
+
+    if 'clr' in preset.keys():
+        inp_clr.value = preset['clr']
     update()
+
+
 inp_preset = Select(title='Preset', options=presets.keys(), value=preset_label)
 inp_preset.on_change('value', load_preset)
 
-
-
 # quantities
-from config import quantities, bondtype_dict
 nq = len(quantities)
-#bondtypes = list(bondtype_dict.keys())
-#bondtype_colors = list(bondtype_dict.values())
+bondtypes = list(bondtype_dict.keys())
+bondtype_colors = list(bondtype_dict.values())
 
-# sliders
+
+# range sliders
+# pylint: disable=redefined-builtin
 def get_slider(desc, range, default=None):
     if default is None:
         default = range
-    return RangeSlider(title=desc, start=range[0], end=range[1], value=default, step=0.1)
+    return RangeSlider(
+        title=desc, start=range[0], end=range[1], value=default, step=0.1)
+
 
 sliders_dict = collections.OrderedDict()
-for k,v in quantities.iteritems():
+for k, v in quantities.iteritems():
     desc = "{} [{}]".format(v['label'], v['unit'])
-    if not 'default' in v.keys():
+    if 'default' not in v.keys():
         v['default'] = None
 
     sliders_dict[k] = get_slider(desc, v['range'], v['default'])
 
-
-# selectors
-plot_options = [ (k, v['label']) for k,v in quantities.iteritems() ]
+# quantity selectors
+plot_options = [(k, v['label']) for k, v in quantities.iteritems()]
 inp_x = Select(title='X', options=plot_options, value=preset['x'])
 inp_y = Select(title='Y', options=plot_options, value=preset['y'])
-inp_clr = Select(title='Color', options=plot_options, value='surface_area')
-#inp_clr = Select(title='Color', options=plot_options + [('bond_type', 'Bond type')], value='surface_area')
+#inp_clr = Select(title='Color', options=plot_options, value=preset['clr'])
+inp_clr = Select(
+    title='Color',
+    options=plot_options + [('bond_type', 'Bond type')],
+    value=preset['clr'])
 
 # plot button, output, graph
 btn_plot = Button(label='Plot')
@@ -94,40 +89,63 @@ hover = bmd.HoverTool(tooltips=[])
 tap = bmd.TapTool()
 
 
-p = figure(
-    plot_height=600, plot_width=700,
-    toolbar_location='below',
-    tools=['pan', 'wheel_zoom', 'save', 'reset', 'zoom_in', 'zoom_out', hover, tap],
-    active_scroll = 'wheel_zoom',
-    output_backend='webgl',
-    title='',
-    title_location='right',
-)
+def create_plot():
+    """Creates scatter plot.
 
-# cbar
-cmap = bmd.LinearColorMapper(palette=Viridis256)
-cbar = bmd.ColorBar(color_mapper=cmap, location=(0, 0))
-p.add_layout(cbar, 'right')
-# misusing plot title for cbar label
-# https://stackoverflow.com/a/49517401
-p.title.align = 'center'
-p.title.text_font_size = '10pt'
-p.title.text_font_style = 'italic'
+    This is needed to redraw the plot for the bond_type coloring,
+    when the colormap needs to change and the colorbar is removed.
+    """
+    p_new = figure(
+        plot_height=600,
+        plot_width=700,
+        toolbar_location='below',
+        tools=[
+            'pan', 'wheel_zoom', 'save', 'reset', 'zoom_in', 'zoom_out', hover,
+            tap
+        ],
+        active_scroll='wheel_zoom',
+        output_backend='webgl',
+        title='',
+        title_location='right',
+    )
+    p_new.title.align = 'center'
+    p_new.title.text_font_size = '10pt'
+    p_new.title.text_font_style = 'italic'
 
-# graph
-p.circle('x', 'y', size=10, source=source, 
-        fill_color={'field':'color', 'transform':cmap})
+    if inp_clr.value == 'bond_type':
+        from bokeh.transform import factor_cmap
+        fill_color = factor_cmap('color', palette=Spectral5, factors=bondtypes)
+        p_new.circle(
+            'x',
+            'y',
+            size=10,
+            source=source,
+            fill_color=fill_color,
+            legend='color')
 
-controls = list(sliders_dict.values()) + [inp_x, inp_y, inp_clr, btn_plot, plot_info]
+    else:
+        cmap = bmd.LinearColorMapper(palette=Viridis256)
+        fill_color = {'field': 'color', 'transform': cmap}
+        p_new.circle('x', 'y', size=10, source=source, fill_color=fill_color)
+        cbar = bmd.ColorBar(color_mapper=cmap, location=(0, 0))
+        #cbar.color_mapper = bmd.LinearColorMapper(palette=Viridis256)
+        p_new.add_layout(cbar, 'right')
+
+    return p_new
+
+
+p = create_plot()
+
+controls = list(
+    sliders_dict.values()) + [inp_x, inp_y, inp_clr, btn_plot, plot_info]
 
 sizing_mode = 'fixed'
 inputs = widgetbox(*controls, sizing_mode=sizing_mode)
-l = layout([
-        [html],
+l = layout(
+    [
         [inputs, p],
         [info_block],
-    ],
-    sizing_mode = sizing_mode)
+    ], sizing_mode=sizing_mode)
 
 #def update_tap(source=source, window=None):
 #    info_block.text = "here"
@@ -135,34 +153,39 @@ l = layout([
 #    print(source)
 #    print(cb_obj.value)
 
+
 def update_legends():
 
     q_x = quantities[inp_x.value]
     q_y = quantities[inp_y.value]
+    p = l.children[0].children[1]
 
-    title = "{} vs {}".format(q_x["label"], q_y["label"])
+    #title = "{} vs {}".format(q_x["label"], q_y["label"])
     xlabel = "{} [{}]".format(q_x["label"], q_x["unit"])
     ylabel = "{} [{}]".format(q_y["label"], q_y["unit"])
     xhover = (q_x["label"], "@x {}".format(q_x["unit"]))
     yhover = (q_y["label"], "@y {}".format(q_y["unit"]))
 
-    #if inp_clr.value == 'bond_type':
-    #    clr_label = "Bond type"
-    #    hover.tooltips = [
-    #        ("name", "@name"), xhover, yhover
-    #    ]
-    #else:
-    q_clr = quantities[inp_clr.value]
-    clr_label = "{} [{}]".format(q_clr["label"], q_clr["unit"])
-    hover.tooltips = [
-        ("name", "@name"), xhover, yhover,
-        (q_clr["label"], "@color {}".format(q_clr["unit"])),
-    ]
+    if inp_clr.value == 'bond_type':
+        clr_label = "Bond type"
+        hover.tooltips = [
+            ("name", "@name"),
+            xhover,
+            yhover,
+            ("Bond type", "@color"),
+        ]
+    else:
+        q_clr = quantities[inp_clr.value]
+        clr_label = "{} [{}]".format(q_clr["label"], q_clr["unit"])
+        hover.tooltips = [
+            ("name", "@name"),
+            xhover,
+            yhover,
+            (q_clr["label"], "@color {}".format(q_clr["unit"])),
+        ]
 
     p.xaxis.axis_label = xlabel
     p.yaxis.axis_label = ylabel
-
-    #cbar.title = clr_label
     p.title.text = clr_label
 
     url = explore_url + "/@uuid"
@@ -172,26 +195,17 @@ def update_legends():
 
     #p.toolbar.active_hover = hover
 
+
 def update():
     update_legends()
     source.data = get_data()
 
-    #if inp_clr.value == 'bond_type':
-
-    #    cmap = bmd.CategoricalColorMapper(
-    #            palette=bondtype_colors, factors = bondtypes)
-    #    #cmap = bmd.LinearColorMapper(palette=Viridis5)
-    #    #cbar.ticker = bmd.BasicTicker(desired_num_ticks=5)
-    #    #colorbar.set_ticklabels(bondtypes)
-    #    p.legend = 'bond_type'
-
-    #else:
-    #    cmap = bmd.LinearColorMapper(palette=Viridis256)
-    cmap.low = min(source.data['color'])
-    cmap.high = max(source.data['color'])
+    if redraw_plot:
+        l.children[0].children[1] = create_plot()
 
     update_legends()
     return
+
 
 #@app.callback(
 #    dash.dependencies.Output('hover_info', 'children'),
@@ -216,6 +230,12 @@ def update():
 
 def get_data():
     """Query the AiiDA database"""
+    from aiida import load_dbenv, is_dbenv_loaded
+    from aiida.backends import settings
+    if not is_dbenv_loaded():
+        load_dbenv(profile=settings.AIIDADB_PROFILE)
+    from aiida.orm.querybuilder import QueryBuilder
+    from aiida.orm.data.parameter import ParameterData
 
     filters = {}
 
@@ -223,20 +243,28 @@ def get_data():
         # a bit of cheating until this is resolved
         # https://github.com/aiidateam/aiida_core/issues/1389
         #filters['attributes.'+label] = {'>=':bounds[0]}
-        filters['attributes.'+label] = {'and':[{'>=':bounds[0]}, {'<':bounds[1]}]}
+        filters['attributes.' + label] = {
+            'and': [{
+                '>=': bounds[0]
+            }, {
+                '<': bounds[1]
+            }]
+        }
 
-    for k,v in sliders_dict.iteritems():
+    for k, v in sliders_dict.iteritems():
         # Note: filtering is costly, avoid if possible
         if not v.value == quantities[k]['range']:
             add_range_filter(v.value, k)
 
     qb = QueryBuilder()
-    qb.append(ParameterData,
-          filters=filters,
-          project = ['attributes.'+inp_x.value, 'attributes.'+inp_y.value, 
-                     'attributes.'+inp_clr.value, 'uuid', 'attributes.name', 
-                     'extras.cif_uuid'
-                     ],
+    qb.append(
+        ParameterData,
+        filters=filters,
+        project=[
+            'attributes.' + inp_x.value, 'attributes.' + inp_y.value,
+            'attributes.' + inp_clr.value, 'uuid', 'attributes.name',
+            'extras.cif_uuid'
+        ],
     )
 
     nresults = qb.count()
@@ -254,24 +282,38 @@ def get_data():
     cif_uuids = map(str, cif_uuids)
     uuids = map(str, uuids)
 
-    #if inp_clr.value == 'bond_type':
-    #    #clrs = map(lambda clr: bondtypes.index(clr), clrs)
-    #    clrs = map(str, clrs)
-    #else:
-    clrs = map(float, clrs)
+    if inp_clr.value == 'bond_type':
+        #clrs = map(lambda clr: bondtypes.index(clr), clrs)
+        clrs = map(str, clrs)
+    else:
+        clrs = map(float, clrs)
 
-    return  dict(x=x, y=y, uuid=cif_uuids, color=clrs, name=names)
+    return dict(x=x, y=y, uuid=cif_uuids, color=clrs, name=names)
+
 
 btn_plot.on_click(update)
 
-#def valid_uri(uri):
-#    from urlparse import urlparse
-#    result = urlparse(uri)
-#    valid = result.scheme and result.netloc and result.path
-#    return uri
 
 def tab_plot():
     # Make a tab with the layout
     update()
-    tab = bmd.Panel(child=l, title = 'Scatter plot')
+    tab = bmd.Panel(child=l, title='Scatter plot')
     return tab
+
+
+redraw_plot = False
+
+
+# pylint: disable=unused-argument
+def on_change_clr(attr, old, new):
+    """Remember to redraw plot next time, when necessary.
+
+    When switching between bond_type color and something else,
+    the plot needs to be redrawn.
+    """
+    global redraw_plot
+    if (new == 'bond_type' or old == 'bond_type') and new != old:
+        redraw_plot = True
+
+
+inp_clr.on_change('value', on_change_clr)
