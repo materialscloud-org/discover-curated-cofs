@@ -25,7 +25,7 @@ RUN /opt/import-cofdb.sh
   
 # Copy bokeh app
 WORKDIR /project/lsmo-bokeh-app
-COPY README.md description.html main.py ./
+COPY app ./app
 COPY serve-app.sh serve-restapi.sh /opt/
 
 # start bokeh server

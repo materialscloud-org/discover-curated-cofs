@@ -22,7 +22,7 @@ psql_start
 #fi
 
 #===============================================================================
-bokeh serve .                   \
+bokeh serve app                 \
     --port 5006                 \
     --log-level debug           \
     --allow-websocket-origin "*" \
