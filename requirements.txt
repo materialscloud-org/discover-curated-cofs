@@ -1,4 +1,4 @@
-aiida
+aiida<1.0
 bokeh
 pre-commit==1.8.2
 yapf==0.21.0
