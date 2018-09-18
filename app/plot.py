@@ -12,15 +12,8 @@ from bokeh.io import curdoc
 
 from config import quantities, bondtype_dict, presets
 
-# get explore_url from arguments
-args = curdoc().session_context.request.arguments
-try:
-    explore_url = args.get('explore_url')[0]
-except (TypeError, KeyError):
-    explore_url = 'https://dev-www.materialscloud.org/explore/cofs/details'
-
-# presets
 # get preset for figure from arguments
+args = curdoc().session_context.request.arguments
 try:
     preset_label = args.get('preset')[0]
     preset = presets[preset_label]
@@ -193,7 +186,7 @@ def update_legends():
     p.yaxis.axis_label = ylabel
     p.title.text = clr_label
 
-    url = explore_url + "/@uuid"
+    url = "detail?cif_uuid=@uuid"
     tap.callback = bmd.OpenURL(url=url)
     #tap.callback = bmd.CustomJS.from_py_func(update_tap)
     #tap.callback = bmd.CustomJS(code="""console.info("hello TapTool")""")

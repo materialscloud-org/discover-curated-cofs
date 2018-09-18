@@ -5,28 +5,20 @@ USER scientist
 
 # Download COF DB
 WORKDIR /project
-#RUN base_url=http://archive.materialscloud.org/file/2018.0003/v2;  \
-#    wget ${base_url}/cof-database.aiida;
-COPY data/parameters.aiida /project
+RUN export base_url=http://archive.materialscloud.org/file/2018.0003/v2; \
+    wget ${base_url}/structures.tgz &&\
+    wget ${base_url}/properties.tgz
+RUN tar xf structures.tgz && rm structures.tgz && \
+    tar xf properties.tgz && rm propertiez.tgz
 
-# Import COF DB
-COPY import-cofdb.sh /opt/
-RUN /opt/import-cofdb.sh
-
-## Import COF DB (temporary workaround)
-#RUN mv cof-database.aiida cof-database.tar.gz; \
-#    tar xf cof-database.tar.gz; \
-#    rm cof-database.tar.gz
-#RUN rm -rf /project/aiida_repository/repository/node; \
-#    mv nodes /project/aiida_repository/repository/node
-#COPY import-cofdb-manual.sh /opt/
-#COPY aiida-db-backup.psql /project
-#RUN /opt/import-cofdb-manual.sh
-  
 # Copy bokeh app
 WORKDIR /project/lsmo-bokeh-app
-COPY app ./app
-COPY serve-app.sh serve-restapi.sh /opt/
+COPY app detail import-db.py requirements.txt ./
+COPY serve-app.sh /opt/
+
+# install app, set up DB
+RUN pip install -r requirements.txt
+RUN python import-db.py
 
 # start bokeh server
 EXPOSE 5006

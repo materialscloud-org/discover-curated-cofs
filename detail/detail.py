@@ -36,20 +36,34 @@ def get_data(cif_uuid):
     from aiida.orm.data.cif import CifData
 
     qb = QueryBuilder()
-    qb.append(CifData, filters={'uuid': {'==': cif_uuid}})
+    qb.append(
+        CifData, filters={'uuid': {
+            '==': cif_uuid
+        }}, tag='cifs', project='*')
+    qb.append(
+        ParameterData,
+        descendant_of='cifs',
+        project='*',
+    )
 
     nresults = qb.count()
     if nresults == 0:
         plot_info.text = "No matching COF found."
         return ""
-    else:
-        cif = qb.one()[0]
-        return cif.get_attr('filename')
+    return qb.one()
 
 
 def update():
-    filename = get_data(cif_uuid=cif_uuid)
-    info_block.text = filename
+    cif, pm = get_data(cif_uuid=cif_uuid)
+    cif_str = cif._prepare_cif()
+    info_block.text = cif.get_attr('filename')
+
+    properties = pm.get_attrs()
+    s = "\n"
+    for k, v in properties.items():
+        s += "{}: {}\n".format(k, v)
+
+    info_block.text += s
 
 
 def tab_detail():
