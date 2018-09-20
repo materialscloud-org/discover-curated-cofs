@@ -7,6 +7,9 @@ USER root
 # Install jsmol extension
 WORKDIR /project
 RUN git clone https://github.com/ltalirz/jsmol-bokeh-extension.git
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs
+# add to global PYTHONPATH
+RUN echo "/project/jsmol-bokeh-extension" >> /usr/local/lib/python2.7/dist-packages/site-packages.pth
 
 # Copy bokeh app
 WORKDIR /project/discover-cofs
@@ -19,7 +22,6 @@ COPY serve-app.sh /opt/
 RUN chown -R scientist:scientist /project
 
 USER scientist
-RUN echo "export PYTHONPATH=$PYTHONPATH:/project/jsmol-bokeh-extension" >> /project/.bashrc
 
 # start bokeh server
 EXPOSE 5006
