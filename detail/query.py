@@ -1,6 +1,7 @@
 """ Queries to the DB
 """
 
+
 def get_sqlite_data(name, plot_info):
     """Query the sqlite database"""
     from import_db import automap_table, engine
@@ -47,4 +48,3 @@ def get_data_aiida(cif_uuid, plot_info):
         plot_info.text = "No matching COF found."
         return None
     return qb.one()
-

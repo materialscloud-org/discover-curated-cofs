@@ -10,7 +10,7 @@ from bokeh.io import curdoc
 
 from jsmol import JSMol
 from import_db import get_cif_content
-from query import get_sqlite_data as get_data
+from detail.query import get_sqlite_data as get_data
 
 html = bmd.Div(
     text=open(join(dirname(__file__), "description.html")).read(), width=800)

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=unsubscriptable-object, too-many-locals
 from __future__ import print_function
 import collections
 from os.path import dirname, join
@@ -11,12 +12,13 @@ from bokeh.models.widgets import RangeSlider, Select, Button, PreText
 from bokeh.io import curdoc
 
 from config import quantities, bondtype_dict, presets
+from figure.query import get_data_sqlite as get_data
+from figure.query import data_empty
 
 html = bmd.Div(
     text=open(join(dirname(__file__), "description.html")).read(), width=800)
 
-# -*- coding: utf-8 -*-
-# pylint: disable=unsubscriptable-object, too-many-locals
+redraw_plot = False
 
 
 def get_preset_label_from_url():
@@ -93,7 +95,6 @@ btn_plot = Button(label='Plot')
 info_block = PreText(text='', width=500, height=100)
 plot_info = PreText(text='', width=300, height=100)
 
-data_empty = dict(x=[0], y=[0], uuid=['1234'], color=[0], name=['no data'])
 source = bmd.ColumnDataSource(data=data_empty)
 hover = bmd.HoverTool(tooltips=[])
 tap = bmd.TapTool()
@@ -198,173 +199,22 @@ def update_legends(ly):
     #p.toolbar.active_hover = hover
 
 
-def update(ly=None):
+def update():
 
-    if ly is None:
-        ly = curdoc().roots[0]
-    update_legends(ly)
-    #source.data = get_data_aiida()
-    source.data = get_data()
+    update_legends(l)
+
+    projections = [inp_x.value, inp_y.value, inp_clr.value, 'name', 'filename']
+
+    source.data = get_data(projections, sliders_dict, quantities, plot_info)
 
     if redraw_plot:
-        ly.children[0].children[1] = create_plot()
+        l.children[0].children[1] = create_plot()
 
-    update_legends(ly)
+    update_legends(l)
     return
 
 
-#@app.callback(
-#    dash.dependencies.Output('hover_info', 'children'),
-#    [dash.dependencies.Input('scatter_plot', 'hoverData')])
-#def update_text(hoverData):
-#    if hoverData is None:
-#        return ""
-#
-#    uuid = hoverData['points'][0]['customdata']
-#    rest_url = 'http://localhost:8000/explore/sssp/details/'
-#
-#    node = load_node(uuid)
-#    attrs = node.get_attrs()
-#    s = "[View AiiDA Node]({})\n".format(rest_url+uuid)
-#    for k,v in attrs.items():
-#        if 'units' in k:
-#            continue
-#        s += " * {}: {}\n".format(k,v)
-#
-#    return s
-
-
-def get_data():
-    """Query the database.
-    
-    Note: For efficiency, this uses the the sqlalchemy.sql interface which does
-    not go via the (more convenient) ORM.
-    """
-    from import_db import automap_table, engine
-    from sqlalchemy.sql import select
-
-    Table = automap_table(engine)
-
-    selections = []
-    for label in [inp_x.value, inp_y.value, inp_clr.value, 'name', 'filename']:
-        selections.append(getattr(Table, label))
-
-    filters = None
-    for k, v in sliders_dict.items():
-        if not v.value == quantities[k]['range']:
-            filter = getattr(Table, k).between(v.value[0], v.value[1])
-            if filters is None:
-                filters = filter
-            else:
-                filters = filters._and(filter)  # pylint: disable=protected-access
-
-    s = select(selections).where(filters)
-
-    results = engine.connect().execute(s).fetchall()
-
-    nresults = len(results)
-    if not results:
-        plot_info.text = "No matching COFs found."
-        return data_empty
-
-    plot_info.text = "{} COFs found. Plotting...".format(nresults)
-
-    # x,y position
-    x, y, clrs, names, filenames = zip(*results)
-    plot_info.text = "{} COFs queried".format(nresults)
-    x = list(map(float, x))
-    y = list(map(float, y))
-
-    if inp_clr.value == 'bond_type':
-        #clrs = map(lambda clr: bondtypes.index(clr), clrs)
-        clrs = list(map(str, clrs))
-    else:
-        clrs = list(map(float, clrs))
-
-    return dict(x=x, y=y, filename=filenames, color=clrs, name=names)
-
-
-def get_data_aiida():
-    """Query the AiiDA database"""
-    from aiida import load_dbenv, is_dbenv_loaded
-    from aiida.backends import settings
-    if not is_dbenv_loaded():
-        load_dbenv(profile=settings.AIIDADB_PROFILE)
-    from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm.data.parameter import ParameterData
-
-    filters = {}
-
-    def add_range_filter(bounds, label):
-        # a bit of cheating until this is resolved
-        # https://github.com/aiidateam/aiida_core/issues/1389
-        #filters['attributes.'+label] = {'>=':bounds[0]}
-        filters['attributes.' + label] = {
-            'and': [{
-                '>=': bounds[0]
-            }, {
-                '<': bounds[1]
-            }]
-        }
-
-    for k, v in sliders_dict.items():
-        # Note: filtering is costly, avoid if possible
-        if not v.value == quantities[k]['range']:
-            add_range_filter(v.value, k)
-
-    qb = QueryBuilder()
-    qb.append(
-        ParameterData,
-        filters=filters,
-        project=[
-            'attributes.' + inp_x.value, 'attributes.' + inp_y.value,
-            'attributes.' + inp_clr.value, 'uuid', 'attributes.name',
-            'extras.cif_uuid'
-        ],
-    )
-
-    nresults = qb.count()
-    if nresults == 0:
-        plot_info.text = "No matching COFs found."
-        return data_empty
-
-    plot_info.text = "{} COFs found. Plotting...".format(nresults)
-
-    # x,y position
-    x, y, clrs, uuids, names, cif_uuids = zip(*qb.all())
-    plot_info.text = "{} COFs queried".format(nresults)
-    x = map(float, x)
-    y = map(float, y)
-    cif_uuids = map(str, cif_uuids)
-    uuids = map(str, uuids)
-
-    if inp_clr.value == 'bond_type':
-        #clrs = map(lambda clr: bondtypes.index(clr), clrs)
-        clrs = map(str, clrs)
-    else:
-        clrs = map(float, clrs)
-
-    return dict(x=x, y=y, uuid=cif_uuids, color=clrs, name=names)
-
-
 btn_plot.on_click(update)
-
-
-def tab_plot():
-    # Create a panel with a new layout
-    sizing_mode = 'fixed'
-    inputs = widgetbox(*controls, sizing_mode=sizing_mode)
-    ly = layout(
-        [
-            [inputs, p],
-            [info_block],
-        ], sizing_mode=sizing_mode)
-    update(ly=ly)
-
-    return bmd.Panel(child=ly, title='Scatter plot')
-
-
-redraw_plot = False
 
 
 # pylint: disable=unused-argument
@@ -381,10 +231,20 @@ def on_change_clr(attr, old, new):
 
 inp_clr.on_change('value', on_change_clr)
 
+# Create a panel with a new layout
+sizing_mode = 'fixed'
+inputs = widgetbox(*controls, sizing_mode=sizing_mode)
+l = layout(
+    [
+        [inputs, p],
+        [info_block],
+    ], sizing_mode=sizing_mode)
+update()
+
 # Create each of the tabs
-tabs = bmd.widgets.Tabs(tabs=[tab_plot()])
-ly = layout([html, tabs])
+tab = bmd.Panel(child=l, title='Scatter plot')
+tabs = bmd.widgets.Tabs(tabs=[tab])
 
 # Put the tabs in the current document for display
 curdoc().title = "Covalent Organic Frameworks"
-curdoc().add_root(ly)
+curdoc().add_root(layout([html, tabs]))
