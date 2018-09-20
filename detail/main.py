@@ -3,7 +3,7 @@
 from __future__ import print_function
 from os.path import dirname, join
 
-from bokeh.layouts import layout
+from bokeh.layouts import layout, widgetbox
 import bokeh.models as bmd
 from bokeh.models.widgets import PreText
 from bokeh.io import curdoc
@@ -80,44 +80,35 @@ def get_name_from_url():
     return name
 
 
-def update():
-    # get structure uuid from arguments
-    global script_source, info
+def table_widget(entry):
+    from bokeh.models import ColumnDataSource
+    from bokeh.models.widgets import DataTable, TableColumn
 
-    entry = get_data(name=get_name_from_url())
+    data = dict(
+        labels=[str(k) for k in entry.__dict__],
+        values=[str(v) for v in entry.__dict__.values()],
+    )
+    source = ColumnDataSource(data)
 
-    if entry:
-        info_block.text = entry.filename
-        cif_str = get_cif_content(entry.filename)
+    columns = [
+        TableColumn(field="labels", title="Properties"),
+        TableColumn(field="values", title="Values"),
+    ]
+    data_table = DataTable(
+        source=source, columns=columns, width=400, height=280)
 
-        script = """
-load data "cifstring"
-{}
-end "cifstring"
-""".format(cif_str)
-
-        script_source.data['script'] = [script]  # pylint: disable=unsupported-assignment-operation
-        info['script'] = script
-
-        s = "\n"
-        for k in entry.__dict__:
-            s += "{}: {}\n".format(k, getattr(entry, k))
-
-        info_block.text += s
-
-
-def tab_detail():
-    # Make a tab with the layout
-    update()
-    tab = bmd.Panel(child=l, title='Detail view')
-    return tab
+    return widgetbox(data_table)
 
 
 entry = get_data(name=get_name_from_url())
 
-if entry:
-    info_block.text = entry.filename
-    cif_str = get_cif_content(entry.filename)
+info_block.text = entry.filename
+cif_str = get_cif_content(entry.filename)
+
+#s = "\n"
+#for k in entry.__dict__:
+#    s += "{}: {}\n".format(k, getattr(entry, k))
+#info_block.text += s
 
 info = dict(
     height="100%",
@@ -145,12 +136,16 @@ sizing_mode = 'fixed'
 l = layout(
     [
         [applet],
+        [table_widget(entry)],
         [info_block],
         [plot_info],
-    ], sizing_mode=sizing_mode)
+    ],
+    sizing_mode=sizing_mode)
+
+tab = bmd.Panel(child=l, title='Detail view')
 
 # Create each of the tabs
-tabs = bmd.widgets.Tabs(tabs=[tab_detail()])
+tabs = bmd.widgets.Tabs(tabs=[tab])
 
 # Put the tabs in the current document for display
 curdoc().title = "Covalent Organic Frameworks"
