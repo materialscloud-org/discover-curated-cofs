@@ -2,19 +2,16 @@
 # pylint: disable=unsubscriptable-object, too-many-locals
 from __future__ import print_function
 
-from bokeh.layouts import layout
+from bokeh.layouts import layout, widgetbox
 import bokeh.models as bmd
-from bokeh.models.widgets import RangeSlider, Select, Button, PreText
+from bokeh.models.widgets import RangeSlider, Select, Button, PreText, TextInput
 from bokeh.io import curdoc
+from jsmol import JSMol
+
+script_source = bmd.ColumnDataSource()
 
 info_block = PreText(text='', width=500, height=100)
 plot_info = PreText(text='', width=300, height=100)
-sizing_mode = 'fixed'
-l = layout(
-    [
-        [info_block],
-        [plot_info],
-    ], sizing_mode=sizing_mode)
 
 
 def get_data(name):
@@ -65,21 +62,37 @@ def get_data_aiida(cif_uuid):
     return qb.one()
 
 
-def update():
-    # get structure uuid from arguments
+def get_name_from_url():
     args = curdoc().session_context.request.arguments
     try:
         name = args.get('name')[0]
+        if type(name) == bytes:
+            name = name.decode()
     except (TypeError, KeyError):
-        name = 'e2ea913a-1722-40ec-ae0d-5adc64a8ba7a'
+        name = 'linker91_CH_linker92_N_clh_relaxed'
+
+    return name
+
+
+def update():
+    # get structure uuid from arguments
+    global script_source, info
 
     from import_db import get_cif_content
-
-    entry = get_data(name=name)
+    entry = get_data(name=get_name_from_url())
 
     if entry:
         info_block.text = entry.filename
         cif_str = get_cif_content(entry.filename)
+
+        script = """
+load data "mydata"
+{}
+end "mydata"
+"""
+
+        script_source.data['script'] = [script]
+        info['script'] = script
 
         s = "\n"
         for k in entry.__dict__:
@@ -93,3 +106,41 @@ def tab_detail():
     update()
     tab = bmd.Panel(child=l, title='Detail view')
     return tab
+
+
+from import_db import get_cif_content
+entry = get_data(name=get_name_from_url())
+
+if entry:
+    info_block.text = entry.filename
+    cif_str = get_cif_content(entry.filename)
+
+info = dict(
+    height="100%",
+    width="100%",
+    serverURL="https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+    use="HTML5",
+    j2sPath="https://chemapps.stolaf.edu/jmol/jsmol/j2s",
+    script="""
+load data "mydata"
+{}
+end "mydata"
+""".format(cif_str))
+
+#    "background black;load https://dev-www.materialscloud.org/cofs/api/v2/cifs/febd2d02-5690-4a07-9013-505c9a06bc5b/content/download",
+#)
+
+applet = JSMol(
+    width=600,
+    height=600,
+    script_source=script_source,
+    info=info,
+)
+
+sizing_mode = 'fixed'
+l = layout(
+    [
+        [applet],
+        [info_block],
+        [plot_info],
+    ], sizing_mode=sizing_mode)

@@ -4,10 +4,6 @@ import bokeh.models as bmd
 from bokeh.io import curdoc
 from bokeh.layouts import layout
 
-from aiida import load_dbenv, is_dbenv_loaded
-from aiida.backends import settings
-if not is_dbenv_loaded():
-    load_dbenv(profile=settings.AIIDADB_PROFILE)
 from detail import tab_detail
 
 html = bmd.Div(
