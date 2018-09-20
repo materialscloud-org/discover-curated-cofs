@@ -12,7 +12,7 @@ set -x
 #psql_start
 
 #===============================================================================
-bokeh serve app detail          \
+bokeh serve figure detail  \
     --port 5006                 \
     --log-level debug           \
     --allow-websocket-origin "*" \

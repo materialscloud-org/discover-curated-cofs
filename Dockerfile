@@ -6,7 +6,7 @@ USER scientist
 
 # Install jsmol extension
 WORKDIR /project
-RUN git clone git@github.com:ltalirz/jsmol-bokeh-extension.git
+RUN git clone https://github.com/ltalirz/jsmol-bokeh-extension.git
 RUN export PYTHONPATH=$PYTHONPATH:/project/jsmol-bokeh-extension
 
 # Copy bokeh app
