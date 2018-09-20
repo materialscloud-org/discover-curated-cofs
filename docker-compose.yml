@@ -4,16 +4,16 @@ services:
   bokeh:
     restart: always
     build: .
-    image: discover-cofs
+    image: discover-cofs:master
     command: ["/opt/serve-app.sh"]
     environment:
       PYTHONPATH: '/project'
       SHELL: '/bin/bash'
 
     volumes:
-     - './data:/project/data'
+     - './data:/project/discover-cofs/data'
     ports:
-      - '3246:5006'
+      - '3245:5006'
 
 volumes:
   redis:

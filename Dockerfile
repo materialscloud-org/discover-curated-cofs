@@ -1,21 +1,25 @@
 # using https://github.com/materialscloud-org/mc-docker-stack/tree/discover
 #
 FROM mc-docker-stack:discover
-USER scientist
+USER root
 
 
 # Install jsmol extension
 WORKDIR /project
 RUN git clone https://github.com/ltalirz/jsmol-bokeh-extension.git
-RUN export PYTHONPATH=$PYTHONPATH:/project/jsmol-bokeh-extension
 
 # Copy bokeh app
-WORKDIR /project/lsmo-bokeh-app
-COPY app detail requirements.txt ./
+WORKDIR /project/discover-cofs
+COPY figure ./figure
+COPY detail ./detail
+COPY setup.py import_db.py ./
+RUN pip install -e .
 COPY serve-app.sh /opt/
 
-# install app
-RUN pip install --user -r requirements.txt
+RUN chown -R scientist:scientist /project
+
+USER scientist
+RUN echo "export PYTHONPATH=$PYTHONPATH:/project/jsmol-bokeh-extension" >> /project/.bashrc
 
 # start bokeh server
 EXPOSE 5006

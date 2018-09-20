@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
 set -x
-
-docker tag mo-cof:master mo-cof:latest
+docker tag discover-cofs:master discover-cofs:latest
 
 #EOF

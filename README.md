@@ -9,14 +9,15 @@ Using
 ## Installation
 
 ```
-pip install -r requirements
+pip install -e .
 ./prepare.sh
-bokeh serve --show .
+bokeh serve --show figure detail
 ```
 
 ## Docker
 
 ```
+pip install -e .
 ./prepare.sh
 docker-compose build
 docker-compose up
