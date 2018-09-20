@@ -186,7 +186,7 @@ def update_legends():
     p.yaxis.axis_label = ylabel
     p.title.text = clr_label
 
-    url = "detail?cif_uuid=@uuid"
+    url = "detail?name=@name"
     tap.callback = bmd.OpenURL(url=url)
     #tap.callback = bmd.CustomJS.from_py_func(update_tap)
     #tap.callback = bmd.CustomJS(code="""console.info("hello TapTool")""")
@@ -196,6 +196,7 @@ def update_legends():
 
 def update():
     update_legends()
+    #source.data = get_data_aiida()
     source.data = get_data()
 
     if redraw_plot:
@@ -227,6 +228,56 @@ def update():
 
 
 def get_data():
+    """Query the database.
+    
+    Note: For efficiency, this uses the the sqlalchemy.sql interface which does
+    not go via the (more convenient) ORM.
+    """
+    from import_db import automap_table, engine
+    from sqlalchemy.sql import select, and_
+
+    Table = automap_table(engine)
+
+    selections = []
+    for label in [inp_x.value, inp_y.value, inp_clr.value, 'name', 'filename']:
+        selections.append(getattr(Table, label))
+
+    filters = None
+    for k, v in sliders_dict.iteritems():
+        if not v.value == quantities[k]['range']:
+            filter = getattr(Table, k).between(v.value[0], v.value[1])
+            if filters is None:
+                filters = filter
+            else:
+                filters = filters._and(filter)
+
+    s = select(selections).where(filters)
+
+    results = engine.connect().execute(s).fetchall()
+
+    nresults = len(results)
+    if not results:
+        plot_info.text = "No matching COFs found."
+        return data_empty
+
+    plot_info.text = "{} COFs found. Plotting...".format(nresults)
+
+    # x,y position
+    x, y, clrs, names, filenames = zip(*results)
+    plot_info.text = "{} COFs queried".format(nresults)
+    x = map(float, x)
+    y = map(float, y)
+
+    if inp_clr.value == 'bond_type':
+        #clrs = map(lambda clr: bondtypes.index(clr), clrs)
+        clrs = map(str, clrs)
+    else:
+        clrs = map(float, clrs)
+
+    return dict(x=x, y=y, filename=filenames, color=clrs, name=names)
+
+
+def get_data_aiida():
     """Query the AiiDA database"""
     from aiida import load_dbenv, is_dbenv_loaded
     from aiida.backends import settings

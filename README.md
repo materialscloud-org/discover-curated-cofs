@@ -2,22 +2,22 @@
 
 Using
 
- * AiiDA backend
  * bokeh server
+ * sqlite backend
+   (AiiDA backend in alpha)
 
 ## Installation
 
 ```
 pip install -r requirements
+./prepare.sh
 bokeh serve --show .
 ```
 
 ## Docker
 
-First, build `mc-docker-stack:latest`.
-Then run
-
 ```
+./prepare.sh
 docker-compose build
 docker-compose up
 ```
