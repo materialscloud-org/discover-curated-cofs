@@ -129,6 +129,17 @@ def automap_table(engine):
     return Base.classes.get(table_name)
 
 
+def get_cif_path(filename):
+    from os.path import join, abspath
+    return abspath(join(structure_folder, filename))
+
+
+def get_cif_content(filename):
+    with open(get_cif_path(filename), 'r') as f:
+        content = f.read()
+    return content
+
+
 if __name__ == "__main__":
     parse_csv(properties_csv)
     add_filenames()
