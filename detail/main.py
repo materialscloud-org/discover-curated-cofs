@@ -61,9 +61,13 @@ cif_str = get_cif_content(entry.filename)
 info = dict(
     height="100%",
     width="100%",
-    serverURL="https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
     use="HTML5",
-    j2sPath="https://chemapps.stolaf.edu/jmol/jsmol/j2s",
+    #serverURL="https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+    #j2sPath="https://chemapps.stolaf.edu/jmol/jsmol/j2s",
+    #serverURL="https://www.materialscloud.org/discover/scripts/external/jsmol/php/jsmol.php",
+    #j2sPath="https://www.materialscloud.org/discover/scripts/external/jsmol/j2s",
+    serverURL="detail/static/jsmol/php/jsmol.php",
+    j2sPath="detail/static/jsmol/j2s",
     script="""
 load data "cifstring"
 {}
@@ -75,6 +79,7 @@ applet = JSMol(
     height=600,
     script_source=script_source,
     info=info,
+    js_url="detail/static/jsmol/JSmol.min.js",
 )
 
 sizing_mode = 'fixed'
