@@ -17,7 +17,6 @@ html = bmd.Div(
 
 script_source = bmd.ColumnDataSource()
 
-info_block = PreText(text='', width=500, height=100)
 plot_info = PreText(text='', width=300, height=100)
 
 
@@ -53,9 +52,9 @@ def table_widget(entry):
     return widgetbox(data_table)
 
 
-entry = get_data(get_name_from_url(), plot_info)
+cof_name = get_name_from_url()
+entry = get_data(cof_name, plot_info)
 
-info_block.text = entry.filename
 cif_str = get_cif_content(entry.filename)
 
 info = dict(
@@ -87,13 +86,12 @@ l = layout(
     [
         [applet],
         [table_widget(entry)],
-        [info_block],
         [plot_info],
     ],
     sizing_mode=sizing_mode)
 
 # We add this as a tab
-tab = bmd.Panel(child=l, title='Detail view')
+tab = bmd.Panel(child=l, title=cof_name)
 tabs = bmd.widgets.Tabs(tabs=[tab])
 
 # Put the tabs in the current document for display
