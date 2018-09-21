@@ -68,7 +68,7 @@ info = dict(
     #j2sPath="https://www.materialscloud.org/discover/scripts/external/jsmol/j2s",
     serverURL="detail/static/jsmol/php/jsmol.php",
     j2sPath="detail/static/jsmol/j2s",
-    script="""
+    script="""set antialiasDisplay ON;
 load data "cifstring"
 {}
 end "cifstring"
