@@ -6,7 +6,7 @@ WORKDIR /project
 
 
 # Install jsmol
-RUN wget https://sourceforge.net/projects/jmol/files/Jmol/Version%2014.29/Jmol%2014.29.22/Jmol-14.29.22-binary.zip/download -o jmol.zip
+RUN wget https://sourceforge.net/projects/jmol/files/Jmol/Version%2014.29/Jmol%2014.29.22/Jmol-14.29.22-binary.zip/download --output-document jmol.zip
 RUN unzip jmol.zip && cd jmol-14.29.22 && unzip jsmol.zip
 
 # Install jsmol bokeh extension

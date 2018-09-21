@@ -38,7 +38,6 @@ def get_data_sqlite(projections, sliders_dict, quantities, plot_info):
 
     # x,y position
     x, y, clrs, names, filenames = zip(*results)
-    plot_info.text = "{} COFs queried".format(nresults)
     x = list(map(float, x))
     y = list(map(float, y))
 

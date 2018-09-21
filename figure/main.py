@@ -7,7 +7,7 @@ from os.path import dirname, join
 from bokeh.plotting import figure
 from bokeh.layouts import layout, widgetbox
 import bokeh.models as bmd
-from bokeh.palettes import Viridis256, Spectral5
+from bokeh.palettes import Viridis256
 from bokeh.models.widgets import RangeSlider, Select, Button, PreText
 from bokeh.io import curdoc
 
@@ -111,8 +111,13 @@ def create_plot():
         plot_width=700,
         toolbar_location='below',
         tools=[
-            'pan', 'wheel_zoom', 'save', 'reset', 'zoom_in', 'zoom_out', hover,
-            tap
+            'pan',
+            'wheel_zoom',
+            'box_zoom',
+            'save',
+            'reset',
+            hover,
+            tap,
         ],
         active_scroll='wheel_zoom',
         output_backend='webgl',
@@ -125,7 +130,9 @@ def create_plot():
 
     if inp_clr.value == 'bond_type':
         from bokeh.transform import factor_cmap
-        fill_color = factor_cmap('color', palette=Spectral5, factors=bondtypes)
+        paper_palette = list(bondtype_dict.values())
+        fill_color = factor_cmap(
+            'color', palette=paper_palette, factors=bondtypes)
         p_new.circle(
             'x',
             'y',
@@ -200,6 +207,7 @@ def update_legends(ly):
 
 
 def update():
+    global redraw_plot
 
     update_legends(l)
 
@@ -209,8 +217,10 @@ def update():
 
     if redraw_plot:
         l.children[0].children[1] = create_plot()
+        redraw_plot = False
 
     update_legends(l)
+    plot_info.text += " done!"
     return
 
 
