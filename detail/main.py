@@ -2,10 +2,12 @@
 # pylint: disable=unsubscriptable-object, too-many-locals
 from __future__ import print_function
 from os.path import dirname, join
+from copy import copy
+import json
 
 from bokeh.layouts import layout, widgetbox
 import bokeh.models as bmd
-from bokeh.models.widgets import PreText
+from bokeh.models.widgets import PreText, Button
 from bokeh.io import curdoc
 
 from jsmol import JSMol
@@ -15,9 +17,14 @@ from detail.query import get_sqlite_data as get_data
 html = bmd.Div(
     text=open(join(dirname(__file__), "description.html")).read(), width=800)
 
+download_js = open(join(dirname(__file__), "static", "download.js")).read()
+
 script_source = bmd.ColumnDataSource()
 
 plot_info = PreText(text='', width=300, height=100)
+
+btn_download_table = Button(label="Download json", button_type="success")
+btn_download_cif = Button(label="Download cif", button_type="success")
 
 
 def get_name_from_url():
@@ -36,9 +43,21 @@ def table_widget(entry):
     from bokeh.models import ColumnDataSource
     from bokeh.models.widgets import DataTable, TableColumn
 
+    entry_dict = copy(entry.__dict__)
+    for k, v in entry_dict.items():
+        if k == 'id' or k == '_sa_instance_state':
+            del entry_dict[k]
+
+        # use _units keys to rename corresponding quantity
+        if k[-6:] == '_units':
+            prop = k[:-6]
+            new_key = "{} [{}]".format(prop, entry_dict[k])
+            del entry_dict[k]
+            entry_dict[new_key] = entry_dict.pop(prop)
+
     data = dict(
-        labels=[str(k) for k in entry.__dict__],
-        values=[str(v) for v in entry.__dict__.values()],
+        labels=[str(k) for k in entry_dict],
+        values=[str(v) for v in entry_dict.values()],
     )
     source = ColumnDataSource(data)
 
@@ -47,7 +66,16 @@ def table_widget(entry):
         TableColumn(field="values", title="Values"),
     ]
     data_table = DataTable(
-        source=source, columns=columns, width=400, height=280)
+        source=source,
+        columns=columns,
+        width=500,
+        height=570,
+        index_position=None)
+
+    json_str = json.dumps(entry_dict, indent=2)
+    btn_download_table.callback = bmd.CustomJS(
+        args=dict(string=json_str, filename='properties.json'),
+        code=download_js)
 
     return widgetbox(data_table)
 
@@ -73,6 +101,9 @@ load data "cifstring"
 end "cifstring"
 """.format(cif_str))
 
+btn_download_cif.callback = bmd.CustomJS(
+    args=dict(string=cif_str, filename=entry.filename), code=download_js)
+
 applet = JSMol(
     width=600,
     height=600,
@@ -84,8 +115,10 @@ applet = JSMol(
 sizing_mode = 'fixed'
 l = layout(
     [
-        [applet],
-        [table_widget(entry)],
+        [
+            [[applet], [btn_download_cif]],
+            [[table_widget(entry)], [btn_download_table]],
+        ],
         [plot_info],
     ],
     sizing_mode=sizing_mode)
