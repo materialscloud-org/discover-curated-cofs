@@ -3,6 +3,7 @@
 from __future__ import print_function
 from os.path import dirname, join
 from copy import copy
+from collections import OrderedDict
 import json
 
 from bokeh.layouts import layout, widgetbox
@@ -55,6 +56,10 @@ def table_widget(entry):
             del entry_dict[k]
             entry_dict[new_key] = entry_dict.pop(prop)
 
+    # order entry dict
+    entry_dict = OrderedDict(
+        [(k, entry_dict[k]) for k in sorted(list(entry_dict.keys()))])
+
     data = dict(
         labels=[str(k) for k in entry_dict],
         values=[str(v) for v in entry_dict.values()],
@@ -70,11 +75,12 @@ def table_widget(entry):
         columns=columns,
         width=500,
         height=570,
-        index_position=None)
+        index_position=None,
+        fit_columns=False)
 
     json_str = json.dumps(entry_dict, indent=2)
     btn_download_table.callback = bmd.CustomJS(
-        args=dict(string=json_str, filename='properties.json'),
+        args=dict(string=json_str, filename=entry_dict['name'] + '.json'),
         code=download_js)
 
     return widgetbox(data_table)
