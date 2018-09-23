@@ -95,28 +95,28 @@ presets = {
         'y_min': 0,
         'y_max': 250,
     },
-    '12a': {
-        'bond_filter': 'amide',
-        'x': 'density',
-        'y': 'deliverable_capacity',
-        'clr': 'topology',
-    },
-    '12b': {
-        'bond_filter': 'amine',
-        'x': 'density',
-        'y': 'deliverable_capacity',
-        'clr': 'topology',
-    },
-    '12c': {
-        'bond_filter': 'imine',
-        'x': 'density',
-        'y': 'deliverable_capacity',
-        'clr': 'topology',
-    },
-    '12d': {
-        'bond_filter': 'amide',
-        'x': 'density',
-        'y': 'deliverable_capacity',
-        'clr': 'topology',
-    },
+    #    '12a': {
+    #        'bond_filter': 'amide',
+    #        'x': 'density',
+    #        'y': 'deliverable_capacity',
+    #        'clr': 'net',
+    #    },
+    #    '12b': {
+    #        'bond_filter': 'amine',
+    #        'x': 'density',
+    #        'y': 'deliverable_capacity',
+    #        'clr': 'net',
+    #    },
+    #    '12c': {
+    #        'bond_filter': 'imine',
+    #        'x': 'density',
+    #        'y': 'deliverable_capacity',
+    #        'clr': 'net',
+    #    },
+    #    '12d': {
+    #        'bond_filter': 'amide',
+    #        'x': 'density',
+    #        'y': 'deliverable_capacity',
+    #        'clr': 'net',
+    #    },
 }

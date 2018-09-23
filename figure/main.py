@@ -43,6 +43,11 @@ def load_preset(attr, old, new):
     if 'clr' in preset.keys():
         inp_clr.value = preset['clr']
 
+    # reset all filters
+    for q in quantities:
+        sliders_dict[q].value = quantities[q]['range']
+
+    # apply some filters
     slx = sliders_dict[preset['x']]
     if 'x_min' in preset.keys():
         slx.value = (preset['x_min'], slx.value[1])
@@ -62,13 +67,20 @@ bondtypes = list(bondtype_dict.keys())
 bondtype_colors = list(bondtype_dict.values())
 
 
+def on_slider_change(attr, old, new):
+    btn_plot.button_type = 'primary'
+
+
 # range sliders
 # pylint: disable=redefined-builtin
 def get_slider(desc, range, default=None):
     if default is None:
         default = range
-    return RangeSlider(
+    slider = RangeSlider(
         title=desc, start=range[0], end=range[1], value=default, step=0.1)
+
+    slider.on_change('value', on_slider_change)
+    return slider
 
 
 sliders_dict = collections.OrderedDict()
@@ -91,7 +103,7 @@ inp_clr = Select(
     value=preset_url['clr'])
 
 # plot button, output, graph
-btn_plot = Button(label='Plot')
+btn_plot = Button(label='Plot', button_type='primary')
 info_block = PreText(text='', width=500, height=100)
 plot_info = PreText(text='', width=300, height=100)
 
@@ -206,6 +218,21 @@ def update_legends(ly):
     #p.toolbar.active_hover = hover
 
 
+# pylint: disable=unused-argument
+def check_uniqueness(attr, old, new):
+    selected = [inp_x.value, inp_y.value, inp_clr.value]
+    unique = list(set(selected))
+    if len(unique) < len(selected):
+        double = [i for i in selected if i in unique or unique.remove(i)]
+        double_str = ", ".join([quantities[d]['label'] for d in double])
+        plot_info.text = "Warning: {} doubly selected.".format(double_str)
+        btn_plot.button_type = 'danger'
+
+    else:
+        plot_info.text = ""
+        btn_plot.button_type = 'primary'
+
+
 def update():
     global redraw_plot
 
@@ -221,6 +248,7 @@ def update():
 
     update_legends(l)
     plot_info.text += " done!"
+    btn_plot.button_type = 'success'
     return
 
 
@@ -238,7 +266,11 @@ def on_change_clr(attr, old, new):
     if (new == 'bond_type' or old == 'bond_type') and new != old:
         redraw_plot = True
 
+    check_uniqueness(attr, old, new)
 
+
+inp_x.on_change('value', check_uniqueness)
+inp_y.on_change('value', check_uniqueness)
 inp_clr.on_change('value', on_change_clr)
 
 # Create a panel with a new layout

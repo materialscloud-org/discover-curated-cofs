@@ -24,8 +24,8 @@ script_source = bmd.ColumnDataSource()
 
 plot_info = PreText(text='', width=300, height=100)
 
-btn_download_table = Button(label="Download json", button_type="success")
-btn_download_cif = Button(label="Download cif", button_type="success")
+btn_download_table = Button(label="Download json", button_type="primary")
+btn_download_cif = Button(label="Download cif", button_type="primary")
 
 
 def get_name_from_url():
