@@ -115,9 +115,11 @@ tap = bmd.TapTool()
 def create_plot():
     """Creates scatter plot.
 
-    This is needed to redraw the plot for the bond_type coloring,
-    when the colormap needs to change and the colorbar is removed.
+    Note: While it is usually enough to update the data source, redrawing the
+    plot is needed for bond_type coloring, when the colormap needs to change
+    and the colorbar is removed.
     """
+    global source
     p_new = figure(
         plot_height=600,
         plot_width=700,
@@ -234,7 +236,7 @@ def check_uniqueness(attr, old, new):
 
 
 def update():
-    global redraw_plot
+    global redraw_plot, source
 
     update_legends(l)
 
@@ -242,8 +244,12 @@ def update():
 
     source.data = get_data(projections, sliders_dict, quantities, plot_info)
 
-    if redraw_plot:
-        l.children[0].children[1] = create_plot()
+    #if redraw_plot:
+    if True:  # pylint: disable=using-constant-test
+        figure = create_plot()
+        #TO DO: for some reason this destroys the coupling to source.data
+        # to figure out why (and then restrict this to actual redrawing scenarios)
+        l.children[0].children[1] = figure
         redraw_plot = False
 
     update_legends(l)
