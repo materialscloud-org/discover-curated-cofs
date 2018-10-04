@@ -1,11 +1,13 @@
 """Querying the DB
 """
+from bokeh.models.widgets import RangeSlider, CheckboxButtonGroup
+from config import max_points
 # pylint: disable=too-many-locals
 data_empty = dict(x=[0], y=[0], uuid=['1234'], color=[0], name=['no data'])
 
 
-def get_data_sqlite(projections, sliders_dict, quantities, plot_info):
-    """Query the sqlite database.
+def get_data_sqla(projections, sliders_dict, quantities, plot_info):
+    """Query database using SQLAlchemy.
     
     Note: For efficiency, this uses the the sqlalchemy.sql interface which does
     not go via the (more convenient) ORM.
@@ -21,9 +23,14 @@ def get_data_sqlite(projections, sliders_dict, quantities, plot_info):
 
     filters = []
     for k, v in sliders_dict.items():
-        if not v.value == quantities[k]['range']:
-            f = getattr(Table, k).between(v.value[0], v.value[1])
-            filters.append(f)
+        if isinstance(v, RangeSlider):
+            if not v.value == quantities[k]['range']:
+                f = getattr(Table, k).between(v.value[0], v.value[1])
+                filters.append(f)
+        elif isinstance(v, CheckboxButtonGroup):
+            if not len(v.active) == len(v.labels):
+                f = getattr(Table, k).in_([v.tags[i] for i in v.active])
+                filters.append(f)
 
     s = select(selections).where(and_(*filters))
 
@@ -33,8 +40,13 @@ def get_data_sqlite(projections, sliders_dict, quantities, plot_info):
     if not results:
         plot_info.text = "No matching COFs found."
         return data_empty
-
-    plot_info.text = "{} COFs found. Plotting...".format(nresults)
+    elif nresults > max_points:
+        results = results[:max_points]
+        plot_info.text = "{} COFs found.\nPlotting {}...".format(
+            nresults, max_points)
+    else:
+        plot_info.text = "{} COFs found.\nPlotting {}...".format(
+            nresults, nresults)
 
     # x,y position
     x, y, clrs, names, filenames = zip(*results)

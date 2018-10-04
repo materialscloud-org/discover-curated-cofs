@@ -6,6 +6,13 @@ Using
  * sqlite backend
    (AiiDA backend in alpha)
 
+## Configuration
+
+The plots can be configured using yml files:
+
+ * `figure/filters.yml`: defines available filters
+ * `figure/presets.yml`: defines presets for axis + filter settings
+
 ## Installation
 
 ```

@@ -1,0 +1,89 @@
+# Specifies filters
+# 2 types supported: float, list
+---
+- column: dimensions
+  label: Dimensionality
+  values:
+  - 2
+  - 3
+  labels:
+  - 2D layers
+  - 3D network
+  type: list
+
+- column: bond_type
+  label: Bond type
+  values:
+  - amide
+  - amine
+  - imine
+  - CC
+  - mixed
+  type: list
+
+- column: density
+  label: Density
+  range:
+  - 10.0
+  - 1200.0
+  unit: kg/m^3
+  type: float
+
+- column: deliverable_capacity
+  default:
+  - 175
+  - 300
+  label: Deliverable capacity
+  range:
+  - 0.0
+  - 300.0
+  unit: v STP/v
+  type: float
+
+- column: absolute_methane_uptake_high_P
+  label: CH4 uptake High-P
+  range:
+  - 0.0
+  - 400.0
+  unit: mol/kg
+  type: float
+
+- column: absolute_methane_uptake_low_P
+  label: CH4 uptake Low-P
+  range:
+  - 0.0
+  - 400.0
+  unit: mol/kg
+  type: float
+
+- column: heat_desorption_high_P
+  label: CH4 heat of desorption High-P
+  range:
+  - 0.0
+  - 30.0
+  unit: kJ/mol
+  type: float
+
+- column: heat_desorption_low_P
+  label: CH4 heat of desorption Low-P
+  range:
+  - 0.0
+  - 30.0
+  unit: kJ/mol
+  type: float
+
+- column: supercell_volume
+  label: Supercell volume
+  range:
+  - 0.0
+  - 1000000.0
+  unit: A^3
+  type: float
+
+- column: surface_area
+  label: Geometric surface area
+  range:
+  - 0.0
+  - 12000.0
+  unit: m^2/g
+  type: float

@@ -2,17 +2,18 @@
 # pylint: disable=unsubscriptable-object, too-many-locals
 from __future__ import print_function
 import collections
+from copy import copy
 from os.path import dirname, join
 
 from bokeh.plotting import figure
 from bokeh.layouts import layout, widgetbox
 import bokeh.models as bmd
 from bokeh.palettes import Viridis256
-from bokeh.models.widgets import RangeSlider, Select, Button, PreText
+from bokeh.models.widgets import RangeSlider, Select, Button, PreText, CheckboxButtonGroup
 from bokeh.io import curdoc
 
 from config import quantities, bondtype_dict, presets
-from figure.query import get_data_sqlite as get_data
+from figure.query import get_data_sqla as get_data
 from figure.query import data_empty
 
 html = bmd.Div(
@@ -32,27 +33,42 @@ def get_preset_label_from_url():
     return preset_label
 
 
-# pylint: disable=unused-argument
-def load_preset(attr, old, new):
+def load_preset(attr, old, new):  # pylint: disable=unused-argument,redefined-builtin
     """Load preset and update sliders/plot accordingly"""
     # get figure from arguments
-    preset = presets[new]
-    inp_x.value = preset['x']
-    inp_y.value = preset['y']
+    preset = copy(presets[new])
 
-    if 'clr' in preset.keys():
-        inp_clr.value = preset['clr']
+    try:
+        inp_x.value = preset.pop('x')
+    except KeyError:
+        pass
+    try:
+        inp_y.value = preset.pop('y')
+    except KeyError:
+        pass
+    try:
+        inp_clr.value = preset.pop('clr')
+    except KeyError:
+        pass
 
     # reset all filters
     for q in quantities:
-        sliders_dict[q].value = quantities[q]['range']
+        filter = filters_dict[q]
 
-    # apply some filters
-    slx = sliders_dict[preset['x']]
-    if 'x_min' in preset.keys():
-        slx.value = (preset['x_min'], slx.value[1])
-    if 'x_max' in preset.keys():
-        slx.value = (slx.value[0], preset['x_max'])
+        if isinstance(filter, RangeSlider):
+
+            if q in preset.keys():
+                filter.value = preset[q]
+            else:
+                filter.value = quantities[q]['range']
+
+        elif isinstance(filter, CheckboxButtonGroup):
+
+            if q in preset.keys():
+                values = preset[q]
+            else:
+                values = quantities[q]['values']
+            filter.active = [filter.tags.index(v) for v in values]
 
 
 inp_preset = Select(
@@ -67,7 +83,8 @@ bondtypes = list(bondtype_dict.keys())
 bondtype_colors = list(bondtype_dict.values())
 
 
-def on_slider_change(attr, old, new):
+def on_filter_change(attr, old, new):
+    """Change color of plot button to blue"""
     btn_plot.button_type = 'primary'
 
 
@@ -79,17 +96,42 @@ def get_slider(desc, range, default=None):
     slider = RangeSlider(
         title=desc, start=range[0], end=range[1], value=default, step=0.1)
 
-    slider.on_change('value', on_slider_change)
+    slider.on_change('value', on_filter_change)
     return slider
 
 
-sliders_dict = collections.OrderedDict()
+def get_select(desc, values, default=None, labels=None):
+    if default is None:
+        # by default, make all selections active
+        default = range(len(values))
+
+    if labels is None:
+        labels = map(str, values)
+
+    # misuse tags to store values without mapping to str
+    group = CheckboxButtonGroup(labels=labels, active=default, tags=values)
+    group.on_change('active', on_filter_change)
+
+    return group
+
+
+filters_dict = collections.OrderedDict()
 for k, v in quantities.items():
-    desc = "{} [{}]".format(v['label'], v['unit'])
+    if 'unit' not in v.keys():
+        desc = v['label']
+    else:
+        desc = "{} [{}]".format(v['label'], v['unit'])
+
     if 'default' not in v.keys():
         v['default'] = None
 
-    sliders_dict[k] = get_slider(desc, v['range'], v['default'])
+    if v['type'] == 'float':
+        filters_dict[k] = get_slider(desc, v['range'], v['default'])
+    elif v['type'] == 'list':
+        if 'labels' not in v.keys():
+            v['labels'] = None
+        filters_dict[k] = get_select(desc, v['values'], v['default'],
+                                     v['labels'])
 
 # quantity selectors
 preset_url = presets[get_preset_label_from_url()]
@@ -168,14 +210,9 @@ def create_plot():
 
 p = create_plot()
 
-controls = [inp_preset] + [v for k, v in sliders_dict.items()
-                           ] + [inp_x, inp_y, inp_clr, btn_plot, plot_info]
-
-#def update_tap(source=source, window=None):
-#    info_block.text = "here"
-#    print("here")
-#    print(source)
-#    print(cb_obj.value)
+# inp_preset
+controls = [inp_x, inp_y, inp_clr] + [v for k, v in filters_dict.items()
+                                      ] + [btn_plot, plot_info]
 
 
 def update_legends(ly):
@@ -242,7 +279,7 @@ def update():
 
     projections = [inp_x.value, inp_y.value, inp_clr.value, 'name', 'filename']
 
-    source.data = get_data(projections, sliders_dict, quantities, plot_info)
+    source.data = get_data(projections, filters_dict, quantities, plot_info)
 
     #if redraw_plot:
     if True:  # pylint: disable=using-constant-test

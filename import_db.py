@@ -20,15 +20,17 @@ data = None
 engine = sqlalchemy.create_engine(db_params, echo=False)
 pandas_sql = pd.io.sql.pandasSQL_builder(engine, schema=None)
 
+columns_json = {}
+
 
 def parse_csv(path):
-    global data
     data = pd.read_csv(
         path, low_memory=False, verbose=1, skipinitialspace=True)
     print("Read {} data rows from .csv file".format(len(data)))
+    return data
 
 
-def add_filenames():
+def add_filenames(data):
     print("Adding filenames")
     fnames = [
         "{}_{}_{}_relaxed.cif".format(row['linkerA'], row['linkerB'],
@@ -36,8 +38,10 @@ def add_filenames():
         for _index, row in data.iterrows()
     ]
     data['filename'] = fnames
+    return data
 
 
+# pylint: disable=too-many-arguments
 def to_sql_k(self,
              frame,
              name,
@@ -69,7 +73,7 @@ def to_sql_k(self,
     table.insert(chunksize)
 
 
-def rename_columns():
+def rename_columns(data):
     """Rename columns.
 
     Need to rename columns to valid python variable names.
@@ -82,6 +86,7 @@ def rename_columns():
     unit_regex = re.compile('\[(.*?)\]')
     for label in labels:
         match = re.search(unit_regex, label)
+        # provide units as separate column
         if match:
             units = match.group(1).strip()
             label_new = re.sub(unit_regex, '', label).strip().replace(' ', '_')
@@ -90,6 +95,8 @@ def rename_columns():
         else:
             label_new = label.replace(' ', '_')
             data.rename(index=str, columns={label: label_new}, inplace=True)
+
+    return data
 
 
 def fill_db():
@@ -141,8 +148,8 @@ def get_cif_content(filename):
 
 
 if __name__ == "__main__":
-    parse_csv(properties_csv)
-    add_filenames()
+    data = parse_csv(properties_csv)
+    data = add_filenames(data)
     rename_columns()
     fill_db()
     automap_table(engine)
