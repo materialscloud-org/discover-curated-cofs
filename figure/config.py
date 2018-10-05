@@ -18,4 +18,8 @@ bondtype_dict = collections.OrderedDict([
 with open(join(dirname(__file__), "presets.yml"), 'r') as f:
     presets = yaml.load(f)
 
+for k in presets.keys():
+    if 'clr' not in presets[k].keys():
+        presets[k]['clr'] = presets['default']['clr']
+
 max_points = 70000
