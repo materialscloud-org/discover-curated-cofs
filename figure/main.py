@@ -3,7 +3,7 @@
 from __future__ import print_function
 import collections
 from copy import copy
-from os.path import dirname, join
+from os.path import join
 
 from bokeh.plotting import figure
 from bokeh.layouts import layout, widgetbox
@@ -12,12 +12,13 @@ from bokeh.palettes import Viridis256
 from bokeh.models.widgets import RangeSlider, Select, Button, PreText, CheckboxButtonGroup
 from bokeh.io import curdoc
 
-from config import quantities, bondtype_dict, presets, filter_list
+import config
+from config import quantities, presets
 from figure.query import get_data_sqla as get_data
 from figure.query import data_empty
 
 html = bmd.Div(
-    text=open(join(dirname(__file__), "description.html")).read(), width=800)
+    text=open(join(config.static_dir, "description.html")).read(), width=800)
 
 redraw_plot = False
 
@@ -79,12 +80,12 @@ inp_preset.on_change('value', load_preset)
 
 # quantities
 nq = len(quantities)
-bondtypes = list(bondtype_dict.keys())
-bondtype_colors = list(bondtype_dict.values())
+bondtypes = list(config.bondtype_dict.keys())
+bondtype_colors = list(config.bondtype_dict.values())
 
 # quantity selectors
 preset_url = presets[get_preset_label_from_url()]
-plot_options = [(k, v['label']) for k, v in quantities.items()]
+plot_options = [(q, quantities[q]['label']) for q in config.plot_quantities]
 inp_x = Select(title='X', options=plot_options, value=preset_url['x'])
 inp_y = Select(title='Y', options=plot_options, value=preset_url['y'])
 #inp_clr = Select(title='Color', options=plot_options, value=preset_url['clr'])
@@ -128,7 +129,7 @@ def get_select(desc, values, default=None, labels=None):
 
 filters_dict = collections.OrderedDict()
 #for k, v in quantities.items():
-for k in filter_list:
+for k in config.filter_list:
     v = quantities[k]
     if 'unit' not in v.keys():
         desc = v['label']
@@ -188,7 +189,7 @@ def create_plot():
 
     if inp_clr.value == 'bond_type':
         from bokeh.transform import factor_cmap
-        paper_palette = list(bondtype_dict.values())
+        paper_palette = list(config.bondtype_dict.values())
         fill_color = factor_cmap(
             'color', palette=paper_palette, factors=bondtypes)
         p_new.circle(

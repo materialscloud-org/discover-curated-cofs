@@ -2,10 +2,14 @@ import collections
 import yaml
 from os.path import join, dirname
 
-with open(join(dirname(__file__), "columns.yml"), 'r') as f:
+static_dir = join(dirname(__file__), "static")
+
+with open(join(static_dir, "columns.yml"), 'r') as f:
     quantity_list = yaml.load(f)
 
 quantities = collections.OrderedDict([(q['column'], q) for q in quantity_list])
+
+plot_quantities = [ q for q in quantities.keys() if quantities[q]['type'] == 'float' ]
 
 bondtype_dict = collections.OrderedDict([
     ('amide', "#1f77b4"),
@@ -15,10 +19,10 @@ bondtype_dict = collections.OrderedDict([
     ('mixed', "#778899"),
 ])
 
-with open(join(dirname(__file__), "filters.yml"), 'r') as f:
+with open(join(static_dir, "filters.yml"), 'r') as f:
     filter_list = yaml.load(f)
 
-with open(join(dirname(__file__), "presets.yml"), 'r') as f:
+with open(join(static_dir, "presets.yml"), 'r') as f:
     presets = yaml.load(f)
 
 for k in presets.keys():

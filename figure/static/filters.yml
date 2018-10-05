@@ -2,5 +2,6 @@
 ---
 - dimensions
 - bond_type
-- density
 - deliverable_capacity
+- density
+- surface_area
