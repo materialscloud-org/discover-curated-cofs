@@ -12,7 +12,7 @@ from bokeh.palettes import Viridis256
 from bokeh.models.widgets import RangeSlider, Select, Button, PreText, CheckboxButtonGroup
 from bokeh.io import curdoc
 
-from config import quantities, bondtype_dict, presets
+from config import quantities, bondtype_dict, presets, filter_list
 from figure.query import get_data_sqla as get_data
 from figure.query import data_empty
 
@@ -82,6 +82,17 @@ nq = len(quantities)
 bondtypes = list(bondtype_dict.keys())
 bondtype_colors = list(bondtype_dict.values())
 
+# quantity selectors
+preset_url = presets[get_preset_label_from_url()]
+plot_options = [(k, v['label']) for k, v in quantities.items()]
+inp_x = Select(title='X', options=plot_options, value=preset_url['x'])
+inp_y = Select(title='Y', options=plot_options, value=preset_url['y'])
+#inp_clr = Select(title='Color', options=plot_options, value=preset_url['clr'])
+inp_clr = Select(
+    title='Color',
+    options=plot_options + [('bond_type', 'Bond type')],
+    value=preset_url['clr'])
+
 
 def on_filter_change(attr, old, new):
     """Change color of plot button to blue"""
@@ -116,7 +127,9 @@ def get_select(desc, values, default=None, labels=None):
 
 
 filters_dict = collections.OrderedDict()
-for k, v in quantities.items():
+#for k, v in quantities.items():
+for k in filter_list:
+    v = quantities[k]
     if 'unit' not in v.keys():
         desc = v['label']
     else:
@@ -132,17 +145,6 @@ for k, v in quantities.items():
             v['labels'] = None
         filters_dict[k] = get_select(desc, v['values'], v['default'],
                                      v['labels'])
-
-# quantity selectors
-preset_url = presets[get_preset_label_from_url()]
-plot_options = [(k, v['label']) for k, v in quantities.items()]
-inp_x = Select(title='X', options=plot_options, value=preset_url['x'])
-inp_y = Select(title='Y', options=plot_options, value=preset_url['y'])
-#inp_clr = Select(title='Color', options=plot_options, value=preset_url['clr'])
-inp_clr = Select(
-    title='Color',
-    options=plot_options + [('bond_type', 'Bond type')],
-    value=preset_url['clr'])
 
 # plot button, output, graph
 btn_plot = Button(label='Plot', button_type='primary')
@@ -211,7 +213,7 @@ def create_plot():
 p = create_plot()
 
 # inp_preset
-controls = [inp_x, inp_y, inp_clr] + [v for k, v in filters_dict.items()
+controls = [inp_x, inp_y, inp_clr] + [_v for k, _v in filters_dict.items()
                                       ] + [btn_plot, plot_info]
 
 

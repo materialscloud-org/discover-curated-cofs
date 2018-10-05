@@ -2,7 +2,7 @@ import collections
 import yaml
 from os.path import join, dirname
 
-with open(join(dirname(__file__), "filters.yml"), 'r') as f:
+with open(join(dirname(__file__), "columns.yml"), 'r') as f:
     quantity_list = yaml.load(f)
 
 quantities = collections.OrderedDict([(q['column'], q) for q in quantity_list])
@@ -14,6 +14,9 @@ bondtype_dict = collections.OrderedDict([
     ('CC', "#2ca02c"),
     ('mixed', "#778899"),
 ])
+
+with open(join(dirname(__file__), "filters.yml"), 'r') as f:
+    filter_list = yaml.load(f)
 
 with open(join(dirname(__file__), "presets.yml"), 'r') as f:
     presets = yaml.load(f)

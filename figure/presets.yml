@@ -1,3 +1,5 @@
+# Presets
+# Keys: x, y, clr + filters
 ---
 default:
   clr: bond_type
