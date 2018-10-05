@@ -53,7 +53,7 @@ def load_preset(attr, old, new):  # pylint: disable=unused-argument,redefined-bu
         pass
 
     # reset all filters
-    for q in quantities:
+    for q in config.filter_list:
         filter = filters_dict[q]
 
         if isinstance(filter, RangeSlider):
@@ -72,11 +72,11 @@ def load_preset(attr, old, new):  # pylint: disable=unused-argument,redefined-bu
             filter.active = [filter.tags.index(v) for v in values]
 
 
-inp_preset = Select(
-    title='Preset',
-    options=list(presets.keys()),
-    value=get_preset_label_from_url())
-inp_preset.on_change('value', load_preset)
+#inp_preset = Select(
+#    title='Preset',
+#    options=list(presets.keys()),
+#    value=get_preset_label_from_url())
+#inp_preset.on_change('value', load_preset)
 
 # quantities
 nq = len(quantities)
@@ -84,15 +84,12 @@ bondtypes = list(config.bondtype_dict.keys())
 bondtype_colors = list(config.bondtype_dict.values())
 
 # quantity selectors
-preset_url = presets[get_preset_label_from_url()]
 plot_options = [(q, quantities[q]['label']) for q in config.plot_quantities]
-inp_x = Select(title='X', options=plot_options, value=preset_url['x'])
-inp_y = Select(title='Y', options=plot_options, value=preset_url['y'])
-#inp_clr = Select(title='Color', options=plot_options, value=preset_url['clr'])
+inp_x = Select(title='X', options=plot_options)
+inp_y = Select(title='Y', options=plot_options)
+#inp_clr = Select(title='Color', options=plot_options)
 inp_clr = Select(
-    title='Color',
-    options=plot_options + [('bond_type', 'Bond type')],
-    value=preset_url['clr'])
+    title='Color', options=plot_options + [('bond_type', 'Bond type')])
 
 
 def on_filter_change(attr, old, new):
@@ -151,6 +148,8 @@ for k in config.filter_list:
 btn_plot = Button(label='Plot', button_type='primary')
 info_block = PreText(text='', width=500, height=100)
 plot_info = PreText(text='', width=300, height=100)
+
+load_preset(None, None, get_preset_label_from_url())
 
 source = bmd.ColumnDataSource(data=data_empty)
 hover = bmd.HoverTool(tooltips=[])
@@ -278,7 +277,7 @@ def check_uniqueness(attr, old, new):
 def update():
     global redraw_plot, source
 
-    update_legends(l)
+    #update_legends(l)
 
     projections = [inp_x.value, inp_y.value, inp_clr.value, 'name', 'filename']
 

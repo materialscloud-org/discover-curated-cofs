@@ -5,6 +5,9 @@ default:
   clr: bond_type
   x: density
   y: deliverable_capacity
+  deliverable_capacity:
+  - 175
+  - 300
 
 3a:
   x: density
