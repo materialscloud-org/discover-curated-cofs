@@ -37,7 +37,10 @@ def get_preset_label_from_url():
 def load_preset(attr, old, new):  # pylint: disable=unused-argument,redefined-builtin
     """Load preset and update sliders/plot accordingly"""
     # get figure from arguments
-    preset = copy(presets[new])
+    try:
+        preset = copy(presets[new])
+    except KeyError:
+        preset = copy(presets['default'])
 
     try:
         inp_x.value = preset.pop('x')
@@ -92,7 +95,7 @@ inp_clr = Select(
     title='Color', options=plot_options + [('bond_type', 'Bond type')])
 
 
-def on_filter_change(attr, old, new):
+def on_filter_change(attr, old, new): # pylint: disable=unused-argument
     """Change color of plot button to blue"""
     btn_plot.button_type = 'primary'
 
@@ -197,6 +200,8 @@ def create_plot():
             size=10,
             source=source,
             fill_color=fill_color,
+            fill_alpha=0.6,
+            line_alpha=0.4,
             legend='color')
 
     else:
