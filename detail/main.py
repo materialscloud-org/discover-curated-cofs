@@ -12,7 +12,7 @@ from bokeh.models.widgets import PreText, Button
 from bokeh.io import curdoc
 
 from jsmol import JSMol
-from import_db import get_cif_content
+#from import_db import get_cif_content
 from detail.query import get_sqlite_data as get_data
 
 html = bmd.Div(
@@ -89,7 +89,27 @@ def table_widget(entry):
 cof_name = get_name_from_url()
 entry = get_data(cof_name, plot_info)
 
-cif_str = get_cif_content(entry.filename)
+
+def get_cif_content_from_os(filename):
+    """Load CIF content via GET request from object store."""
+    import requests
+
+    url = "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/{}".format(
+        filename)
+    data = requests.get(url)
+    return data.content
+
+
+cif_str = get_cif_content_from_os(entry.filename)
+
+
+def get_cif_url(filename):
+    """Return URL for CIF file name"""
+    #name = "linker100_CH2_linker105_NH_pts_relaxed.cif"
+    url = "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/{}".format(
+        filename)
+    return url
+
 
 info = dict(
     height="100%",
@@ -105,7 +125,12 @@ info = dict(
 load data "cifstring"
 {}
 end "cifstring"
-""".format(cif_str))
+""".format(cif_str)
+    ## Note: Need PHP server for approach below to work
+    #    script="""set antialiasDisplay ON;
+    #load cif::{};
+    #""".format(get_cif_url(entry.filename))
+)
 
 btn_download_cif.callback = bmd.CustomJS(
     args=dict(string=cif_str, filename=entry.filename), code=download_js)
