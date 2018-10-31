@@ -79,9 +79,9 @@ def table_widget(entry):
         fit_columns=False)
 
     json_str = json.dumps(entry_dict, indent=2)
-    #btn_download_table.callback = bmd.CustomJS(
-    #    args=dict(string=json_str, filename=entry_dict['name'] + '.json'),
-    #    code=download_js)
+    btn_download_table.callback = bmd.CustomJS(
+        args=dict(string=json_str, filename=entry_dict['name'] + '.json'),
+        code=download_js)
 
     return widgetbox(data_table)
 
@@ -89,26 +89,7 @@ def table_widget(entry):
 cof_name = get_name_from_url()
 entry = get_data(cof_name, plot_info)
 
-
-def get_cif_content(name):
-    #name = "linker100_CH2_linker105_NH_pts_relaxed.cif"
-    url =  "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/{}".format(name)
-    import requests
-    data = requests.get(url)
-    return data.content
-
-
-
 cif_str = get_cif_content(entry.filename)
-
-
-# working url:
-# https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/linker100_CH2_linker105_NH_pts_relaxed.cif
-
-def get_cif_url(name):
-    name = "linker100_CH2_linker105_NH_pts_relaxed.cif"
-    url =  "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/{}".format(name)
-    return url
 
 info = dict(
     height="100%",
@@ -120,16 +101,14 @@ info = dict(
     #j2sPath="https://www.materialscloud.org/discover/scripts/external/jsmol/j2s",
     serverURL="detail/static/jsmol/php/jsmol.php",
     j2sPath="detail/static/jsmol/j2s",
-    #script='set antialiasDisplay ON; load cif::{};'.format(get_cif_url(entry.filename))
     script="""set antialiasDisplay ON;
 load data "cifstring"
 {}
 end "cifstring"
-""".format(cif_str)
-)
+""".format(cif_str))
 
-#btn_download_cif.callback = bmd.CustomJS(
-#    args=dict(string="", filename=entry.filename), code=download_js)
+btn_download_cif.callback = bmd.CustomJS(
+    args=dict(string=cif_str, filename=entry.filename), code=download_js)
 
 applet = JSMol(
     width=600,
@@ -144,7 +123,7 @@ l = layout(
     [
         [
             [[applet], [btn_download_cif]],
-            [[table_widget(entry)], []],
+            [[table_widget(entry)], [btn_download_table]],
         ],
         [plot_info],
     ],
