@@ -89,13 +89,14 @@ def table_widget(entry):
 cof_name = get_name_from_url()
 entry = get_data(cof_name, plot_info)
 
+os_url = "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/structures"
+
 
 def get_cif_content_from_os(filename):
     """Load CIF content via GET request from object store."""
     import requests
 
-    url = "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/{}".format(
-        filename)
+    url = "{}/{}".format(os_url, filename)
     data = requests.get(url)
     return data.content
 
@@ -106,8 +107,7 @@ cif_str = get_cif_content_from_os(entry.filename)
 def get_cif_url(filename):
     """Return URL for CIF file name"""
     #name = "linker100_CH2_linker105_NH_pts_relaxed.cif"
-    url = "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/{}".format(
-        filename)
+    url = "{}/{}".format(os_url, filename)
     return url
 
 
