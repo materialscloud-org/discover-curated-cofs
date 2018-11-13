@@ -101,6 +101,7 @@ def get_cif_content_from_os(filename):
     return data.content
 
 
+#cif_str = get_cif_content(entry.filename)
 cif_str = get_cif_content_from_os(entry.filename)
 
 

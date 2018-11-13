@@ -1,0 +1,213 @@
+<style>
+h1 {
+    margin: 1em 0 0 0;
+    color: #2e484c;
+    font-family: 'Julius Sans One', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+a:link {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0d8ba1;
+}
+a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #1a5952;
+}
+a:hover, a:focus, a:active {
+    text-decoration: underline;
+    color: #9685BA;
+}
+p {
+    font: "Libre Baskerville", sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
+    width: 80%;
+    max-width: 800;
+}
+
+/* selection table */
+
+img.figure-thumbnail {
+   height: 175px;
+   border-radius: 30px;
+   padding:2px;
+   border:2px solid #14afff;
+   background-color:#fff;
+}
+
+/* Container holding the image and the text */
+.container {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+/* Text to appear upon hover */
+.hover-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    color: #14afff;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.container:hover img {
+   opacity: 0.3;
+   filter: alpha(opacity=30);
+}
+
+.container:hover .hover-text {
+   opacity: 1.0;
+}
+
+figure {
+    text-align: center;
+    margin-inline-end: 0;
+    margin-inline-start: 0;
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+figure figcaption {
+    text-align: center;
+}
+
+
+table.figures td {
+    padding: 10px;
+    text-align: center;
+}
+
+</style>
+
+<!--
+<h1>Covalent Organic Frameworks for Methane Storage</h1>
+<p>
+ We present a database of 69,840 largely novel covalent organic 
+ frameworks assembled <i>in silico</i> from 666 distinct organic 
+  linkers based on four established synthetic routes to amide, amine, imine, 
+  and carbon-carbon bonds. Due to their light weights and high internal 
+  surface areas, the frameworks are promising candidates for methane 
+  storage applications. 
+</p>
+<br />
+-->
+
+<table class="figures">
+<tr>
+
+  <td>
+    <figure>
+      <div class=container>
+        <a href="figure?preset=3a">
+          <img class="figure-thumbnail" src="select-figure/static/images/3a.png">
+          <div class="hover-text">Figure 3a</div>
+        </a>
+      </div>
+      <figcaption>
+      Surface area <i>vs</i> Density (2d COFs)
+      </figcaption>
+    </figure>
+  </td>
+
+  <td>
+    <figure>
+      <div class=container>
+        <a href="figure?preset=3b">
+          <img class="figure-thumbnail" src="select-figure/static/images/3b.png">
+          <div class="hover-text">Figure 3b</div>
+        </a>
+      </div>
+      <figcaption>
+      Surface area <i>vs</i> Density (3d COFs)
+      </figcaption>
+    </figure>
+  </td>
+
+</tr>
+<tr>
+  <td>
+    <figure>
+      <div class=container>
+        <a href="figure?preset=7a">
+          <img class="figure-thumbnail" src="select-figure/static/images/7a.png">
+          <div class="hover-text">Figure 7a</div>
+        </a>
+      </div>
+      <figcaption>
+          Methane uptake (low P) <i>vs</i> Density
+      </figcaption>
+    </figure>
+  </td>
+
+  <td>
+    <figure>
+      <div class=container>
+        <a href="figure?preset=7b">
+          <img class="figure-thumbnail" src="select-figure/static/images/7b.png">
+          <div class="hover-text">Figure 7b</div>
+        </a>
+      </div>
+      <figcaption>
+          Methane uptake (high P) <i>vs</i> Density
+      </figcaption>
+    </figure>
+  </td>
+
+</tr>
+<tr>
+
+  <td>
+    <figure>
+      <div class=container>
+        <a href="figure?preset=8b">
+          <img class="figure-thumbnail" src="select-figure/static/images/8b.png">
+          <div class="hover-text">Figure 8b</div>
+        </a>
+      </div>
+      <figcaption>
+      Deliverable capacity <i>vs</i> Density (2d COFs)
+      </figcaption>
+    </figure>
+  </td>
+
+  <td>
+    <figure>
+      <div class=container>
+        <a href="figure?preset=9b">
+          <img class="figure-thumbnail" src="select-figure/static/images/9b.png">
+          <div class="hover-text">Figure 9b</div>
+        </a>
+      </div>
+      <figcaption>
+      Deliverable capacity <i>vs</i> Density (3d COFs)
+      </figcaption>
+    </figure>
+  </td>
+
+</tr>
+<tr>
+
+  <td>
+    <figure>
+      <div class=container>
+        <a href="figure?preset=11">
+          <img class="figure-thumbnail" src="select-figure/static/images/11.png">
+          <div class="hover-text">Figure 11</div>
+        </a>
+      </div>
+      <figcaption>
+      Deliverable capacity <i>vs</i> Surface area
+      </figcaption>
+    </figure>
+  </td>
+
+</tr>
+</table>
+
