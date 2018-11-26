@@ -56,6 +56,7 @@ def load_preset(attr, old, new):  # pylint: disable=unused-argument,redefined-bu
         pass
 
     # reset all filters
+    # pylint: disable=redefined-builtin
     for q in config.filter_list:
         filter = filters_dict[q]
 
@@ -95,7 +96,7 @@ inp_clr = Select(
     title='Color', options=plot_options + [('bond_type', 'Bond type')])
 
 
-def on_filter_change(attr, old, new): # pylint: disable=unused-argument
+def on_filter_change(attr, old, new):  # pylint: disable=unused-argument
     """Change color of plot button to blue"""
     btn_plot.button_type = 'primary'
 
@@ -112,7 +113,7 @@ def get_slider(desc, range, default=None):
     return slider
 
 
-def get_select(desc, values, default=None, labels=None):
+def get_select(desc, values, default=None, labels=None):  # pylint: disable=unused-argument
     if default is None:
         # by default, make all selections active
         default = range(len(values))
@@ -170,7 +171,7 @@ def create_plot():
     p_new = figure(
         plot_height=600,
         plot_width=700,
-        toolbar_location='below',
+        toolbar_location='above',
         tools=[
             'pan',
             'wheel_zoom',
@@ -180,7 +181,8 @@ def create_plot():
             hover,
             tap,
         ],
-        active_scroll='wheel_zoom',
+        #active_scroll='box_zoom',
+        active_drag='box_zoom',
         output_backend='webgl',
         title='',
         title_location='right',
