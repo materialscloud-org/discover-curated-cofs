@@ -11,6 +11,7 @@ import re
 
 folder_db = 'data/'
 structure_folder = folder_db + '/structures/'
+structure_extension = 'cif'
 properties_csv = folder_db + '/properties.csv'
 table_name = 'cofs'  # parameters will be put in this database
 db_params = 'sqlite:///{}database.db'.format(folder_db)
@@ -33,10 +34,14 @@ def parse_csv(path):
 def add_filenames(data):
     print("Adding filenames")
     fnames = [
-        "{}_{}_{}_relaxed.cif".format(row['linkerA'], row['linkerB'],
-                                      row['net'])
+        "{}.{}".format(row['name'], structure_extension)
         for _index, row in data.iterrows()
     ]
+    #fnames = [
+    #    "{}_{}_{}_relaxed.cif".format(row['linkerA'], row['linkerB'],
+    #                                  row['net'])
+    #    for _index, row in data.iterrows()
+    #]
     data['filename'] = fnames
     return data
 
@@ -126,8 +131,6 @@ def automap_table(engine):
       
     See https://stackoverflow.com/a/35397969/1069467 for workarounds
     """
-    from sqlalchemy.ext.automap import automap_base
-
     Base = sqlalchemy.ext.automap.automap_base()
     Base.prepare(engine, reflect=True)
 
@@ -150,6 +153,6 @@ def get_cif_content(filename):
 if __name__ == "__main__":
     data = parse_csv(properties_csv)
     data = add_filenames(data)
-    rename_columns()
+    rename_columns(data)
     fill_db()
     automap_table(engine)

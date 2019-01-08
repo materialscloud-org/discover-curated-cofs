@@ -11,7 +11,7 @@ import bokeh.models as bmd
 from bokeh.models.widgets import PreText, Button
 from bokeh.io import curdoc
 
-from jsmol import JSMol
+from jsmol_bokeh_extension import JSMol
 #from import_db import get_cif_content
 from detail.query import get_sqlite_data as get_data
 
@@ -45,7 +45,9 @@ def table_widget(entry):
     from bokeh.models.widgets import DataTable, TableColumn
 
     entry_dict = copy(entry.__dict__)
-    for k, v in entry_dict.items():
+    # Note: iterate over old dict, not the copy that is changing
+    for k, v in entry.__dict__.items():
+        #for k, v in entry_dict.items():
         if k == 'id' or k == '_sa_instance_state':
             del entry_dict[k]
 

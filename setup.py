@@ -8,14 +8,16 @@ if __name__ == '__main__':
     # such that it can be discovered automatically
     setup(
         packages=["detail", "figure"],
-        name="discover-cofs",
+        name="bokeh-discover-section",
         author="Leopold Talirz",
         author_email="info@materialscloud.org",
-        description="bokeh application for COF discover section.",
+        description="A template for DISCOVER sections using bokeh server.",
         license="MIT",
         classifiers=["Programming Language :: Python"],
         version="0.1.0",
-        install_requires=["bokeh>=0.13", "pandas", "sqlalchemy"],
+        install_requires=[
+            "bokeh>=0.13", "jsmol-bokeh-extension", "pandas", "sqlalchemy"
+        ],
         extras_require={
             "pre-commit": [
                 "pre-commit==1.11.0", "yapf==0.24.0", "prospector==0.12.11",
