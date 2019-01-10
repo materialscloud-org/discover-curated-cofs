@@ -131,7 +131,8 @@ def automap_table(engine):
       
     See https://stackoverflow.com/a/35397969/1069467 for workarounds
     """
-    Base = sqlalchemy.ext.automap.automap_base()
+    from sqlalchemy.ext.automap import automap_base
+    Base = automap_base()
     Base.prepare(engine, reflect=True)
 
     # mapped classes are now created with names by default
