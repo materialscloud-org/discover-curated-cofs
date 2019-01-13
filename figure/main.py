@@ -236,6 +236,20 @@ def update_legends(ly):
     xhover = (q_x["label"], "@x {}".format(q_x["unit"]))
     yhover = (q_y["label"], "@y {}".format(q_y["unit"]))
 
+    q_clr = quantities[inp_clr.value]
+    if 'unit' not in q_clr.keys():
+        clr_label = q_clr["label"]
+        clr_val = "@color"
+    else:
+        clr_val = "@color {}".format(q_clr['unit'])
+        clr_label = "{} [{}]".format(q_clr["label"], q_clr["unit"])
+    hover.tooltips = [
+        ("name", "@name"),
+        xhover,
+        yhover,
+        (q_clr["label"], clr_val),
+    ]
+
     if inp_clr.value == 'bond_type':
         clr_label = "Bond type"
         hover.tooltips = [
