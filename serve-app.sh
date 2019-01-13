@@ -11,8 +11,6 @@ set -x
 #source /opt/postgres.sh
 #psql_start
 
-/usr/local/bin/verdi restapi &
-
 #===============================================================================
 bokeh serve figure detail select-figure  \
     --port 5006                 \
