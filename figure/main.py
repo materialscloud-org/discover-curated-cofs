@@ -28,6 +28,8 @@ def get_preset_label_from_url():
     args = curdoc().session_context.request.arguments
     try:
         preset_label = args.get('preset')[0]
+        if isinstance(preset_label, bytes):
+            preset_label = preset_label.decode()
     except (TypeError, KeyError):
         preset_label = 'default'
 
@@ -61,7 +63,6 @@ def load_preset(attr, old, new):  # pylint: disable=unused-argument,redefined-bu
         filter = filters_dict[q]
 
         if isinstance(filter, RangeSlider):
-
             if q in preset.keys():
                 filter.value = preset[q]
             else:
@@ -116,10 +117,10 @@ def get_slider(desc, range, default=None):
 def get_select(desc, values, default=None, labels=None):  # pylint: disable=unused-argument
     if default is None:
         # by default, make all selections active
-        default = range(len(values))
+        default = list(range(len(values)))
 
     if labels is None:
-        labels = map(str, values)
+        labels = list(map(str, values))
 
     # misuse tags to store values without mapping to str
     group = CheckboxButtonGroup(labels=labels, active=default, tags=values)
@@ -304,8 +305,7 @@ def update():
 
     source.data = get_data(projections, filters_dict, quantities, plot_info)
 
-    #if redraw_plot:
-    if True:  # pylint: disable=using-constant-test
+    if redraw_plot:
         figure = create_plot()
         #TO DO: for some reason this destroys the coupling to source.data
         # to figure out why (and then restrict this to actual redrawing scenarios)

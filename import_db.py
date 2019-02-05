@@ -16,6 +16,10 @@ properties_csv = folder_db + '/properties.csv'
 table_name = 'cofs'  # parameters will be put in this database
 db_params = 'sqlite:///{}database.db'.format(folder_db)
 
+# when storing structures on an object store
+os_url = "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/test_data/structures"
+
+
 data = None
 
 engine = sqlalchemy.create_engine(db_params, echo=False)
@@ -37,11 +41,6 @@ def add_filenames(data):
         "{}.{}".format(row['name'], structure_extension)
         for _index, row in data.iterrows()
     ]
-    #fnames = [
-    #    "{}_{}_{}_relaxed.cif".format(row['linkerA'], row['linkerB'],
-    #                                  row['net'])
-    #    for _index, row in data.iterrows()
-    #]
     data['filename'] = fnames
     return data
 
@@ -145,10 +144,21 @@ def get_cif_path(filename):
     return abspath(join(structure_folder, filename))
 
 
-def get_cif_content(filename):
+def get_cif_content_from_disk(filename):
+    """Load CIF content from disk."""
     with open(get_cif_path(filename), 'r') as f:
         content = f.read()
     return content
+
+
+def get_cif_content_from_os(filename):
+    """Load CIF content via GET request from object store."""
+    import requests
+
+    url = "{}/{}".format(os_url, filename)
+    print(url)
+    data = requests.get(url)
+    return data.content
 
 
 if __name__ == "__main__":

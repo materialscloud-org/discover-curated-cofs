@@ -1,28 +1,42 @@
-# Materials Cloud Discover Section for Covalent Organic Frameworks
+# Structure-Property-Visualizer
 
-Using
+Use this app to generate interactive visualizations like [these](https://www.materialscloud.org/discover/cofs#mcloudHeader) 
+for atomic structures and their properties.
 
- * bokeh server
- * sqlite database backend
-   (AiiDA database backend in alpha)
- * jsmol for structure visualization
+## Features
 
-## Prerequisites
+ * interactive scatter plots via [bokeh server](https://bokeh.pydata.org/en/1.0.4/)
+ * interactive structure visualization via [jsmol](https://chemapps.stolaf.edu/jmol/docs/)
+ * simple input: provide CIF/XYZ files with structures and CSV file with their properties
+ * simple deployment on [materialscloud.org](https://www.materialscloud.org/discover/menu) through [Docker containers](http://docker.com)
+ * driven by database backend:
+   1. [sqlite](https://www.sqlite.org/index.html) database (default)
+   1. [AiiDA](http://www.aiida.net/) database backend (less tested)
 
- * python
- * nodejs >= 6
+## Getting started
 
-## Installation
+### Prerequisites
+
+ * [git](https://git-scm.com/)
+ * [python](https://www.python.org/)
+ * [nodejs](https://nodejs.org/en/) >= 6
+
+### Installation
 
 ```
+git clone https://github.com/materialscloud-org/structure-property-visualizer.git
+cd structure-property-visualizer
 pip install -e .     # install python dependencies
-./prepare.sh         # download the data (run only once)
-bokeh serve --show figure detail   # run app
+./prepare.sh         # download test data (run only once)
 ```
 
-## Configuration
+### Running the app
 
-Feel free to adapt this app to your own needs:
+```
+bokeh serve --show figure detail select-figure   # run app
+```
+
+## Customizing the app
 
 ### Input data
  * a set of structures in `data/structures`
@@ -37,7 +51,7 @@ The plots can be configured using a few YAML files:
  * `figure/filters.yml`: defines filters available in plot
  * `figure/presets.yml`: defines presets for axis + filter settings
 
-## Docker
+## Docker deployment
 
 ```
 pip install -e .

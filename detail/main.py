@@ -10,9 +10,9 @@ from bokeh.layouts import layout, widgetbox
 import bokeh.models as bmd
 from bokeh.models.widgets import PreText, Button
 from bokeh.io import curdoc
-
 from jsmol_bokeh_extension import JSMol
-#from import_db import get_cif_content
+from import_db import get_cif_content_from_disk as get_cif_str
+#from import_db import get_cif_content_from_os as get_cif_str
 from detail.query import get_sqlite_data as get_data
 
 html = bmd.Div(
@@ -47,7 +47,6 @@ def table_widget(entry):
     entry_dict = copy(entry.__dict__)
     # Note: iterate over old dict, not the copy that is changing
     for k, v in entry.__dict__.items():
-        #for k, v in entry_dict.items():
         if k == 'id' or k == '_sa_instance_state':
             del entry_dict[k]
 
@@ -90,29 +89,7 @@ def table_widget(entry):
 
 cof_name = get_name_from_url()
 entry = get_data(cof_name, plot_info)
-
-os_url = "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/structures/structures"
-
-
-def get_cif_content_from_os(filename):
-    """Load CIF content via GET request from object store."""
-    import requests
-
-    url = "{}/{}".format(os_url, filename)
-    data = requests.get(url)
-    return data.content
-
-
-#cif_str = get_cif_content(entry.filename)
-cif_str = get_cif_content_from_os(entry.filename)
-
-
-def get_cif_url(filename):
-    """Return URL for CIF file name"""
-    #name = "linker100_CH2_linker105_NH_pts_relaxed.cif"
-    url = "{}/{}".format(os_url, filename)
-    return url
-
+cif_str = get_cif_str(entry.filename)
 
 info = dict(
     height="100%",
