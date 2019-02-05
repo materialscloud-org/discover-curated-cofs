@@ -42,14 +42,15 @@ bokeh serve --show figure detail select-figure   # run app
  * a set of structures in `data/structures`
    * Allowed file extensions: `cif`, `xyz`
  * a CSV file `data/properties.csv` with their properties
-   * has a column `name` whose value `<name>` links each row to a file in `structures/<name>.<extension>xyz`.
+   * has a column `name` whose value `<name>` links each row to a file in `structures/<name>.<extension>`.
+ * adapt `import_db.py` accordingly and run it to create the database
 
 ### Plots
 
-The plots can be configured using a few YAML files:
- * `figure/columns.yml`: defines metadata for columns of CSV file
- * `figure/filters.yml`: defines filters available in plot
- * `figure/presets.yml`: defines presets for axis + filter settings
+The plots can be configured using a few YAML files in `figure/static`:
+ * `columns.yml`: defines metadata for columns of CSV file
+ * `filters.yml`: defines filters available in plot
+ * `presets.yml`: defines presets for axis + filter settings
 
 ## Docker deployment
 
