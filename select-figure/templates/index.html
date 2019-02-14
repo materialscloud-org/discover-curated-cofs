@@ -9,17 +9,16 @@
 
 {% block contents %}
 <div class="content" >
+<div class="content-float" >
 
 <p>
   Click on a figure for the <b>interactive plot</b>.
 </p>
 
-<table class="figures">
-<tr>
-
-  <td colspan=4>
+<div class="one-column-grid">
+  <div class="grid-item">
     <figure>
-      <div class=container>
+      <div class="container">
         <a href="figure">
           <img class="figure-thumbnail default-figure mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/default.png">
           <div class="hover-text">High-performing COFs</div>
@@ -29,119 +28,32 @@
       Deliverable Capacity <i>vs</i> Density
       </figcaption>
     </figure>
-  </td>
+  </div>
+</div>
 
-</tr>
-
-<tr>
-
-  <td>
+<div class="three-column-grid">
+  {% for fig in figures %}
+  <div class="grid-item">
     <figure>
-      <div class=container>
-        <a href="figure?preset=3a">
-          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/3a.png">
-          <div class="hover-text">Figure 3a</div>
+      <div class="container">
+        <a href="figure?preset={{ fig[0] }}">
+          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/{{ fig[0] }}.png">
+          <div class="hover-text">Figure {{ fig[0] }}</div>
         </a>
       </div>
       <figcaption>
-      Surface area <i>vs</i> Density (2d COFs)
+        {{ fig[1] }}
       </figcaption>
     </figure>
-  </td>
+  </div>
+  {% endfor %}
 
-  <td>
-    <figure>
-      <div class=container>
-        <a href="figure?preset=3b">
-          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/3b.png">
-          <div class="hover-text">Figure 3b</div>
-        </a>
-      </div>
-      <figcaption>
-      Surface area <i>vs</i> Density (3d COFs)
-      </figcaption>
-    </figure>
-  </td>
-
-  <td>
-    <figure>
-      <div class=container>
-        <a href="figure?preset=7a">
-          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/7a.png">
-          <div class="hover-text">Figure 7a</div>
-        </a>
-      </div>
-      <figcaption>
-          Methane uptake (low P) <i>vs</i> Density
-      </figcaption>
-    </figure>
-  </td>
-
-  <td>
-    <figure>
-      <div class=container>
-        <a href="figure?preset=7b">
-          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/7b.png">
-          <div class="hover-text">Figure 7b</div>
-        </a>
-      </div>
-      <figcaption>
-          Methane uptake (high P) <i>vs</i> Density
-      </figcaption>
-    </figure>
-  </td>
-
-</tr>
-<tr>
-
-  <td>
-    <figure>
-      <div class=container>
-        <a href="figure?preset=8b">
-          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/8b.png">
-          <div class="hover-text">Figure 8b</div>
-        </a>
-      </div>
-      <figcaption>
-      Deliverable capacity <i>vs</i> Density (2d COFs)
-      </figcaption>
-    </figure>
-  </td>
-
-  <td>
-    <figure>
-      <div class=container>
-        <a href="figure?preset=9b">
-          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/9b.png">
-          <div class="hover-text">Figure 9b</div>
-        </a>
-      </div>
-      <figcaption>
-      Deliverable capacity <i>vs</i> Density (3d COFs)
-      </figcaption>
-    </figure>
-  </td>
-
-  <td>
-    <figure>
-      <div class=container>
-        <a href="figure?preset=11">
-          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/11.png">
-          <div class="hover-text">Figure 11</div>
-        </a>
-      </div>
-      <figcaption>
-      Deliverable capacity <i>vs</i> Surface area
-      </figcaption>
-    </figure>
-  </td>
-
-</tr>
-</table>
+</div>
 
 <!-- No actual bokeh content to display, but let's keep it here //-->
 {{ super() }}
 
+</div>
 </div>
 
 {% endblock %}

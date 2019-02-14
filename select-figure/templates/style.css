@@ -1,9 +1,11 @@
 /* Style for select-figure content */
 
+/* needed only when served via bokeh 
 .bk-layout-fixed {
     margin: 0 auto;
     text-align: center;
 }
+*/
 
 div.content {
     margin: 0 auto;
@@ -13,10 +15,22 @@ div.content {
     text-align: center;
 }
 
-table.figures td {
-    padding: 15px;
-    text-align: center;
-    vertical-align: top;
+div.content-float {
+    position: relative;
+    display: inline-block;
+}
+
+div.one-column-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  /* to offset the next grid */
+  margin-block-end: 30px;
+}
+
+div.three-column-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-row-gap: 20px;
 }
 
 figure {

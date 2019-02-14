@@ -1,6 +1,6 @@
 # using https://github.com/materialscloud-org/mc-docker-stack/tree/discover
 #
-FROM mc-docker-stack:discover
+FROM aiidalab/aiidalab-docker-stack:discover
 USER root
 WORKDIR /project
 
