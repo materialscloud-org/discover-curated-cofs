@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css" />
 <style>
 .bk-layout-fixed {
     margin: 0 auto;
@@ -9,73 +10,12 @@ div.content {
     display: inline-block;
 }
 
-/*
-p {
-    border: 1px solid red;
-}
-h1 {
-    margin: 1em 0 0 0;
-    color: #2e484c;
-    font-family: 'Julius Sans One', sans-serif;
-    font-size: 1.8em;
-    text-transform: uppercase;
-}
-*/
-a:link {
-    font-weight: bold;
-    text-decoration: none;
-    color: #0d8ba1;
-}
-a:visited {
-    font-weight: bold;
-    text-decoration: none;
-    color: #1a5952;
-}
-a:hover, a:focus, a:active {
-    text-decoration: underline;
-    color: #9685BA;
-}
-
 /* selection table */
 
-img.figure-thumbnail {
-   height: 175px;
-   border-radius: 30px;
-   padding:2px;
-   border:2px solid #14afff;
-   background-color:#fff;
-}
-
-img.default-figure {
-    height: 250px;
-}
-
-/* Container holding the image and the text */
-.container {
-    position: relative;
+table.figures td {
+    padding: 20px;
     text-align: center;
-    color: white;
-}
-
-/* Text to appear upon hover */
-.hover-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    color: #14afff;
-    font-size: 1.3em;
-    font-weight: bold;
-}
-
-.container:hover img {
-   opacity: 0.3;
-   filter: alpha(opacity=30);
-}
-
-.container:hover .hover-text {
-   opacity: 1.0;
+    vertical-align: top;
 }
 
 figure {
@@ -92,13 +32,45 @@ figure figcaption {
     text-align: center;
 }
 
-
-table.figures td {
-    padding: 10px;
-    text-align: center;
-    vertical-align: top;
+img.figure-thumbnail {
+   width: 250px;
+   /* border-radius: 30px; */
+   padding:2px;
+   /* border:2px solid #14afff; */
+   /* background-color:#fff; */
+   /* background-color: rgba(245,245,245,.19);*/
+   border-radius: 4px;
 }
 
+/* Container holding the image and the text */
+.container {
+    position: relative;
+    text-align: center;
+    /*color: white;*/
+}
+
+/* Text to appear upon hover */
+.hover-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    /* color: #14afff; */
+    /* color: black; */
+    color: #1565C0;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.container:hover img {
+   opacity: 0.3;
+   filter: alpha(opacity=30);
+}
+
+.container:hover .hover-text {
+   opacity: 1.0;
+}
 
 </style>
 
@@ -133,7 +105,7 @@ table.figures td {
     <figure>
       <div class=container>
         <a href="figure?preset=3a">
-          <img class="figure-thumbnail" src="select-figure/static/images/3a.png">
+          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card default-figure" src="select-figure/static/images/3a.png">
           <div class="hover-text">Figure 3a</div>
         </a>
       </div>
@@ -161,7 +133,7 @@ table.figures td {
     <figure>
       <div class=container>
         <a href="figure?preset=7a">
-          <img class="figure-thumbnail" src="select-figure/static/images/7a.png">
+          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/7a.png">
           <div class="hover-text">Figure 7a</div>
         </a>
       </div>
@@ -175,7 +147,7 @@ table.figures td {
     <figure>
       <div class=container>
         <a href="figure?preset=7b">
-          <img class="figure-thumbnail" src="select-figure/static/images/7b.png">
+          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/7b.png">
           <div class="hover-text">Figure 7b</div>
         </a>
       </div>
@@ -192,7 +164,7 @@ table.figures td {
     <figure>
       <div class=container>
         <a href="figure?preset=8b">
-          <img class="figure-thumbnail" src="select-figure/static/images/8b.png">
+          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/8b.png">
           <div class="hover-text">Figure 8b</div>
         </a>
       </div>
@@ -206,7 +178,7 @@ table.figures td {
     <figure>
       <div class=container>
         <a href="figure?preset=9b">
-          <img class="figure-thumbnail" src="select-figure/static/images/9b.png">
+          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/9b.png">
           <div class="hover-text">Figure 9b</div>
         </a>
       </div>
@@ -220,7 +192,7 @@ table.figures td {
     <figure>
       <div class=container>
         <a href="figure?preset=11">
-          <img class="figure-thumbnail" src="select-figure/static/images/11.png">
+          <img class="figure-thumbnail mdl-card mdl-shadow--2dp main-card" src="select-figure/static/images/11.png">
           <div class="hover-text">Figure 11</div>
         </a>
       </div>
