@@ -16,7 +16,7 @@ if __name__ == '__main__':
         classifiers=["Programming Language :: Python"],
         version="0.1.0",
         install_requires=[
-            "bokeh>=0.13", 
+            "bokeh>=0.13,<1.1", 
             "jsmol-bokeh-extension", 
             "pandas", 
             "sqlalchemy",
