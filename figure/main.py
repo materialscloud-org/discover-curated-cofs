@@ -14,7 +14,7 @@ from bokeh.io import curdoc
 
 import config
 from config import quantities, presets
-from figure.query import get_data_sqla as get_data
+from figure.query import get_data_aiida as get_data
 from figure.query import data_empty
 
 html = bmd.Div(

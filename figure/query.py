@@ -70,33 +70,44 @@ def get_data_aiida(projections, sliders_dict, quantities, plot_info):
         load_dbenv(profile=settings.AIIDADB_PROFILE)
     from aiida.orm.querybuilder import QueryBuilder
     from aiida.orm.data.parameter import ParameterData
+    from aiida.orm import WorkCalculation
 
     filters = {}
+    projections = projections[:3]
 
-    def add_range_filter(bounds, label):
-        # a bit of cheating until this is resolved
-        # https://github.com/aiidateam/aiida_core/issues/1389
-        #filters['attributes.'+label] = {'>=':bounds[0]}
-        filters['attributes.' + label] = {
-            'and': [{
-                '>=': bounds[0]
-            }, {
-                '<': bounds[1]
-            }]
-        }
+    #def add_range_filter(bounds, label):
+    #    # a bit of cheating until this is resolved
+    #    # https://github.com/aiidateam/aiida_core/issues/1389
+    #    #filters['attributes.'+label] = {'>=':bounds[0]}
+    #    filters['attributes.' + label] = {
+    #        'and': [{
+    #            '>=': bounds[0]
+    #        }, {
+    #            '<': bounds[1]
+    #        }]
+    #    }
 
-    for k, v in sliders_dict.items():
-        # Note: filtering is costly, avoid if possible
-        if not v.value == quantities[k]['range']:
-            add_range_filter(v.value, k)
+    #for k, v in sliders_dict.items():
+    #    # Note: filtering is costly, avoid if possible
+    #    if not v.value == quantities[k]['range']:
+    #        add_range_filter(v.value, k)
 
-    qb = QueryBuilder()
-    qb.append(
-        ParameterData,
-        filters=filters,
-        project=['attributes.' + p
-                 for p in projections] + ['uuid', 'extras.cif_uuid'],
-    )
+    qb=QueryBuilder()
+    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'CalcPE'} }, tag='calc_pe')  # 296L
+    qb.append(ParameterData, project=['attributes.' + p
+                 for p in projections] + ['uuid', 'label', 'attributes.WCg'], descendant_of='calc_pe')
+    qb.all() # 296L
+    print(projections)
+
+#    qb = QueryBuilder()
+#    qb.append(
+#        ParameterData,
+#        filters=filters,
+#        project=['attributes.' + p
+#                 for p in projections] + ['uuid', 'attributes.Pd'],
+#        #project=['attributes.' + p
+#        #         for p in projections] + ['uuid', 'extras.cif_uuid'],
+#    )
 
     nresults = qb.count()
     if nresults == 0:

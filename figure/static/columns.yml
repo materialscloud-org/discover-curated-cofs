@@ -1,89 +1,177 @@
 # Columns metadata
 # 2 types supported: float, list
 ---
-- column: dimensions
-  type: list
-  label: Dimensionality
-  values:
-  - 2
-  - 3
-  labels:
-  - 2D layers
-  - 3D network
-
-- column: bond_type
-  type: list
-  label: Bond type
-  values:
-  - amide
-  - amine
-  - imine
-  - CC
-  - mixed
-
-- column: density
+- column: PE
   type: float
-  label: Density
+  label: Parasitic energy
   range:
-  - 10.0
-  - 1200.0
-  unit: kg/m^3
+  - 0
+  - 5
+  unit: MJ/kg
 
-- column: deliverable_capacity
+- column: Td
   type: float
-  default:
-  - 175
-  - 300
-  label: Deliverable capacity
+  label: Desorption temperature
   range:
-  - 0.0
-  - 300.0
-  unit: v STP/v
+  - 200
+  - 400
+  unit: K
 
-- column: absolute_methane_uptake_high_P
+- column: Pd
   type: float
-  label: CH4 uptake High-P
+  label: Desorption pressure
   range:
-  - 0.0
-  - 400.0
-  unit: mol/kg
+  - 0
+  - 10
+  unit: bar
 
-- column: absolute_methane_uptake_low_P
+- column: WCg
   type: float
-  label: CH4 uptake Low-P
+  label: Gravimetric working capacity
   range:
-  - 0.0
-  - 400.0
-  unit: mol/kg
+  - 0
+  - 10
+  unit: kg CO2 / kg
 
-- column: heat_desorption_high_P
+- column: WCv
   type: float
-  label: CH4 heat of desorption High-P
+  label: Volumetric working capacity
   range:
-  - 0.0
-  - 30.0
-  unit: kJ/mol
+  - 0
+  - 10
+  unit: kg CO2 / m^3
 
-- column: heat_desorption_low_P
+- column: Pur
   type: float
-  label: CH4 heat of desorption Low-P
+  label: Fraction of CO2
   range:
-  - 0.0
-  - 30.0
-  unit: kJ/mol
+  - 0
+  - 1
+  unit: mol/mol
 
-- column: supercell_volume
-  type: float
-  label: Supercell volume
-  range:
-  - 0.0
-  - 1000000.0
-  unit: A^3
 
-- column: surface_area
-  type: float
-  label: Geometric surface area
-  range:
-  - 0.0
-  - 12000.0
-  unit: m^2/g
+# [{u'PE': 1.8634356351878,
+#   u'PE_descr': u'desorption pressure',
+#   u'PE_units': u'MJ/kg',
+#   u'Pd': 0.03,
+#   u'Pd_units': u'bar',
+#   u'Pur': 0.504499021933417,
+#   u'Pur_descr': u'fraction of CO2 purity',
+#   u'Pur_units': u'mol/mol',
+#   u'Qd': 0.4613937192759,
+#   u'Qd_descr': u'desorption enthalpy',
+#   u'Qd_units': u'MJ/kgCO2',
+#   u'Qs': 4.18594740856125,
+#   u'Qs_descr': u'Sensible heat',
+#   u'Qs_units': u'MJ/kgCO2',
+#   u'Qt': 0.0877830544420484,
+#   u'Qt_descr': u'Not-effective heat requirement',
+#   u'Qt_units': u'MJ/kgCO2',
+#   u'Qteff': 0.549176773717948,
+#   u'Qteff_descr': u'heat requirement',
+#   u'Qteff_units': u'MJ/kgCO2',
+#   u'Td': 333.0,
+#   u'Td_descr': u'desorption temperature',
+#   u'Td_units': u'K',
+#   u'WCg': 0.00560161093872798,
+#   u'WCg_descr': u'gravimetric working capacity',
+#   u'WCg_units': u'kgCO2/kg',
+#   u'WCv': 2.61933288058749,
+#   u'WCv_descr': u'volumetric working capacity',
+#   u'WCv_units': u'kgCO2/m3',
+#   u'Wcomp': 1.31425886146985,
+#   u'Wcomp_descr': u'compression work',
+#   u'Wcomp_units': u'MJ/kgCO2',
+#   u'eloss': 0.505818576326765,
+#   u'eloss_descr': u'fraction of electricity loss (np.nan for air)',
+#   u'eloss_units': u'kJ/kJ',
+#   u'process_feasible': True}]]
+
+
+
+#- column: dimensions
+#  type: list
+#  label: Dimensionality
+#  values:
+#  - 2
+#  - 3
+#  labels:
+#  - 2D layers
+#  - 3D network
+#
+#- column: bond_type
+#  type: list
+#  label: Bond type
+#  values:
+#  - amide
+#  - amine
+#  - imine
+#  - CC
+#  - mixed
+
+#- column: density
+#  type: float
+#  label: Density
+#  range:
+#  - 10.0
+#  - 1200.0
+#  unit: kg/m^3
+#
+#- column: deliverable_capacity
+#  type: float
+#  default:
+#  - 175
+#  - 300
+#  label: Deliverable capacity
+#  range:
+#  - 0.0
+#  - 300.0
+#  unit: v STP/v
+#
+#- column: absolute_methane_uptake_high_P
+#  type: float
+#  label: CH4 uptake High-P
+#  range:
+#  - 0.0
+#  - 400.0
+#  unit: mol/kg
+#
+#- column: absolute_methane_uptake_low_P
+#  type: float
+#  label: CH4 uptake Low-P
+#  range:
+#  - 0.0
+#  - 400.0
+#  unit: mol/kg
+#
+#- column: heat_desorption_high_P
+#  type: float
+#  label: CH4 heat of desorption High-P
+#  range:
+#  - 0.0
+#  - 30.0
+#  unit: kJ/mol
+#
+#- column: heat_desorption_low_P
+#  type: float
+#  label: CH4 heat of desorption Low-P
+#  range:
+#  - 0.0
+#  - 30.0
+#  unit: kJ/mol
+#
+#- column: supercell_volume
+#  type: float
+#  label: Supercell volume
+#  range:
+#  - 0.0
+#  - 1000000.0
+#  unit: A^3
+#
+#- column: surface_area
+#  type: float
+#  label: Geometric surface area
+#  range:
+#  - 0.0
+#  - 12000.0
+#  unit: m^2/g

@@ -21,6 +21,8 @@ if __name__ == '__main__':
             "pandas", 
             "sqlalchemy",
             "requests",
+            "panel",
+            "jupyter",
         ],
         extras_require={
             "pre-commit": [
