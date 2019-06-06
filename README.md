@@ -3,6 +3,19 @@
 Use this app to generate interactive visualizations like [these](https://www.materialscloud.org/discover/cofs#mcloudHeader) 
 for atomic structures and their properties.
 
+## Re-implementation based on Panel
+
+Use as jupyter notebook:
+```
+jupyter notebook
+# open figure/panel.ipynb
+```
+
+Use with panel:
+```
+panel serve figure/panel.ipynb
+```
+
 ## Features
 
  * interactive scatter plots via [bokeh server](https://bokeh.pydata.org/en/1.0.4/)
