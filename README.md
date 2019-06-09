@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/materialscloud-org/structure-property-visualizer.svg?branch=master)](https://travis-ci.org/materialscloud-org/structure-property-visualizer)
+
 # Structure-Property-Visualizer
 
 Use this app to generate interactive visualizations like [these](https://www.materialscloud.org/discover/cofs#mcloudHeader) 
