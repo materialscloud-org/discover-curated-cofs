@@ -1,6 +1,8 @@
 """ Queries to the DB
 """
 
+from __future__ import absolute_import
+
 
 def get_sqlite_data(name, plot_info):
     """Query the sqlite database"""
@@ -33,10 +35,12 @@ def get_data_aiida(cif_uuid, plot_info):
     from aiida.orm.data.cif import CifData
 
     qb = QueryBuilder()
-    qb.append(
-        CifData, filters={'uuid': {
-            '==': cif_uuid
-        }}, tag='cifs', project='*')
+    qb.append(CifData,
+              filters={'uuid': {
+                  '==': cif_uuid
+              }},
+              tag='cifs',
+              project='*')
     qb.append(
         ParameterData,
         descendant_of='cifs',

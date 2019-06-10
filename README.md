@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/materialscloud-org/structure-property-visualizer.svg?branch=master)](https://travis-ci.org/materialscloud-org/structure-property-visualizer)
+
 # Structure-Property-Visualizer
 
 Use this app to generate interactive visualizations like [these](https://www.materialscloud.org/discover/cofs#mcloudHeader) 
@@ -72,5 +74,5 @@ pip install -e .
 ./prepare.sh
 docker-compose build
 docker-compose up
-# open http://localhost:3245/select-figure
+# open http://localhost:3245/cofs/select-figure
 ```

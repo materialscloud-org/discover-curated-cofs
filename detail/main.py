@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=unsubscriptable-object, too-many-locals
 from __future__ import print_function
+from __future__ import absolute_import
 from os.path import dirname, join
 from copy import copy
 from collections import OrderedDict
@@ -15,8 +16,8 @@ from import_db import get_cif_content_from_disk as get_cif_str
 #from import_db import get_cif_content_from_os as get_cif_str
 from detail.query import get_sqlite_data as get_data
 
-html = bmd.Div(
-    text=open(join(dirname(__file__), "description.html")).read(), width=800)
+html = bmd.Div(text=open(join(dirname(__file__), "description.html")).read(),
+               width=800)
 
 download_js = open(join(dirname(__file__), "static", "download.js")).read()
 
@@ -58,8 +59,8 @@ def table_widget(entry):
             entry_dict[new_key] = entry_dict.pop(prop)
 
     # order entry dict
-    entry_dict = OrderedDict(
-        [(k, entry_dict[k]) for k in sorted(list(entry_dict.keys()))])
+    entry_dict = OrderedDict([(k, entry_dict[k])
+                              for k in sorted(list(entry_dict.keys()))])
 
     data = dict(
         labels=[str(k) for k in entry_dict],
@@ -71,18 +72,17 @@ def table_widget(entry):
         TableColumn(field="labels", title="Properties"),
         TableColumn(field="values", title="Values"),
     ]
-    data_table = DataTable(
-        source=source,
-        columns=columns,
-        width=500,
-        height=570,
-        index_position=None,
-        fit_columns=False)
+    data_table = DataTable(source=source,
+                           columns=columns,
+                           width=500,
+                           height=570,
+                           index_position=None,
+                           fit_columns=False)
 
     json_str = json.dumps(entry_dict, indent=2)
-    btn_download_table.callback = bmd.CustomJS(
-        args=dict(string=json_str, filename=entry_dict['name'] + '.json'),
-        code=download_js)
+    btn_download_table.callback = bmd.CustomJS(args=dict(
+        string=json_str, filename=entry_dict['name'] + '.json'),
+                                               code=download_js)
 
     return widgetbox(data_table)
 
@@ -112,8 +112,9 @@ end "cifstring"
     #""".format(get_cif_url(entry.filename))
 )
 
-btn_download_cif.callback = bmd.CustomJS(
-    args=dict(string=cif_str, filename=entry.filename), code=download_js)
+btn_download_cif.callback = bmd.CustomJS(args=dict(string=cif_str,
+                                                   filename=entry.filename),
+                                         code=download_js)
 
 applet = JSMol(
     width=600,
@@ -124,18 +125,17 @@ applet = JSMol(
 )
 
 sizing_mode = 'fixed'
-l = layout(
+ly = layout([
     [
-        [
-            [[applet], [btn_download_cif]],
-            [[table_widget(entry)], [btn_download_table]],
-        ],
-        [plot_info],
+        [[applet], [btn_download_cif]],
+        [[table_widget(entry)], [btn_download_table]],
     ],
-    sizing_mode=sizing_mode)
+    [plot_info],
+],
+           sizing_mode=sizing_mode)
 
 # We add this as a tab
-tab = bmd.Panel(child=l, title=cof_name)
+tab = bmd.Panel(child=ly, title=cof_name)
 tabs = bmd.widgets.Tabs(tabs=[tab])
 
 # Put the tabs in the current document for display

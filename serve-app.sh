@@ -16,6 +16,7 @@ bokeh serve figure detail select-figure  \
     --port 5006                 \
     --log-level debug           \
     --allow-websocket-origin "*" \
+    --prefix "$BOKEH_PREFIX" \
     --use-xheaders
 # --allow-websocket-origin discover.materialscloud.org 
 # --allow-websocket-origin localhost:5006

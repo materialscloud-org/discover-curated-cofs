@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=unsubscriptable-object, too-many-locals
 from __future__ import print_function
+from __future__ import absolute_import
 import collections
 from copy import copy
 from os.path import join
@@ -12,13 +13,14 @@ from bokeh.palettes import Viridis256
 from bokeh.models.widgets import RangeSlider, Select, Button, PreText, CheckboxButtonGroup
 from bokeh.io import curdoc
 
-import config
-from config import quantities, presets
+from figure import config
 from figure.query import get_data_sqla as get_data
 from figure.query import data_empty
+from six.moves import map
+from six.moves import range
 
-html = bmd.Div(
-    text=open(join(config.static_dir, "description.html")).read(), width=800)
+html = bmd.Div(text=open(join(config.static_dir, "description.html")).read(),
+               width=800)
 
 redraw_plot = False
 
@@ -40,9 +42,9 @@ def load_preset(attr, old, new):  # pylint: disable=unused-argument,redefined-bu
     """Load preset and update sliders/plot accordingly"""
     # get figure from arguments
     try:
-        preset = copy(presets[new])
+        preset = copy(config.presets[new])
     except KeyError:
-        preset = copy(presets['default'])
+        preset = copy(config.presets['default'])
 
     try:
         inp_x.value = preset.pop('x')
@@ -63,38 +65,38 @@ def load_preset(attr, old, new):  # pylint: disable=unused-argument,redefined-bu
         filter = filters_dict[q]
 
         if isinstance(filter, RangeSlider):
-            if q in preset.keys():
+            if q in list(preset.keys()):
                 filter.value = preset[q]
             else:
-                filter.value = quantities[q]['range']
+                filter.value = config.quantities[q]['range']
 
         elif isinstance(filter, CheckboxButtonGroup):
 
-            if q in preset.keys():
+            if q in list(preset.keys()):
                 values = preset[q]
             else:
-                values = quantities[q]['values']
+                values = config.quantities[q]['values']
             filter.active = [filter.tags.index(v) for v in values]
 
 
 #inp_preset = Select(
 #    title='Preset',
-#    options=list(presets.keys()),
+#    options=list(config.presets.keys()),
 #    value=get_preset_label_from_url())
 #inp_preset.on_change('value', load_preset)
 
 # quantities
-nq = len(quantities)
+nq = len(config.quantities)
 bondtypes = list(config.bondtype_dict.keys())
 bondtype_colors = list(config.bondtype_dict.values())
 
 # quantity selectors
-plot_options = [(q, quantities[q]['label']) for q in config.plot_quantities]
+plot_options = [(q, config.quantities[q]['label']) for q in config.plot_quantities]
 inp_x = Select(title='X', options=plot_options)
 inp_y = Select(title='Y', options=plot_options)
 #inp_clr = Select(title='Color', options=plot_options)
-inp_clr = Select(
-    title='Color', options=plot_options + [('bond_type', 'Bond type')])
+inp_clr = Select(title='Color',
+                 options=plot_options + [('bond_type', 'Bond type')])
 
 
 def on_filter_change(attr, old, new):  # pylint: disable=unused-argument
@@ -107,8 +109,11 @@ def on_filter_change(attr, old, new):  # pylint: disable=unused-argument
 def get_slider(desc, range, default=None):
     if default is None:
         default = range
-    slider = RangeSlider(
-        title=desc, start=range[0], end=range[1], value=default, step=0.1)
+    slider = RangeSlider(title=desc,
+                         start=range[0],
+                         end=range[1],
+                         value=default,
+                         step=0.1)
 
     slider.on_change('value', on_filter_change)
     return slider
@@ -132,19 +137,19 @@ def get_select(desc, values, default=None, labels=None):  # pylint: disable=unus
 filters_dict = collections.OrderedDict()
 #for k, v in quantities.items():
 for k in config.filter_list:
-    v = quantities[k]
-    if 'unit' not in v.keys():
+    v = config.quantities[k]
+    if 'unit' not in list(v.keys()):
         desc = v['label']
     else:
         desc = "{} [{}]".format(v['label'], v['unit'])
 
-    if 'default' not in v.keys():
+    if 'default' not in list(v.keys()):
         v['default'] = None
 
     if v['type'] == 'float':
         filters_dict[k] = get_slider(desc, v['range'], v['default'])
     elif v['type'] == 'list':
-        if 'labels' not in v.keys():
+        if 'labels' not in list(v.keys()):
             v['labels'] = None
         filters_dict[k] = get_select(desc, v['values'], v['default'],
                                      v['labels'])
@@ -195,17 +200,17 @@ def create_plot():
     if inp_clr.value == 'bond_type':
         from bokeh.transform import factor_cmap
         paper_palette = list(config.bondtype_dict.values())
-        fill_color = factor_cmap(
-            'color', palette=paper_palette, factors=bondtypes)
-        p_new.circle(
-            'x',
-            'y',
-            size=10,
-            source=source,
-            fill_color=fill_color,
-            fill_alpha=0.6,
-            line_alpha=0.4,
-            legend='color')
+        fill_color = factor_cmap('color',
+                                 palette=paper_palette,
+                                 factors=bondtypes)
+        p_new.circle('x',
+                     'y',
+                     size=10,
+                     source=source,
+                     fill_color=fill_color,
+                     fill_alpha=0.6,
+                     line_alpha=0.4,
+                     legend='color')
 
     else:
         cmap = bmd.LinearColorMapper(palette=Viridis256)
@@ -227,8 +232,8 @@ controls = [inp_x, inp_y, inp_clr] + [_v for k, _v in filters_dict.items()
 
 def update_legends(ly):
 
-    q_x = quantities[inp_x.value]
-    q_y = quantities[inp_y.value]
+    q_x = config.quantities[inp_x.value]
+    q_y = config.quantities[inp_y.value]
     p = ly.children[0].children[1]
 
     #title = "{} vs {}".format(q_x["label"], q_y["label"])
@@ -237,8 +242,8 @@ def update_legends(ly):
     xhover = (q_x["label"], "@x {}".format(q_x["unit"]))
     yhover = (q_y["label"], "@y {}".format(q_y["unit"]))
 
-    q_clr = quantities[inp_clr.value]
-    if 'unit' not in q_clr.keys():
+    q_clr = config.quantities[inp_clr.value]
+    if 'unit' not in list(q_clr.keys()):
         clr_label = q_clr["label"]
         clr_val = "@color"
     else:
@@ -260,7 +265,7 @@ def update_legends(ly):
             ("Bond type", "@color"),
         ]
     else:
-        q_clr = quantities[inp_clr.value]
+        q_clr = config.quantities[inp_clr.value]
         clr_label = "{} [{}]".format(q_clr["label"], q_clr["unit"])
         hover.tooltips = [
             ("name", "@name"),
@@ -287,7 +292,7 @@ def check_uniqueness(attr, old, new):
     unique = list(set(selected))
     if len(unique) < len(selected):
         double = [i for i in selected if i in unique or unique.remove(i)]
-        double_str = ", ".join([quantities[d]['label'] for d in double])
+        double_str = ", ".join([config.quantities[d]['label'] for d in double])
         plot_info.text = "Warning: {} doubly selected.".format(double_str)
         btn_plot.button_type = 'danger'
 
@@ -299,20 +304,20 @@ def check_uniqueness(attr, old, new):
 def update():
     global redraw_plot, source
 
-    #update_legends(l)
+    #update_legends(ly)
 
     projections = [inp_x.value, inp_y.value, inp_clr.value, 'name', 'filename']
 
-    source.data = get_data(projections, filters_dict, quantities, plot_info)
+    source.data = get_data(projections, filters_dict, config.quantities, plot_info)
 
     if redraw_plot:
         figure = create_plot()
         #TO DO: for some reason this destroys the coupling to source.data
         # to figure out why (and then restrict this to actual redrawing scenarios)
-        l.children[0].children[1] = figure
+        ly.children[0].children[1] = figure
         redraw_plot = False
 
-    update_legends(l)
+    update_legends(ly)
     plot_info.text += " done!"
     btn_plot.button_type = 'success'
     return
@@ -342,15 +347,14 @@ inp_clr.on_change('value', on_change_clr)
 # Create a panel with a new layout
 sizing_mode = 'fixed'
 inputs = widgetbox(*controls, sizing_mode=sizing_mode)
-l = layout(
-    [
-        [inputs, p],
-        [info_block],
-    ], sizing_mode=sizing_mode)
+ly = layout([
+    [inputs, p],
+    [info_block],
+], sizing_mode=sizing_mode)
 update()
 
 # Create each of the tabs
-tab = bmd.Panel(child=l, title='Scatter plot')
+tab = bmd.Panel(child=ly, title='Scatter plot')
 tabs = bmd.widgets.Tabs(tabs=[tab])
 
 # Put the tabs in the current document for display

@@ -5,6 +5,7 @@
 
 from __future__ import print_function
 
+from __future__ import absolute_import
 import pandas as pd
 import sqlalchemy
 import re
@@ -22,7 +23,6 @@ db_params = 'sqlite:///{}database.db'.format(folder_db)
 # when storing structures on an object store
 os_url = "https://object.cscs.ch/v1/AUTH_b1d80408b3d340db9f03d373bbde5c1e/discover-cofs/test_data/structures"
 
-
 data = None
 
 engine = sqlalchemy.create_engine(db_params, echo=False)
@@ -32,8 +32,10 @@ columns_json = {}
 
 
 def parse_csv(path):
-    data = pd.read_csv(
-        path, low_memory=False, verbose=1, skipinitialspace=True)
+    data = pd.read_csv(path,
+                       low_memory=False,
+                       verbose=1,
+                       skipinitialspace=True)
     print("Read {} data rows from .csv file".format(len(data)))
     return data
 
@@ -66,16 +68,15 @@ def to_sql_k(self,
                 raise ValueError('The type of %s is not a SQLAlchemy '
                                  'type ' % col)
 
-    table = pd.io.sql.SQLTable(
-        name,
-        self,
-        frame=frame,
-        index=index,
-        if_exists=if_exists,
-        index_label=index_label,
-        schema=schema,
-        dtype=dtype,
-        **kwargs)
+    table = pd.io.sql.SQLTable(name,
+                               self,
+                               frame=frame,
+                               index=index,
+                               if_exists=if_exists,
+                               index_label=index_label,
+                               schema=schema,
+                               dtype=dtype,
+                               **kwargs)
     table.create()
     table.insert(chunksize)
 
@@ -86,7 +87,7 @@ def rename_columns(data):
     Need to rename columns to valid python variable names.
     """
     print("Renaming columns")
-    labels = data.keys()
+    labels = list(data.keys())
     #rep_dict = { l: l.replace(' ', '_') for l in labels }
     #data.rename(index=str, columns=rep_dict, inplace=True)
 
@@ -109,14 +110,13 @@ def rename_columns(data):
 def fill_db():
     #data.to_sql(table_name, con=engine, if_exists='replace')
     print("Filling database")
-    to_sql_k(
-        pandas_sql,
-        data,
-        table_name,
-        index=True,
-        index_label='id',
-        keys='id',
-        if_exists='replace')
+    to_sql_k(pandas_sql,
+             data,
+             table_name,
+             index=True,
+             index_label='id',
+             keys='id',
+             if_exists='replace')
 
     with engine.connect() as con:
         test = pd.read_sql("SELECT * FROM {} LIMIT 5".format(table_name), con)
