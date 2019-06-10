@@ -8,8 +8,11 @@ from __future__ import print_function
 import pandas as pd
 import sqlalchemy
 import re
+import os
 
-folder_db = 'data/'
+dirpath = os.path.dirname(os.path.realpath(__file__))
+
+folder_db = dirpath + '/data/'
 structure_folder = folder_db + '/structures/'
 structure_extension = 'cif'
 properties_csv = folder_db + '/properties.csv'
