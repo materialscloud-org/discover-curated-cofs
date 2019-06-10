@@ -1,7 +1,10 @@
 """Querying the DB
 """
+from __future__ import absolute_import
 from bokeh.models.widgets import RangeSlider, CheckboxButtonGroup
-from config import max_points
+from .config import max_points
+from six.moves import map
+from six.moves import zip
 # pylint: disable=too-many-locals
 data_empty = dict(x=[0], y=[0], uuid=['1234'], color=[0], name=['no data'])
 
@@ -49,7 +52,7 @@ def get_data_sqla(projections, sliders_dict, quantities, plot_info):
             nresults, nresults)
 
     # x,y position
-    x, y, clrs, names, filenames = zip(*results)
+    x, y, clrs, names, filenames = list(zip(*results))
     x = list(map(float, x))
     y = list(map(float, y))
 
@@ -106,17 +109,17 @@ def get_data_aiida(projections, sliders_dict, quantities, plot_info):
     plot_info.text = "{} COFs found. Plotting...".format(nresults)
 
     # x,y position
-    x, y, clrs, uuids, names, cif_uuids = zip(*qb.all())
+    x, y, clrs, uuids, names, cif_uuids = list(zip(*qb.all()))
     plot_info.text = "{} COFs queried".format(nresults)
-    x = map(float, x)
-    y = map(float, y)
-    cif_uuids = map(str, cif_uuids)
-    uuids = map(str, uuids)
+    x = list(map(float, x))
+    y = list(map(float, y))
+    cif_uuids = list(map(str, cif_uuids))
+    uuids = list(map(str, uuids))
 
     if projections[2] == 'bond_type':
         #clrs = map(lambda clr: bondtypes.index(clr), clrs)
-        clrs = map(str, clrs)
+        clrs = list(map(str, clrs))
     else:
-        clrs = map(float, clrs)
+        clrs = list(map(float, clrs))
 
     return dict(x=x, y=y, uuid=cif_uuids, color=clrs, name=names)
