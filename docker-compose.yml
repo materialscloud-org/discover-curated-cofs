@@ -3,7 +3,10 @@ version: '2'
 services:
   bokeh:
     restart: always
-    build: .
+    build:
+      context: .
+      args:
+        BOKEH_PREFIX: /cofs
     image: discover-cofs:master
     command: ["/opt/serve-app.sh"]
     environment:

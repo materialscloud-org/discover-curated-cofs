@@ -61,5 +61,5 @@ pip install -e .
 ./prepare.sh
 docker-compose build
 docker-compose up
-# open http://localhost:3245/select-figure
+# open http://localhost:3245/cofs/select-figure
 ```
