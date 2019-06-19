@@ -8,6 +8,11 @@ static_dir = join(dirname(__file__), "static")
 with open(join(static_dir, "columns.yml"), 'r') as f:
     quantity_list = yaml.load(f)
 
+for item in quantity_list:
+    if 'scale' not in item.keys():
+        item['scale'] = 'linear'
+
+
 quantities = collections.OrderedDict([(q['column'], q) for q in quantity_list])
 
 plot_quantities = [

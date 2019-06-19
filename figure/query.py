@@ -48,7 +48,7 @@ def get_data_sqla(projections, sliders_dict, quantities):
 
 link_attribute_dict = {
     'opt_out_pe': ['PE', 'Td', 'Pd', 'WCg', 'WCv', 'Pur'],
-    'opt_out_zeopp': ['Density', 'surface_area', 'av_volume_fraction'],
+    'opt_out_zeopp': ['Density', 'ASA_m^2/g', 'AV_Volume_fraction'],
     'iso_co2': ['henry_coefficient_average'],
 }
 
@@ -85,12 +85,25 @@ def get_data_aiida(projections, sliders_dict, quantities):
     
     qb = QueryBuilder()
     qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, tag='collect')
-    for link_label in link_attribute_dict:
-        link_projections = [ 'attributes.' + p for p in projections if p in link_attribute_dict[link_label]]
-        if link_projections:
-            print(link_projections)
-            qb.append(ParameterData, project=link_projections, edge_filters={'label': link_label}, input_of='collect')
 
+    # Note: This implementation is faster but does not preserve the order of projections 
+    #       Could still use it but would need to reorder the columns before returning.
+    # qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, tag='collect')
+    # for link_label in link_attribute_dict:
+    #     link_projections = [ 'attributes.' + p for p in projections if p in link_attribute_dict[link_label]]
+    #     if link_projections:
+    #         print(link_projections)
+    #         qb.append(ParameterData, project=link_projections, edge_filters={'label': link_label}, input_of='collect')
+
+    for p in projections:
+        for link_label in link_attribute_dict:
+            if p in link_attribute_dict[link_label]:
+               print(p)
+               qb.append(ParameterData, project=['attributes.' + p], edge_filters={'label': link_label}, input_of='collect')
+
+    #     if link_projections:
+    #         print(link_projections)
+    #         qb.append(ParameterData, project=link_projections, edge_filters={'label': link_label}, input_of='collect')
     qb.append(StructureData, project=['label', 'uuid'], edge_filters={'label': 'ref_structure'}, input_of='collect')    
 
     return qb.all()
