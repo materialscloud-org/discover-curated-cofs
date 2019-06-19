@@ -10,12 +10,12 @@ for atomic structures and their properties.
 Use as jupyter notebook:
 ```
 jupyter notebook
-# open figure/panel.ipynb
+# open figure/main.ipynb
 ```
 
 Use with panel:
 ```
-panel serve figure/panel.ipynb
+panel serve detail/ figure/
 ```
 
 ## Features
