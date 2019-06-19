@@ -1,5 +1,7 @@
 from __future__ import print_function
 import numpy as np
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 def plot_isotherm(**kwargs):
@@ -54,4 +56,5 @@ def plot_isotherm(**kwargs):
         ax[0].set_ylim([-1,41])
         ax[1].set_xlim([-51,0+1])
         #fig.savefig(dir_out+"/"+structure_label+".png",dpi=300,bbox_inches='tight')
-    plt.show()
+    # plt.show()
+    return fig

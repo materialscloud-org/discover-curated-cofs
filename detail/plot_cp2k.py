@@ -102,5 +102,6 @@ def plot_energy_steps(stepsfile, structure_label):
         
         p.line('index', 'energy', source=data, line_color='blue')
         p.circle('index', 'energy', source=data, line_color='blue', size=3)
-        output_notebook()
-        show(p)
+        return p
+        #output_notebook()
+        #show(p)
