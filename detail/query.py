@@ -55,7 +55,7 @@ def get_sqlite_data(name, plot_info):
 
 
 
-def get_data_aiida(cif_uuid='3104b3fa-2f2f-40e7-9537-81f2e6b7ab08', link_label='cp2k_stepsfile'):
+def get_data_aiida(structure_label='13161N2', link_label='cp2k_stepsfile'):
     """Query the AiiDA database"""
     from aiida import load_dbenv, is_dbenv_loaded
     from aiida.backends import settings
@@ -63,6 +63,7 @@ def get_data_aiida(cif_uuid='3104b3fa-2f2f-40e7-9537-81f2e6b7ab08', link_label='
         load_dbenv()
     from aiida.orm.querybuilder import QueryBuilder
     from aiida.orm import WorkCalculation, Node
+    from aiida.orm.data.structure import StructureData
 
     # For some reason, the combined query is very slow...
     # qb = QueryBuilder()
@@ -72,13 +73,14 @@ def get_data_aiida(cif_uuid='3104b3fa-2f2f-40e7-9537-81f2e6b7ab08', link_label='
     # qb.one()
 
     qb = QueryBuilder()
-    qb.append(Node, filters={ 'uuid': cif_uuid}, tag='cif')
-    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, output_of='cif', tag='collect')
+    qb.append(StructureData, filters={ 'label': structure_label}, tag='structure')
+    #qb.append(Node, filters={ 'uuid': cif_uuid}, tag='cif')
+    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, output_of='structure', tag='collect')
     wf_node = qb.one()[0]
 
     qb = QueryBuilder()
     qb.append(Node, filters={ 'uuid': wf_node.uuid}, tag='collect')
-    qb.append(Node, project=['*'], edge_filters={'label': 'cp2k_stepsfile'}, input_of='collect')
+    qb.append(Node, project=['*'], edge_filters={'label': link_label}, input_of='collect')
     res_node = qb.one()[0]
 
     return res_node
