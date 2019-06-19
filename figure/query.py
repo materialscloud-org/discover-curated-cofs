@@ -46,8 +46,13 @@ def get_data_sqla(projections, sliders_dict, quantities):
 
     return results
 
+link_attribute_dict = {
+    'opt_out_pe': ['PE', 'Td', 'Pd', 'WCg', 'WCv', 'Pur'],
+    'opt_out_zeopp': ['Density', 'surface_area', 'av_volume_fraction'],
+    'iso_co2': ['henry_coefficient_average'],
+}
 
-def get_data_aiida(projections, sliders_dict, quantities, plot_info):
+def get_data_aiida(projections, sliders_dict, quantities):
     """Query the AiiDA database"""
     from aiida import load_dbenv, is_dbenv_loaded
     from aiida.backends import settings
@@ -55,10 +60,11 @@ def get_data_aiida(projections, sliders_dict, quantities, plot_info):
         load_dbenv(profile=settings.AIIDADB_PROFILE)
     from aiida.orm.querybuilder import QueryBuilder
     from aiida.orm.data.parameter import ParameterData
-    from aiida.orm import WorkCalculation
+    from aiida.orm.data.structure import StructureData
+    from aiida.orm import WorkCalculation, Node
 
     filters = {}
-    projections = projections[:3]
+    #projections = projections[:3]
 
     #def add_range_filter(bounds, label):
     #    # a bit of cheating until this is resolved
@@ -76,43 +82,40 @@ def get_data_aiida(projections, sliders_dict, quantities, plot_info):
     #    # Note: filtering is costly, avoid if possible
     #    if not v.value == quantities[k]['range']:
     #        add_range_filter(v.value, k)
+    
+    qb = QueryBuilder()
+    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, tag='collect')
+    for link_label in link_attribute_dict:
+        link_projections = [ 'attributes.' + p for p in projections if p in link_attribute_dict[link_label]]
+        if link_projections:
+            print(link_projections)
+            qb.append(ParameterData, project=link_projections, edge_filters={'label': link_label}, input_of='collect')
 
-    qb=QueryBuilder()
-    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'CalcPE'} }, tag='calc_pe')  # 296L
-    qb.append(ParameterData, project=['attributes.' + p
-                 for p in projections] + ['uuid', 'label', 'attributes.WCg'], descendant_of='calc_pe')
-    qb.all() # 296L
-    print(projections)
+    qb.append(StructureData, project=['label', 'uuid'], edge_filters={'label': 'ref_structure'}, input_of='collect')    
 
-#    qb = QueryBuilder()
-#    qb.append(
-#        ParameterData,
-#        filters=filters,
-#        project=['attributes.' + p
-#                 for p in projections] + ['uuid', 'attributes.Pd'],
-#        #project=['attributes.' + p
-#        #         for p in projections] + ['uuid', 'extras.cif_uuid'],
-#    )
+    return qb.all()
 
-    nresults = qb.count()
-    if nresults == 0:
-        plot_info.text = "No matching COFs found."
-        return data_empty
+    #nresults = qb.count()
+    #if nresults == 0:
+    #    plot_info.text = "No matching COFs found."
+    #    return data_empty
 
-    plot_info.text = "{} COFs found. Plotting...".format(nresults)
+    #plot_info.text = "{} COFs found. Plotting...".format(nresults)
 
-    # x,y position
-    x, y, clrs, uuids, names, cif_uuids = list(zip(*qb.all()))
-    plot_info.text = "{} COFs queried".format(nresults)
-    x = list(map(float, x))
-    y = list(map(float, y))
-    cif_uuids = list(map(str, cif_uuids))
-    uuids = list(map(str, uuids))
 
-    if projections[2] == 'bond_type':
-        #clrs = map(lambda clr: bondtypes.index(clr), clrs)
-        clrs = list(map(str, clrs))
-    else:
-        clrs = list(map(float, clrs))
+    ## x,y position
+    #x, y, clrs, uuids, names, cif_uuids = list(zip(*qb.all()))
+    #plot_info.text = "{} COFs queried".format(nresults)
+    #x = list(map(float, x))
+    #y = list(map(float, y))
+    #cif_uuids = list(map(str, cif_uuids))
+    #uuids = list(map(str, uuids))
 
-    return dict(x=x, y=y, uuid=cif_uuids, color=clrs, name=names)
+    #if projections[2] == 'bond_type':
+    #    #clrs = map(lambda clr: bondtypes.index(clr), clrs)
+    #    clrs = list(map(str, clrs))
+    #else:
+    #    clrs = list(map(float, clrs))
+
+    #return qb.all()
+    #return dict(x=x, y=y, uuid=cif_uuids, color=clrs, name=names)
