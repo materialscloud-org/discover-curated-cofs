@@ -70,7 +70,6 @@ def plot_energy_steps(stepsfile, structure_label):
     
         from bokeh.models import BoxAnnotation
         from bokeh.plotting import figure, show, output_notebook
-        from bokeh.sampledata.glucose import data
         import bokeh.models as bmd
 
         tooltips = [

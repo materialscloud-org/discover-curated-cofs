@@ -33,8 +33,8 @@ panel serve detail/ figure/
 ### Prerequisites
 
  * [git](https://git-scm.com/)
- * [python](https://www.python.org/)
- * [nodejs](https://nodejs.org/en/) >= 6
+ * [python](https://www.python.org/) >= 2.7
+ * [nodejs](https://nodejs.org/en/) >= 6.10
 
 ### Installation
 
