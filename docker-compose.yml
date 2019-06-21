@@ -3,17 +3,15 @@ version: '2'
 services:
   bokeh:
     restart: always
-    build:
-      context: .
-      args:
-        BOKEH_PREFIX: /cofs
     image: discover-cofs:master
     command: ["/opt/serve-app.sh"]
     environment:
       PYTHONPATH: '/project'
       SHELL: '/bin/bash'
+      BOKEH_PREFIX: /curated-cofs
+      EXPLORE_URL: "https://dev-www.materialscloud.org/explore/curated-cofs" 
 
-    volumes:
-     - './data:/project/discover-cofs/data'
+    #volumes:
+    # - './data:/project/discover-cofs/data'
     ports:
-      - '3245:5006'
+      - '3253:5006'
