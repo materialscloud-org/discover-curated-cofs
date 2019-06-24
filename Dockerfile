@@ -20,10 +20,13 @@ RUN ln -s /project/jmol-14.29.22/jsmol ./detail/static/jsmol
 COPY setup.py import_db.py ./
 RUN pip install -e .
 COPY serve-app.sh /opt/
+COPY config.json /project/.aiida/
 
-RUN chown -R scientist:scientist /project
+RUN useradd --home /project --uid 1000 --shell /bin/bash ubuntu && \
+    chown -R ubuntu:ubuntu /project
+#RUN chown -R scientist:scientist /project
 
-USER scientist
+USER ubuntu
 
 # start bokeh server
 EXPOSE 5006
