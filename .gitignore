@@ -5,3 +5,4 @@
 *.egg-info
 jmol.zip
 .ipynb_checkpoints/
+.vscode
