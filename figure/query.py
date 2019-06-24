@@ -8,6 +8,11 @@ from six.moves import zip
 # pylint: disable=too-many-locals
 data_empty = dict(x=[0], y=[0], uuid=['1234'], color=[0], name=['no data'])
 
+link_attribute_dict = {
+    'opt_out_pe': ['PE', 'Td', 'Pd', 'WCg', 'WCv', 'Pur'],
+    'opt_out_zeopp': ['Density', 'ASA_m^2/g', 'AV_Volume_fraction'],
+    'iso_co2': ['henry_coefficient_average'],
+}
 
 def get_data_aiida(projections, sliders_dict, quantities):
     """Query the AiiDA database"""
