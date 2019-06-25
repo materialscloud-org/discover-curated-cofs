@@ -4,3 +4,6 @@
 *.pyc
 *.egg-info
 jmol.zip
+.ipynb_checkpoints/
+.vscode
+config.json

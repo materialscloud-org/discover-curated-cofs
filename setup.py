@@ -7,7 +7,7 @@ if __name__ == '__main__':
     # Provide static information in setup.json
     # such that it can be discovered automatically
     setup(packages=["detail", "figure"],
-          name="bokeh-discover-section",
+          name="cofdb-discover-section",
           author="Leopold Talirz",
           author_email="info@materialscloud.org",
           description="A template for DISCOVER sections using bokeh server.",
@@ -15,11 +15,14 @@ if __name__ == '__main__':
           classifiers=["Programming Language :: Python"],
           version="0.1.1",
           install_requires=[
-              "bokeh",
+              "bokeh>=1.2.0",
               "jsmol-bokeh-extension>=0.2",
               "pandas",
               "sqlalchemy",
               "requests",
+              "panel",
+              "param",
+              "jupyter",
           ],
           extras_require={
               "pre-commit":

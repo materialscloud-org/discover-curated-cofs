@@ -1,7 +1,10 @@
 # Specify filters
 ---
-- dimensions
-- bond_type
-- deliverable_capacity
-- density
-- surface_area
+#- dimensions
+#- bond_type
+#- deliverable_capacity
+#- density
+#- surface_area
+- PE
+- Td
+- Pd

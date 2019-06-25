@@ -17,18 +17,16 @@ COPY figure ./figure
 COPY detail ./detail
 COPY select-figure ./select-figure
 RUN ln -s /project/jmol-14.29.22/jsmol ./detail/static/jsmol
-COPY setup.py import_db.py ./
+COPY setup.py ./
 RUN pip install -e .
 COPY serve-app.sh /opt/
+COPY config.json /project/.aiida/
 
-RUN chown -R scientist:scientist /project
+RUN useradd --home /project --uid 1000 --shell /bin/bash ubuntu && \
+    chown -R ubuntu:ubuntu /project
+#RUN chown -R scientist:scientist /project
 
-USER scientist
-
-# This environment variable can be changed at build time:
-#   docker build  --build-arg BOKEH_PREFIX=/abc
-ARG BOKEH_PREFIX="abc"
-ENV BOKEH_PREFIX $BOKEH_PREFIX
+USER ubuntu
 
 # start bokeh server
 EXPOSE 5006

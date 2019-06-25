@@ -5,7 +5,28 @@
     margin: 0 auto;
     text-align: center;
 }
+
+transparency:
+-webkit-mask-image: -webkit-gradient(linear, left top, 
+    left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
 */
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: rgba(0,0,0,.5);
+  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+div.grid-item {
+  max-height:350px;
+  overflow:scroll;
+}
+
 
 div.content {
     margin: 0 auto;
@@ -25,6 +46,12 @@ div.one-column-grid {
   grid-template-columns: repeat(1, 1fr);
   /* to offset the next grid */
   margin-block-end: 30px;
+}
+
+div.two-column-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-row-gap: 20px;
 }
 
 div.three-column-grid {

@@ -24,31 +24,63 @@ def get_sqlite_data(name, plot_info):
     return query.one()
 
 
-def get_data_aiida(cif_uuid, plot_info):
+# def get_data_aiida(cif_uuid, plot_info):
+#     """Query the AiiDA database"""
+#     from aiida import load_dbenv, is_dbenv_loaded
+#     from aiida.backends import settings
+#     if not is_dbenv_loaded():
+#         load_dbenv(profile=settings.AIIDADB_PROFILE)
+#     from aiida.orm.querybuilder import QueryBuilder
+#     from aiida.orm.data.parameter import ParameterData
+#     from aiida.orm.data.cif import CifData
+
+#     qb = QueryBuilder()
+#     qb.append(CifData,
+#               filters={'uuid': {
+#                   '==': cif_uuid
+#               }},
+#               tag='cifs',
+#               project='*')
+#     qb.append(
+#         ParameterData,
+#         descendant_of='cifs',
+#         project='*',
+#     )
+
+#     nresults = qb.count()
+#     if nresults == 0:
+#         plot_info.text = "No matching COF found."
+#         return None
+#     return qb.one()
+
+
+
+def get_data_aiida(structure_label='13161N2', link_label='cp2k_stepsfile'):
     """Query the AiiDA database"""
     from aiida import load_dbenv, is_dbenv_loaded
     from aiida.backends import settings
     if not is_dbenv_loaded():
-        load_dbenv(profile=settings.AIIDADB_PROFILE)
+        load_dbenv()
     from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm.data.parameter import ParameterData
-    from aiida.orm.data.cif import CifData
+    from aiida.orm import WorkCalculation, Node
+    from aiida.orm.data.structure import StructureData
+
+    # For some reason, the combined query is very slow...
+    # qb = QueryBuilder()
+    # qb.append(Node, filters={ 'uuid': cif_uuid}, tag='cif')
+    # qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, output_of='cif', tag='collect')
+    # qb.append(Node, project=['*'], edge_filters={'label': 'cp2k_stepsfile'}, input_of='collect', )
+    # qb.one()
 
     qb = QueryBuilder()
-    qb.append(CifData,
-              filters={'uuid': {
-                  '==': cif_uuid
-              }},
-              tag='cifs',
-              project='*')
-    qb.append(
-        ParameterData,
-        descendant_of='cifs',
-        project='*',
-    )
+    qb.append(StructureData, filters={ 'label': structure_label}, tag='structure')
+    #qb.append(Node, filters={ 'uuid': cif_uuid}, tag='cif')
+    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, output_of='structure', tag='collect')
+    wf_node = qb.one()[0]
 
-    nresults = qb.count()
-    if nresults == 0:
-        plot_info.text = "No matching COF found."
-        return None
-    return qb.one()
+    qb = QueryBuilder()
+    qb.append(Node, filters={ 'uuid': wf_node.uuid}, tag='collect')
+    qb.append(Node, project=['*'], edge_filters={'label': link_label}, input_of='collect')
+    res_node = qb.one()[0]
+
+    return res_node
