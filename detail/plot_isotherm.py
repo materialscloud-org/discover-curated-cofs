@@ -5,7 +5,7 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 def plot_isotherm(**kwargs):
-    
+
     #plot figure
     pmax=30
     plotcolor={'co2':'red','n2':'blue'}
@@ -17,7 +17,7 @@ def plot_isotherm(**kwargs):
                            sharey=True,
                            gridspec_kw={"width_ratios":[1.2,0.8],
                                 "wspace":0.0})
-    fig.suptitle('Isotherms for: '+ structure_label)
+    #fig.suptitle('Isotherms for: '+ structure_label)
     ax[0].set(xlabel='Pressure (bar)',
               ylabel='Uptake (mol/kg)')
     ax[1].set(xlabel='Heat of adsorption (kJ/mol)')
