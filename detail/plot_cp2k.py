@@ -44,7 +44,7 @@ def plot_energy_steps(stepsfile, structure_label):
         import matplotlib.pyplot as plt
 
         fig, ax = plt.subplots(figsize=[8, 4.5])
-        ax.set(title='Robust cell optimization of: '+ structure_label,
+        ax.set(#title='Robust cell optimization of: '+ structure_label,
             xlabel='Steps',
             ylabel='Energy (eV/atom)',
             ylim=[-0.01*max_energy_shifted, +1.01*max_energy_shifted],
@@ -67,7 +67,7 @@ def plot_energy_steps(stepsfile, structure_label):
         plt.close(fig)
 
     elif plot_method == 'bokeh':
-    
+
         from bokeh.models import BoxAnnotation
         from bokeh.plotting import figure, show, output_notebook
         import bokeh.models as bmd
@@ -78,16 +78,16 @@ def plot_energy_steps(stepsfile, structure_label):
         ]
         hover = bmd.HoverTool(tooltips=tooltips)
         TOOLS = ["pan", "wheel_zoom", "box_zoom", "reset", "save", hover]
-        
-        data = bmd.ColumnDataSource(data=dict( energy=energy_shifted, index=range(len(energy_shifted)) ) ) 
 
-        p = figure(tools=TOOLS, title='Robust cell optimization of: '+ structure_label,
+        data = bmd.ColumnDataSource(data=dict( energy=energy_shifted, index=range(len(energy_shifted)) ) )
+
+        p = figure(tools=TOOLS, #title='Robust cell optimization of: '+ structure_label,
                 height=350, width=550)
         #p.background_fill_color = "#efefef"
         #p.xgrid.grid_line_color=None
         p.xaxis.axis_label = 'Steps'
         p.yaxis.axis_label = 'Energy (ev/atom)'
-        
+
 
         startindex=get_startindex(steps)
         startindex = [s-1 for s in startindex]
@@ -98,7 +98,7 @@ def plot_energy_steps(stepsfile, structure_label):
         if len(startindex) > 4: #Print also Stage3_CellOpt
             p.add_layout(BoxAnnotation(left=startindex[3], right=startindex[4], fill_alpha=0.2, fill_color='green'))
         #print energy profile
-        
+
         p.line('index', 'energy', source=data, line_color='blue')
         p.circle('index', 'energy', source=data, line_color='blue', size=3)
         return p
