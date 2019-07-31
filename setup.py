@@ -23,6 +23,7 @@ if __name__ == '__main__':
               "panel",
               "param",
               "jupyter",
+              "graphviz",
           ],
           extras_require={
               "pre-commit":
