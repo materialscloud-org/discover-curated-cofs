@@ -67,7 +67,6 @@ def plot_energy_steps(stepsfile, structure_label):
         plt.close(fig)
 
     elif plot_method == 'bokeh':
-
         from bokeh.models import BoxAnnotation
         from bokeh.plotting import figure, show, output_notebook
         import bokeh.models as bmd
@@ -88,7 +87,6 @@ def plot_energy_steps(stepsfile, structure_label):
         p.xaxis.axis_label = 'Steps'
         p.yaxis.axis_label = 'Energy (ev/atom)'
 
-
         startindex=get_startindex(steps)
         startindex = [s-1 for s in startindex]
         if len(startindex) > 2: #Print only Stage1_CellOpt
@@ -98,7 +96,6 @@ def plot_energy_steps(stepsfile, structure_label):
         if len(startindex) > 4: #Print also Stage3_CellOpt
             p.add_layout(BoxAnnotation(left=startindex[3], right=startindex[4], fill_alpha=0.2, fill_color='green'))
         #print energy profile
-
         p.line('index', 'energy', source=data, line_color='blue')
         p.circle('index', 'energy', source=data, line_color='blue', size=3)
         return p

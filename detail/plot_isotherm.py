@@ -5,7 +5,6 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 def plot_isotherm(**kwargs):
-
     #plot figure
     pmax=30
     plotcolor={'co2':'red','n2':'blue'}
