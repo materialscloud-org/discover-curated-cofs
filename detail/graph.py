@@ -37,8 +37,10 @@ def get_graph(cof_label):
     import pandas as pd
 
     df = pd.read_csv("detail/static/cof-papers.csv")
+    paper_id = "p{:s}".format(cof_label[:4])
+    paper_row = df.loc[df["CURATED-COFs paper ID"] == paper_id ]
+    link_paper = paper_row["URL"].values[0]
 
-    link_paper = df[df["CURATED-COFs paper ID"]=="p{}".format(cof_label[:4])].at[0,"URL"]
     link_github = "https://github.com/danieleongari/CURATED-COFs/blob/master/cifs/{}.cif".format(cof_label)
 
     g = Digraph("Workflow's graph")
