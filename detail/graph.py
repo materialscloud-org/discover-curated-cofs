@@ -2,6 +2,7 @@
 """
 
 def get_aiida_link(cof_label, link_label, get_wf):
+    import os
     from aiida import load_dbenv, is_dbenv_loaded
     from aiida.backends import settings
     if not is_dbenv_loaded():
@@ -31,7 +32,7 @@ def get_aiida_link(cof_label, link_label, get_wf):
     return "{}/details/{}".format(explore_url,res_node.uuid)
 
 def get_graph(cof_label):
-    import os
+
     from graphviz import Digraph
     import pandas as pd
 
