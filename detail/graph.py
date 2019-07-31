@@ -1,48 +1,44 @@
 """ Plots the workflow's graph
 """
 
+def get_aiida_link(cof_label, link_label, get_wf):
+    from aiida import load_dbenv, is_dbenv_loaded
+    from aiida.backends import settings
+    if not is_dbenv_loaded():
+        load_dbenv()
+    from aiida.orm.querybuilder import QueryBuilder
+    from aiida.orm import WorkCalculation, Node
+    from aiida.orm.data.structure import StructureData
+    explore_url = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
+
+    qb = QueryBuilder()
+    qb.append(StructureData, filters={ 'label': cof_label}, tag='structure')
+    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, output_of='structure', tag='collect')
+    wf_node = qb.one()[0]
+
+    qb = QueryBuilder()
+    qb.append(Node, filters={ 'uuid': wf_node.uuid}, tag='collect')
+    qb.append(Node, project=['*'], edge_filters={'label': link_label}, input_of='collect')
+    res_node = qb.one()[0]
+
+    if get_wf:
+        qb = QueryBuilder()
+        qb.append(Node, filters={ 'uuid': res_node.uuid}, tag='param')
+        qb.append(WorkCalculation, input_of='param')
+        qb.order_by({WorkCalculation:{'ctime':'asc'}}) #Dirty trick: for opt_cif_ddec takes RobustCellOptDDEC instead of DDEC WorkChain
+        res_node = qb.all()[0][0]
+
+    return "{}/details/{}".format(explore_url,res_node.uuid)
+
 def get_graph(cof_label):
     import os
     from graphviz import Digraph
     import pandas as pd
 
-    def get_aiida_link(cof_label, link_label, get_wf):
-        from aiida import load_dbenv, is_dbenv_loaded
-        from aiida.backends import settings
-        if not is_dbenv_loaded():
-            load_dbenv()
-        from aiida.orm.querybuilder import QueryBuilder
-        from aiida.orm import WorkCalculation, Node
-        from aiida.orm.data.structure import StructureData
-        explore_url = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
-
-        qb = QueryBuilder()
-        qb.append(StructureData, filters={ 'label': cof_label}, tag='structure')
-        qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, output_of='structure', tag='collect')
-        wf_node = qb.one()[0]
-
-        qb = QueryBuilder()
-        qb.append(Node, filters={ 'uuid': wf_node.uuid}, tag='collect')
-        qb.append(Node, project=['*'], edge_filters={'label': link_label}, input_of='collect')
-        res_node = qb.one()[0]
-
-        if get_wf:
-            qb = QueryBuilder()
-            qb.append(Node, filters={ 'uuid': res_node.uuid}, tag='param')
-            qb.append(WorkCalculation, input_of='param')
-            qb.order_by({WorkCalculation:{'ctime':'asc'}}) #Dirty trick: for opt_cif_ddec takes RobustCellOptDDEC instead of DDEC WorkChain
-            res_node = qb.all()[0][0]
-
-
-        return "{}/details/{}".format(explore_url,res_node.uuid)
-
     df = pd.read_csv("detail/static/cof-papers.csv")
 
     link_paper = df[df["CURATED-COFs paper ID"]=="p{}".format(cof_label[:4])].at[0,"URL"]
     link_github = "https://github.com/danieleongari/CURATED-COFs/blob/master/cifs/{}.cif".format(cof_label)
-
-
-    link_test = "https://google.com"
 
     g = Digraph("Workflow's graph")
 
