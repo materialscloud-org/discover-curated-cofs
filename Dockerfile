@@ -19,8 +19,8 @@ COPY select-figure ./select-figure
 RUN ln -s /project/jmol-14.29.22/jsmol ./detail/static/jsmol
 COPY setup.py ./
 RUN pip install -e .
-COPY serve-app.sh /opt/
-COPY config.json /project/.aiida/
+COPY .docker/serve-app.sh /opt/
+COPY .docker/config.json /project/.aiida/
 
 RUN useradd --home /project --uid 1000 --shell /bin/bash ubuntu && \
     chown -R ubuntu:ubuntu /project

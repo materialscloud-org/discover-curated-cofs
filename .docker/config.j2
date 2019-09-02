@@ -1,0 +1,34 @@
+{
+    "default_profiles": {
+        "daemon": "curated-cofs",
+        "verdi": "curated-cofs"
+    },
+    "CONFIG_VERSION": {
+        "CURRENT": 1,
+        "OLDEST_COMPATIBLE": 0
+    },
+    "profiles": {
+        "default": {
+            "AIIDADB_ENGINE": "postgresql_psycopg2",
+            "AIIDADB_PASS": "aiida_db_passwd",
+            "AIIDADB_NAME": "aiidadb",
+            "AIIDADB_HOST": "localhost",
+            "AIIDADB_BACKEND": "sqlalchemy",
+            "AIIDADB_PORT": 5432,
+            "default_user_email": "discover@materialscloud.org",
+            "AIIDADB_REPOSITORY_URI": "file:///project/.aiida/repository-default",
+            "AIIDADB_USER": "aiida"
+        },
+        "curated-cofs": {
+            "AIIDADB_ENGINE": "postgresql_psycopg2",
+            "AIIDADB_PASS": "{{ aiida_db_pass }}",
+            "AIIDADB_NAME": "{{ aiida_db_name }}",
+            "AIIDADB_HOST": "{{ aiida_db_host }}",
+            "AIIDADB_BACKEND": "sqlalchemy",
+            "AIIDADB_PORT": "{{ aiida_db_port }}",
+            "default_user_email": "leopold.talirz@epfl.ch",
+            "AIIDADB_REPOSITORY_URI": "file:///project/.aiida/repository-curated-cofs",
+            "AIIDADB_USER": "mcloud"
+        }
+    }
+}

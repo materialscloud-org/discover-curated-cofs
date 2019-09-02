@@ -6,4 +6,4 @@
 jmol.zip
 .ipynb_checkpoints/
 .vscode
-config.json
+.docker/config.json
