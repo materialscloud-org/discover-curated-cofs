@@ -19,7 +19,6 @@ def plot_isotherm(**kwargs):
     p1 = figure(tools=TOOLS, height=350, width=450, x_range=(-1, pmax+1), y_range=(-1,41))
     p1.xaxis.axis_label = 'Pressure (bar)'
     p1.yaxis.axis_label = 'Uptake (mol/kg)'
-    p1.legend.location = "top_left"
 
     p2 = figure(tools=TOOLS, height=350, width=250, x_range=(-51, 0+1), y_range=(-1,41))
     p2.xaxis.axis_label = 'Heat of adsorption (kJ/mol)'
@@ -66,6 +65,8 @@ def plot_isotherm(**kwargs):
         p2.add_layout(
             bmd.Whisker(source=source, base="h_avg", upper="h_upper", lower="h_lower", dimension='width')  # , level="overlay")
         )
+
+    p1.legend.location = "top_left"
 
     fig = row(p1, p2)
 
