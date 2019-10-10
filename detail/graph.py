@@ -4,7 +4,6 @@
 def get_aiida_link(cof_label, link_label, get_wf):
     import os
     from aiida import load_dbenv, is_dbenv_loaded
-    from aiida.backends import settings
     if not is_dbenv_loaded():
         load_dbenv()
     from aiida.orm.querybuilder import QueryBuilder
