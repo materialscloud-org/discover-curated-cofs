@@ -17,26 +17,19 @@ link_attribute_dict = {
 
 def get_data_aiida(projections, sliders_dict, quantities):
     """Query the AiiDA database"""
-    from aiida import load_dbenv, is_dbenv_loaded
-    from aiida.backends import settings
-    if not is_dbenv_loaded():
-        load_dbenv(profile=settings.AIIDADB_PROFILE)
     from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm.data.parameter import ParameterData
-    from aiida.orm.data.structure import StructureData
-    from aiida.orm import WorkCalculation, Node
+    from aiida.orm import Dict, StructureData, WorkFunctionNode, Node
 
     filters = {}
-    
+
     qb = QueryBuilder()
-    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, tag='collect')
+    qb.append(WorkFunctionNode, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, tag='collect')
 
     for p in projections:
         for link_label in link_attribute_dict:
             if p in link_attribute_dict[link_label]:
                print(p)
-               qb.append(ParameterData, project=['attributes.' + p], edge_filters={'label': link_label}, input_of='collect')
-    qb.append(StructureData, project=['label', 'uuid'], edge_filters={'label': 'ref_structure'}, input_of='collect')    
+               qb.append(Dict, project=['attributes.' + p], edge_filters={'label': link_label}, with_outgoing='collect')
+    qb.append(StructureData, project=['label', 'uuid'], edge_filters={'label': 'ref_structure'}, with_outgoing='collect')
 
     return qb.all()
-
