@@ -17,8 +17,6 @@ def structure_jsmol(cif_str):
         j2sPath="detail/static/jsmol/j2s",
         #serverURL="https://www.materialscloud.org/discover/scripts/external/jsmol/php/jsmol.php",
         #j2sPath="https://www.materialscloud.org/discover/scripts/external/jsmol/j2s",
-        #serverURL="detail/static/jsmol/php/jsmol.php",
-        #j2sPath="detail/static/jsmol/j2s",
         script="""set antialiasDisplay ON;
     load data "cifstring"
     {}
@@ -35,7 +33,7 @@ def structure_jsmol(cif_str):
         height=600,
         script_source=script_source,
         info=info,
-        #js_url="detail/static/jsmol/JSmol.min.js",
+        js_url="detail/static/jsmol/JSmol.min.js",
     )
 
     return applet
