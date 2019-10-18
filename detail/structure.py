@@ -17,15 +17,14 @@ def structure_jsmol(cif_str):
         j2sPath="detail/static/jsmol/j2s",
         #serverURL="https://www.materialscloud.org/discover/scripts/external/jsmol/php/jsmol.php",
         #j2sPath="https://www.materialscloud.org/discover/scripts/external/jsmol/j2s",
-        script="""set antialiasDisplay ON;
-    load data "cifstring"
-    {}
-    end "cifstring"
-    """.format(cif_str)
-        ## Note: Need PHP server for approach below to work
-        #    script="""set antialiasDisplay ON;
-        #load cif::{};
-        #""".format(get_cif_url(entry.filename))
+        script="""
+set antialiasDisplay ON;
+load data "cifstring"
+
+{}
+
+end "cifstring"
+""".format(cif_str)
     )
 
     applet = JSMol(

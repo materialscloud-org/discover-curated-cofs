@@ -23,19 +23,23 @@ def get_sqlite_data(name, plot_info):
         return None
     return query.one()
 
-def get_data_aiida(structure_label='13161N2', link_label='cp2k_stepsfile'):
+def get_data_aiida(structure_label='13161N2', link_label='dftopt_out'):
     """Query the AiiDA database"""
     from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm import WorkFunctionNode, Node, StructureData
+    from aiida.orm import WorkFunctionNode, Node
 
     qb = QueryBuilder()
-    qb.append(StructureData, filters={ 'label': structure_label}, tag='structure')
-    qb.append(WorkFunctionNode, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, with_incoming='structure', tag='collect')
-    wf_node = qb.one()[0]
+    qb.append(Node, filters={'label': structure_label}, tag='cof')
+    qb.append(WorkFunctionNode, filters={'attributes.function_name': {'==': 'link_outputs'}}, with_incoming='cof', tag='link')
+    qb.append(Node, edge_filters={'label': link_label}, with_outgoing='link')
+    return qb.all()[0][0]
+
+def get_curated_cofs_version(structure_label='13161N2'):
+    """Query the AiiDA database"""
+    from aiida.orm.querybuilder import QueryBuilder
+    from aiida.orm import WorkFunctionNode, Node
 
     qb = QueryBuilder()
-    qb.append(Node, filters={ 'uuid': wf_node.uuid}, tag='collect')
-    qb.append(Node, project=['*'], edge_filters={'label': link_label}, with_outgoing='collect')
-    res_node = qb.one()[0]
-
-    return res_node
+    qb.append(Node, filters={'label': structure_label}, tag='cof')
+    qb.append(WorkFunctionNode, filters={'attributes.function_name': {'==': 'link_outputs'}}, with_incoming='cof', tag='link')
+    return qb.all()[0][0].extras['curated_cofs_version']
