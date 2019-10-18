@@ -2,34 +2,37 @@
 """
 from __future__ import absolute_import
 from bokeh.models.widgets import RangeSlider, CheckboxButtonGroup
-from .config import max_points
-from six.moves import map
-from six.moves import zip
 # pylint: disable=too-many-locals
 data_empty = dict(x=[0], y=[0], uuid=['1234'], color=[0], name=['no data'])
 
-link_attribute_dict = {
-    'opt_out_pe': ['PE', 'WCg', 'WCv', 'Pur'],
-    'opt_out_zeopp': ['Density', 'ASA_m^2/g', 'AV_Volume_fraction'],
-    'iso_co2': ['henry_coefficient_average'], #TODO: handle also the uptake at 30 bar
-    #'iso_n2': ['henry_coefficient_average'], TODO: redesign the query so that this can be added
+get_link = {
+    'PE': 'pe_out',
+    'WCg': 'pe_out',
+    'WCv': 'pe_out',
+    'Pur': 'pe_out',
+    'Density': 'opt_zeopp_out',
+    'ASA_m^2/g': 'opt_zeopp_out',
+    'AV_Volume_fraction': 'opt_zeopp_out',
+    'henry_coefficient_average_co2': 'isot_co2_out',
+    'henry_coefficient_average_n2': 'isot_n2_out',
 }
 
-def get_data_aiida(projections, sliders_dict, quantities):
+def get_data_aiida(inp_list):
     """Query the AiiDA database"""
     from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm import Dict, StructureData, WorkFunctionNode, Node
+    from aiida.orm import Node, Dict, WorkFunctionNode
 
     filters = {}
 
     qb = QueryBuilder()
-    qb.append(WorkFunctionNode, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, tag='collect')
+    qb.append(WorkFunctionNode, filters={ 'attributes.function_name': {'==': 'link_outputs'} }, tag='link')
 
-    for p in projections:
-        for link_label in link_attribute_dict:
-            if p in link_attribute_dict[link_label]:
-               print(p)
-               qb.append(Dict, project=['attributes.' + p], edge_filters={'label': link_label}, with_outgoing='collect')
-    qb.append(StructureData, project=['label', 'uuid'], edge_filters={'label': 'ref_structure'}, with_outgoing='collect')
+    for inp in inp_list:
+        if inp in  ['henry_coefficient_average_co2', 'henry_coefficient_average_n2']:
+            proj = 'henry_coefficient_average' #fix to distinguish co2/n2
+        else:
+            proj = inp
+        qb.append(Dict, project=['attributes.{}'.format(proj)], edge_filters={'label': get_link[inp]}, with_outgoing='link')
+    qb.append(Node, project=['label'], edge_filters={'label': 'orig_cif'}, with_outgoing='link')
 
     return qb.all()

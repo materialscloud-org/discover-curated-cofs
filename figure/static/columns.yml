@@ -33,9 +33,18 @@
   - 1
   unit: mol/mol
 
-- column: henry_coefficient_average
+- column: henry_coefficient_average_co2
   type: float
   label: Henry coefficient (CO2)
+  range:
+  - 0
+  - 1
+  unit: mol/kg/Pa
+  scale: log
+
+- column: henry_coefficient_average_n2
+  type: float
+  label: Henry coefficient (N2)
   range:
   - 0
   - 1
