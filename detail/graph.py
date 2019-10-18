@@ -20,32 +20,37 @@ def get_graph(cof_label):
 
     from graphviz import Digraph
     import pandas as pd
+    import os
 
-    url = 'https://raw.githubusercontent.com/danieleongari/CURATED-COFs/additions/cof-papers.csv'#TODO: update!
-    df = pd.read_csv(url)
+    try:
+        this_dir = os.path.dirname(os.path.abspath(__file__)) + '/'
+    except:
+        this_dir = '',
+
+    df = pd.read_csv(this_dir + "static/cof-papers.csv")
     paper_id = "p{:s}".format(cof_label[:4])
     paper_row = df.loc[df["CURATED-COFs paper ID"] == paper_id ]
     link_paper = "https://doi.org/" + paper_row["DOI"].values[0]
 
-    link_github = "https://github.com/danieleongari/CURATED-COFs/blob/additions/cifs/{}.cif".format(cof_label) #TODO: update!
+    link_github = "https://github.com/danieleongari/CURATED-COFs/blob/master/cifs/{}.cif".format(cof_label)
 
     g = Digraph("Workflow's graph")
 
     g.attr(rankdir='TB')
     g.attr("node",style='filled', fillcolor='white:gray', gradientangle='45')
 
-    g.node("Reference\npublication", shape="oval",                              href=link_paper)
-    g.node("GitHub", shape="oval",                                              href=link_github)
-    g.node("Original\nstructure", shape="oval",                                 href=get_aiida_link(cof_label,"orig_cif"))
-    g.node("geo1",label="Geometrical\nproperties", shape="oval",                href=get_aiida_link(cof_label,"orig_zeopp_out"))
+    g.node("Reference\npublication", shape="oval",               href=link_paper)
+    g.node("GitHub", shape="oval",                               href=link_github)
+    g.node("Original\nstructure", shape="oval",                  href=get_aiida_link(cof_label,"orig_cif"))
+    g.node("geo1",label="Geometric\nproperties", shape="oval",   href=get_aiida_link(cof_label,"orig_zeopp_out"))
     g.node("DFT optimization\n& DDEC charges", shape="box")
-    g.node("Optimized structure\n W/DDEC charges", shape="oval",                href=get_aiida_link(cof_label,"opt_cif_ddec"))
-    g.node("geo2",label="Geometrical\nproperties", shape="oval",                href=get_aiida_link(cof_label,"opt_zepp_out"))
+    g.node("Optimized structure\n W/DDEC charges", shape="oval", href=get_aiida_link(cof_label,"opt_cif_ddec"))
+    g.node("geo2",label="Geometric\nproperties", shape="oval",   href=get_aiida_link(cof_label,"opt_zeopp_out"))
     g.node("Adsorption calculation\nCO2", shape="box")
     g.node("Adsorption calculation\nN2", shape="box")
-    g.node("Results CO2", shape="oval",                                         href=get_aiida_link(cof_label,"isot_co2_out"))
-    g.node("Results N2", shape="oval",                                          href=get_aiida_link(cof_label,"isot_n2_out"))
-    g.node("CCS process\nperformances", shape="oval",                           href=get_aiida_link(cof_label,"pe_out"))
+    g.node("Results CO2", shape="oval",                          href=get_aiida_link(cof_label,"isot_co2_out"))
+    g.node("Results N2", shape="oval",                           href=get_aiida_link(cof_label,"isot_n2_out"))
+    g.node("CCS process\nperformances", shape="oval",            href=get_aiida_link(cof_label,"pe_out"))
 
     g.edge("Reference\npublication",'GitHub')
     g.edge('GitHub', 'Original\nstructure')
