@@ -16,7 +16,7 @@ if __name__ == '__main__':
           version="0.1.1",
           install_requires=[
               "bokeh>=1.2.0",
-              "jsmol-bokeh-extension>=0.2",
+              "jsmol-bokeh-extension>=0.2.1",
               "pandas",
               "sqlalchemy",
               "requests",
