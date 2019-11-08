@@ -25,12 +25,18 @@ def get_sqlite_data(name, plot_info):
 
 
 def get_group(label='13161N2'):
-    """Query the AiiDA database to get the curated-cof group"""
+    """Query the AiiDA database to get the curated-cof group.
+    If multiple version are available qb.all()[0][0] shuld take the last one computed.
+    """
     from aiida.orm.querybuilder import QueryBuilder
     from aiida.orm import Group
     qb = QueryBuilder()
-    qb.append(Group, filters={'label': 'curated-cof_{}'.format(label)})
+    qb.append(Group, filters={'label': {'like': 'curated-cof_{}_v%'.format(label)}})
     return qb.all()[0][0]
+
+def get_version(group_node):
+    """Given a group return the version as integer."""
+    return int(group_node.label.split("_v")[-1])
 
 def get_data_aiida(group_node, extra_tag):
     """Query the AiiDA database"""

@@ -27,7 +27,7 @@ def get_graph(cof_group):
         this_dir = '',
 
     df = pd.read_csv(this_dir + "static/cof-papers.csv")
-    cof_label = cof_group.label.split("_")[-1]
+    cof_label = cof_group.label.split("_")[1]
     paper_id = "p{:s}".format(cof_label[:4])
     paper_row = df.loc[df["CURATED-COFs paper ID"] == paper_id ]
     link_paper = "https://doi.org/" + paper_row["DOI"].values[0]
