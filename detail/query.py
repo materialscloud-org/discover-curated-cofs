@@ -23,23 +23,21 @@ def get_sqlite_data(name, plot_info):
         return None
     return query.one()
 
-def get_data_aiida(structure_label='13161N2', link_label='dftopt_out'):
-    """Query the AiiDA database"""
-    from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm import WorkFunctionNode, Node
 
+def get_group(label='13161N2'):
+    """Query the AiiDA database to get the curated-cof group"""
+    from aiida.orm.querybuilder import QueryBuilder
+    from aiida.orm import Group
     qb = QueryBuilder()
-    qb.append(Node, filters={'label': structure_label}, tag='cof')
-    qb.append(WorkFunctionNode, filters={'attributes.function_name': {'==': 'link_outputs'}}, with_incoming='cof', tag='link')
-    qb.append(Node, edge_filters={'label': link_label}, with_outgoing='link')
+    qb.append(Group, filters={'label': 'curated-cof_{}'.format(label)})
     return qb.all()[0][0]
 
-def get_curated_cofs_version(structure_label='13161N2'):
+def get_data_aiida(group_node, extra_tag):
     """Query the AiiDA database"""
     from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm import WorkFunctionNode, Node
+    from aiida.orm import Node, Group
 
     qb = QueryBuilder()
-    qb.append(Node, filters={'label': structure_label}, tag='cof')
-    qb.append(WorkFunctionNode, filters={'attributes.function_name': {'==': 'link_outputs'}}, with_incoming='cof', tag='link')
-    return qb.all()[0][0].extras['curated_cofs_version']
+    qb.append(Group, filters={'uuid': group_node.uuid}, tag='group')
+    qb.append(Node, filters={'extras.curated-cof_tag': extra_tag}, with_group='group')
+    return qb.all()[0][0]
