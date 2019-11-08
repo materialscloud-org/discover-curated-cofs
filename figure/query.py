@@ -38,6 +38,5 @@ def get_data_aiida(inp_list):
             proj = inp
         qb.append(Dict, project=['attributes.{}'.format(proj)], filters={'extras.curated-cof_tag': get_tag[inp]},
             with_group='curated-cof')
-    print(qb.all())
 
     return qb.all()
