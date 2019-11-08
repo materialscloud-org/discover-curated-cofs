@@ -1,21 +1,13 @@
 """ Plots the workflow's graph
 """
+import os
 
-def get_aiida_link(group_node, extra_tag):
-    import os
-    from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm import  Node, Group
+EXPLORE_URL = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
 
-    explore_url = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
+def get_aiida_link(node_dict, extra_tag):
+    return "{}/details/{}".format(EXPLORE_URL,node_dict[extra_tag].uuid)
 
-    qb = QueryBuilder()
-    qb.append(Group, filters={'uuid': group_node.uuid}, tag='group')
-    qb.append(Node, filters={'extras.curated-cof_tag': extra_tag}, with_group='group')
-    res_node = qb.all()[0][0]
-
-    return "{}/details/{}".format(explore_url,res_node.uuid)
-
-def get_graph(cof_group):
+def get_graph(cof_group, node_dict):
 
     from graphviz import Digraph
     import pandas as pd
@@ -41,18 +33,18 @@ def get_graph(cof_group):
 
     g.node("Reference\npublication", shape="oval",               href=link_paper)
     g.node("GitHub", shape="oval",                               href=link_github)
-    g.node("Original\nstructure", shape="oval",                  href=get_aiida_link(cof_group,"orig_cif"))
-    g.node("geo1",label="Geometric\nproperties", shape="oval",   href=get_aiida_link(cof_group,"orig_zeopp_out"))
-    g.node("DFT optimization", shape="box",                      href=get_aiida_link(cof_group,"dftopt_wc"))
-    g.node("DFT output details", shape="box",                    href=get_aiida_link(cof_group,"dftopt_out"))
-    g.node("DDEC charges evaluation", shape="box",               href=get_aiida_link(cof_group,"ddec_wc"))
-    g.node("Optimized structure\n W/DDEC charges", shape="oval", href=get_aiida_link(cof_group,"opt_cif_ddec"))
-    g.node("geo2",label="Geometric\nproperties", shape="oval",   href=get_aiida_link(cof_group,"opt_zeopp_out"))
-    g.node("Adsorption calculation\nCO2", shape="box",           href=get_aiida_link(cof_group,"isot_co2_wc"))
-    g.node("Adsorption calculation\nN2", shape="box",            href=get_aiida_link(cof_group,"isot_n2_wc"))
-    g.node("Results CO2", shape="oval",                          href=get_aiida_link(cof_group,"isot_co2_out"))
-    g.node("Results N2", shape="oval",                           href=get_aiida_link(cof_group,"isot_n2_out"))
-    g.node("CCS process\nperformances", shape="oval",            href=get_aiida_link(cof_group,"pe_out"))
+    g.node("Original\nstructure", shape="oval",                  href=get_aiida_link(node_dict,"orig_cif"))
+    g.node("geo1",label="Geometric\nproperties", shape="oval",   href=get_aiida_link(node_dict,"orig_zeopp_out"))
+    g.node("DFT optimization", shape="box",                      href=get_aiida_link(node_dict,"dftopt_wc"))
+    g.node("DFT output details", shape="oval",                    href=get_aiida_link(node_dict,"dftopt_out"))
+    g.node("DDEC charges evaluation", shape="box",               href=get_aiida_link(node_dict,"ddec_wc"))
+    g.node("Optimized structure\n W/DDEC charges", shape="oval", href=get_aiida_link(node_dict,"opt_cif_ddec"))
+    g.node("geo2",label="Geometric\nproperties", shape="oval",   href=get_aiida_link(node_dict,"opt_zeopp_out"))
+    g.node("Adsorption calculation\nCO2", shape="box",           href=get_aiida_link(node_dict,"isot_co2_wc"))
+    g.node("Adsorption calculation\nN2", shape="box",            href=get_aiida_link(node_dict,"isot_n2_wc"))
+    g.node("Results CO2", shape="oval",                          href=get_aiida_link(node_dict,"isot_co2_out"))
+    g.node("Results N2", shape="oval",                           href=get_aiida_link(node_dict,"isot_n2_out"))
+    g.node("CCS process\nperformances", shape="oval",            href=get_aiida_link(node_dict,"pe_out"))
 
     g.edge("Reference\npublication",'GitHub')
     g.edge('GitHub', 'Original\nstructure')

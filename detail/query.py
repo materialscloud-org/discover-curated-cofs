@@ -34,16 +34,13 @@ def get_group(label='13161N2'):
     qb.append(Group, filters={'label': {'like': 'curated-cof_{}_v%'.format(label)}})
     return qb.all()[0][0]
 
+def get_node_dict(group):
+    """Give a group return a dictionary with tags as keys and nodes as values."""
+    node_dict = {}
+    for node in group.nodes:
+        node_dict[node.extras['curated-cof_tag']] = node
+    return node_dict
+
 def get_version(group_node):
     """Given a group return the version as integer."""
     return int(group_node.label.split("_v")[-1])
-
-def get_data_aiida(group_node, extra_tag):
-    """Query the AiiDA database"""
-    from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm import Node, Group
-
-    qb = QueryBuilder()
-    qb.append(Group, filters={'uuid': group_node.uuid}, tag='group')
-    qb.append(Node, filters={'extras.curated-cof_tag': extra_tag}, with_group='group')
-    return qb.all()[0][0]
