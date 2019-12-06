@@ -1,5 +1,4 @@
 import pandas as pd
-from detail.query import get_data_aiida
 
 def get_startindex(l):
     '''Take a list of steps and decide starting indices (and final number of steps).'''
@@ -67,7 +66,7 @@ def plot_energy_steps(dftopt_out, structure_label, version):
     if version==2: # dftopt_out is a Dict
         units='eV'
         ha2u = {'eV': 27.211399}
-        
+
         out_dict =  dftopt_out.get_dict()
 
         tooltips = [

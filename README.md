@@ -7,31 +7,8 @@ for atomic structures and their properties.
 
 ## Inner working
 
-The query for results is done in most of the cases by searching a Node having the as label a certain CURATED-COF ID,
-and search for the WorkFunctionNode with `attributes.function_name=="link_outputs"` that links together all the output.
-(In the future we could directly label the WorkFunctionNode with the ID of the COF)
-
-This WorkFunctionNode also has the extra `curated_cofs_version` that is `0` for structures that were not considered
-(i.e., charged, "C" COFs containing counter ions), `1` for the version published, and `2` for the update of October 2019.
-We will use the index `2` until we need to change the API again.
-The nodes connected are
-
-```
-Inputs            Type
-----------------  -------
-orig_cif          CifData (StructureData in v1)
-orig_zeopp_out    Dict
-orig_cif_qeq      CifData (only in v1)
-orig_qeq_henry    Dict (only in v1)
-dftopt_out        Dict (SinglefileData in v1)
-opt_cif_ddec      CifData
-opt_zepp_out      Dict
-isot_co2_geo_out  Dict (only in v2)
-isot_co2_out      Dict
-isot_n2_geo_out   Dict (only in v2)
-isot_n2_out       Dict
-pe_out            Dict
-```
+For each COF we create a group, e.g., `curated-cof_05001N2_v1` that contains all the nodes that are relevant for that structure.
+These nodes have the extra `curated-cof_tag`, which indicates the content of that node: e.g., `orig_cif`, `opt_cif_ddec`, `isot_n2_out`, ...
 
 ## Re-implementation based on Panel
 
