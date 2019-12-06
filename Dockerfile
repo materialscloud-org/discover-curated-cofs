@@ -1,7 +1,9 @@
 FROM python:3.7
 
 # Install nodejs for jsmol-bokeh-extension
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  nodejs \
+  graphviz \
   && rm -rf /var/lib/apt/lists/* \
   && apt-get clean all
 
