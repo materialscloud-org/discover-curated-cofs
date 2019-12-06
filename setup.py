@@ -19,7 +19,6 @@ if __name__ == '__main__':
               "bokeh~=1.3.4",
               "jsmol-bokeh-extension~=0.2.1",
               "pandas~=0.24.2",
-              "sqlalchemy~=1.0.19",
               "requests~=2.21.0",
               "panel~=0.6.4",
               "param~=1.9.2",
