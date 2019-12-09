@@ -24,23 +24,23 @@ def get_sqlite_data(name, plot_info):
     return query.one()
 
 
-def get_group(label='13161N2'):
-    """Query the AiiDA database to get the curated-cof group.
+def get_group_as_dict(cof_label):
+    """Given a curated-cof label, queries the group and returns a dictionary with tags as keys and nodes as values.
     If multiple version are available qb.all()[0][0] shuld take the last one computed.
     """
     from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm import Group
+    from aiida.orm import Group, Node
     qb = QueryBuilder()
-    qb.append(Group, filters={'label': {'like': 'curated-cof_{}_v%'.format(label)}})
-    return qb.all()[0][0]
+    qb.append(Group, filters={'label': {'like': 'curated-cof_{}_v%'.format(cof_label)}}, tag='group')
+    group_node = qb.all()[0][0]
+    qb.append(Node, project=['extras.curated-cof_tag', '*'], with_group='group')
 
-def get_node_dict(group):
-    """Give a group return a dictionary with tags as keys and nodes as values."""
-    node_dict = {}
-    for node in group.nodes:
-        node_dict[node.extras['curated-cof_tag']] = node
-    return node_dict
+    group_dict = { k: v for k,v in qb.all() }
 
-def get_version(group_node):
-    """Given a group return the version as integer."""
-    return int(group_node.label.split("_v")[-1])
+    group_dict.update({
+        'cof_label': cof_label,
+        'group': group_node,
+        'version': int(group_node.label.split("_v")[-1]),
+    })
+
+    return group_dict
