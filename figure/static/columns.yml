@@ -4,64 +4,56 @@
 - column: PE
   type: float
   label: Parasitic energy
-  range:
-  - 0
-  - 5
   unit: MJ/kg
 
 - column: WCg
   type: float
   label: Gravimetric working capacity
-  range:
-  - 0
-  - 10
   unit: kg CO2 / kg
 
 - column: WCv
   type: float
   label: Volumetric working capacity
-  range:
-  - 0
-  - 10
   unit: kg CO2 / m^3
 
 - column: Pur
   type: float
   label: Final CO2 purity
-  range:
-  - 0
-  - 1
   unit: mol/mol
 
-- column: henry_coefficient_average
+- column: henry_coefficient_average_co2
   type: float
   label: Henry coefficient (CO2)
-  range:
-  - 0
-  - 1
+  unit: mol/kg/Pa
+  scale: log
+
+- column: henry_coefficient_average_n2
+  type: float
+  label: Henry coefficient (N2)
   unit: mol/kg/Pa
   scale: log
 
 - column: AV_Volume_fraction
   type: float
   label: Void Fraction
-  range:
-  - 0
-  - 1
-  unit: 'cm^3/cm^3'
+  unit: cm^3/cm^3
 
 - column: 'ASA_m^2/g'
   type: float
   label: Accessible surface area
-  range:
-  - 0
-  - 4000
-  unit: 'm^2/g'
+  unit: m^2/g
 
 - column: Density
   type: float
   label: Density
-  range:
-  - 10.0
-  - 1200.0
-  unit: "kg/m^3"
+  unit: kg/m^3
+
+- column: Largest_free_sphere
+  type: float
+  label: Largest Free Sphere Diameter
+  unit: Angstrom
+
+- column: Largest_included_sphere
+  type: float
+  label: Largest Included Sphere Diameter
+  unit: Angstrom

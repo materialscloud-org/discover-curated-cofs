@@ -1,42 +1,43 @@
 """Querying the DB
 """
-from __future__ import absolute_import
 from bokeh.models.widgets import RangeSlider, CheckboxButtonGroup
-from .config import max_points
-from six.moves import map
-from six.moves import zip
 # pylint: disable=too-many-locals
 data_empty = dict(x=[0], y=[0], uuid=['1234'], color=[0], name=['no data'])
 
-link_attribute_dict = {
-    'opt_out_pe': ['PE', 'WCg', 'WCv', 'Pur'],
-    'opt_out_zeopp': ['Density', 'ASA_m^2/g', 'AV_Volume_fraction'],
-    'iso_co2': ['henry_coefficient_average'], #TODO: handle also the uptake at 30 bar
-    #'iso_n2': ['henry_coefficient_average'], TODO: redesign the query so that this can be added
+get_tag = {
+    'PE': 'pe_out',
+    'WCg': 'pe_out',
+    'WCv': 'pe_out',
+    'Pur': 'pe_out',
+    'henry_coefficient_average_co2': 'isot_co2_out',
+    'henry_coefficient_average_n2': 'isot_n2_out',
+    'Density': 'opt_zeopp_out',
+    'ASA_m^2/g': 'opt_zeopp_out',
+    'AV_Volume_fraction': 'opt_zeopp_out',
+    "Largest_free_sphere": 'opt_zeopp_out',
+    "Largest_included_sphere": 'opt_zeopp_out',
 }
 
-def get_data_aiida(projections, sliders_dict, quantities):
-    """Query the AiiDA database"""
-    from aiida import load_dbenv, is_dbenv_loaded
-    from aiida.backends import settings
-    if not is_dbenv_loaded():
-        load_dbenv(profile=settings.AIIDADB_PROFILE)
+def get_data_aiida(inp_list):
+    """Query the AiiDA database
+
+    TODO: this section needs to be fixed if more version are present for the same COF!
+    TODO: add version search!
+    """
     from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm.data.parameter import ParameterData
-    from aiida.orm.data.structure import StructureData
-    from aiida.orm import WorkCalculation, Node
+    from aiida.orm import Node, Dict, Group
 
     filters = {}
-    
-    qb = QueryBuilder()
-    qb.append(WorkCalculation, filters={ 'attributes.function_name': {'==': 'collect_outputs'} }, tag='collect')
 
-    for p in projections:
-        for link_label in link_attribute_dict:
-            if p in link_attribute_dict[link_label]:
-               print(p)
-               qb.append(ParameterData, project=['attributes.' + p], edge_filters={'label': link_label}, input_of='collect')
-    qb.append(StructureData, project=['label', 'uuid'], edge_filters={'label': 'ref_structure'}, input_of='collect')    
+    qb = QueryBuilder()
+    qb.append(Group, project=['label'], filters={ 'label': {'like': 'curated-cof_%_v%'} }, tag='curated-cof')
+
+    for inp in inp_list:
+        if inp in  ['henry_coefficient_average_co2', 'henry_coefficient_average_n2']:
+            proj = 'henry_coefficient_average' #fix to distinguish co2/n2
+        else:
+            proj = inp
+        qb.append(Dict, project=['attributes.{}'.format(proj)], filters={'extras.curated-cof_tag': get_tag[inp]},
+            with_group='curated-cof')
 
     return qb.all()
-

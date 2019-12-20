@@ -7,18 +7,18 @@ if __name__ == '__main__':
     # Provide static information in setup.json
     # such that it can be discovered automatically
     setup(packages=["detail", "figure"],
-          name="cofdb-discover-section",
+          name="discover-curated-cofs",
           author="Leopold Talirz",
-          author_email="info@materialscloud.org",
-          description="A template for DISCOVER sections using bokeh server.",
+          author_email="leopold.talirz@epfl.ch",
+          description="A Materials Cloud DISCOVER section for CURATED COFs.",
           license="MIT",
           classifiers=["Programming Language :: Python"],
-          version="0.1.1",
+          version="0.2.0",
           install_requires=[
+              "aiida-core~=1.0.1",
               "bokeh~=1.3.4",
               "jsmol-bokeh-extension~=0.2.1",
               "pandas~=0.24.2",
-              "sqlalchemy~=1.0.19",
               "requests~=2.21.0",
               "panel~=0.6.4",
               "param~=1.9.2",
