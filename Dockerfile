@@ -20,6 +20,7 @@ WORKDIR /app/discover-cofs
 
 COPY figure ./figure
 COPY detail ./detail
+COPY data ./data
 COPY select-figure ./select-figure
 RUN ln -s /app/jmol-14.29.22/jsmol ./detail/static/jsmol
 COPY setup.py ./
