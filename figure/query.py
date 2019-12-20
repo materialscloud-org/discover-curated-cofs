@@ -1,6 +1,5 @@
 """Querying the DB
 """
-from __future__ import absolute_import
 from bokeh.models.widgets import RangeSlider, CheckboxButtonGroup
 # pylint: disable=too-many-locals
 data_empty = dict(x=[0], y=[0], uuid=['1234'], color=[0], name=['no data'])
@@ -10,11 +9,13 @@ get_tag = {
     'WCg': 'pe_out',
     'WCv': 'pe_out',
     'Pur': 'pe_out',
+    'henry_coefficient_average_co2': 'isot_co2_out',
+    'henry_coefficient_average_n2': 'isot_n2_out',
     'Density': 'opt_zeopp_out',
     'ASA_m^2/g': 'opt_zeopp_out',
     'AV_Volume_fraction': 'opt_zeopp_out',
-    'henry_coefficient_average_co2': 'isot_co2_out',
-    'henry_coefficient_average_n2': 'isot_n2_out',
+    "Largest_free_sphere": 'opt_zeopp_out',
+    "Largest_included_sphere": 'opt_zeopp_out',
 }
 
 def get_data_aiida(inp_list):
