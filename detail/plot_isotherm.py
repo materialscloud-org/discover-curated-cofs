@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
+from bokeh.plotting import figure
+import bokeh.models as bmd
+from bokeh.layouts import row
+import numpy as np
 
 def plot_isotherm(**kwargs):
     """Plot isotherm figure"""
-    from bokeh.plotting import figure
-    import bokeh.models as bmd
-    from bokeh.layouts import row
-    import numpy as np
 
 
     tooltips = [
@@ -27,10 +27,11 @@ def plot_isotherm(**kwargs):
     plotcolor={'co2':'red','n2':'blue'}
     plotlabel={'co2':'CO₂','n2':u'N₂'}
 
+    version = kwargs.pop('version')
     for gas in ['co2', 'n2']:
         isot_out = kwargs['pm_' + gas]
 
-        if kwargs['version']==1: # parse Dict from curated_cofs_version_1
+        if version ==1: # parse Dict from curated_cofs_version_1
             isot_out = isot_out.get_dict()
             if 'henry_coefficient_average' in isot_out.keys(): #porous
                 # parse isotherm for plotting
@@ -50,7 +51,7 @@ def plot_isotherm(**kwargs):
                 p = [0, pmax]
                 q_avg = q_upper = q_lower = h_avg = h_upper = h_lower = [0, 0]
 
-        elif kwargs['version']==2: # parse Dict from curated_cofs_version_2
+        elif version ==2: # parse Dict from curated_cofs_version_2
             try: #isot_out is a Dict node = porous
                 isot_out = isot_out.get_dict()
 
@@ -73,7 +74,7 @@ def plot_isotherm(**kwargs):
         data = dict(p=p, q_avg=q_avg, q_upper=q_upper, q_lower=q_lower, h_avg=h_avg, h_upper=h_upper, h_lower=h_lower)
         source = bmd.ColumnDataSource(data=data)
 
-        p1.line('p', 'q_avg', source=source, line_color=plotcolor[gas], line_width=2, legend=plotlabel[gas])
+        p1.line('p', 'q_avg', source=source, line_color=plotcolor[gas], line_width=2, legend_label=plotlabel[gas])
         p1.circle('p', 'q_avg', source=source, color=plotcolor[gas], size=10, legend=plotlabel[gas])
         p1.add_layout(
             bmd.Whisker(source=source, base="p", upper="q_upper", lower="q_lower") #, level="overlay")

@@ -3,6 +3,7 @@ import panel as pn
 from detail.query import get_group_as_dict
 from bokeh.io import curdoc
 import os
+#import gc; gc.set_debug(gc.DEBUG_LEAK)
 
 load_profile()
 

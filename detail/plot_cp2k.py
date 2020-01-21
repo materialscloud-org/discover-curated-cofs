@@ -18,7 +18,8 @@ def plot_energy_steps(dftopt_out, structure_label, version):
     import bokeh.models as bmd
 
     if version==1: # dftopt_out is a SinglefileData
-        df = pd.read_csv(dftopt_out.open(),sep=' ')
+        with dftopt_out.open() as f:
+            df = pd.read_csv(f,sep=' ')
 
         steps = df['#step'].tolist()
         energy = df['energy(eV/atom)'].tolist()

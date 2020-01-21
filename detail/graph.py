@@ -1,24 +1,22 @@
 """ Plots the workflow's graph
 """
 import os
+from graphviz import Digraph
+import pandas as pd
 
 EXPLORE_URL = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
+
+try:
+    this_dir = os.path.dirname(os.path.abspath(__file__)) + '/'
+except:
+    this_dir = '',
+
+df = pd.read_csv(this_dir + "/../data/cof-papers.csv")
 
 def get_aiida_link(node_dict, extra_tag):
     return "{}/details/{}".format(EXPLORE_URL,node_dict[extra_tag].uuid)
 
 def get_graph(cof_group, node_dict):
-
-    from graphviz import Digraph
-    import pandas as pd
-    import os
-
-    try:
-        this_dir = os.path.dirname(os.path.abspath(__file__)) + '/'
-    except:
-        this_dir = '',
-
-    df = pd.read_csv(this_dir + "/../data/cof-papers.csv")
     cof_label = cof_group.label.split("_")[1]
     paper_id = "p{:s}".format(cof_label[:4])
     paper_row = df.loc[df["CURATED-COFs paper ID"] == paper_id ]
