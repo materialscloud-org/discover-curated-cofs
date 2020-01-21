@@ -1,6 +1,8 @@
 FROM python:3.7
 
-# Install nodejs for jsmol-bokeh-extension
+# Install recent nodejs for bokeh & jsmol-bokeh-extension
+# See https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 RUN apt-get update && apt-get install -y --no-install-recommends \
   nodejs \
   graphviz \
