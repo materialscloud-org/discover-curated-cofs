@@ -27,5 +27,5 @@ if __name__ == '__main__':
           ],
           extras_require={
               "pre-commit":
-              ["pre-commit==1.17.0", "prospector==0.12.11", "pylint==1.9.3"]
+              ["pre-commit==1.17.0", "prospector==1.2.0", "pylint==2.4.0"]
           })
