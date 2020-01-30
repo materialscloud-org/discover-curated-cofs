@@ -27,7 +27,7 @@ def provenance_link(uuid, label=None):
     if label is None:
         label = "Browse provenance\n" + uuid
 
-    logo_url = "https://www.materialscloud.org/discover/images/ceede967.aiida-logo-128.png"
+    logo_url = "select-figure/static/images/aiida-128.png"
     explore_url = os.getenv(
         'EXPLORE_URL',
         "https://dev-www.materialscloud.org/explore/curated-cofs")
