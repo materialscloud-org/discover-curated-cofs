@@ -4,23 +4,13 @@ from os.path import join, dirname
 
 static_dir = join(dirname(__file__), "static")
 
-with open(join(static_dir, "columns.yml"), 'r') as f:
-    quantity_list = yaml.load(f)
+with open(join(static_dir, "quantities.yml"), 'r') as f:
+    quantities_list = yaml.load(f, Loader=yaml.SafeLoader)
 
-for item in quantity_list:
+for item in quantities_list:
+    if 'descr' not in item.keys():
+        item['descr'] = 'Description to be added!'
     if 'scale' not in item.keys():
         item['scale'] = 'linear'
 
-
-quantities = collections.OrderedDict([(q['column'], q) for q in quantity_list])
-
-plot_quantities = [
-    q for q in quantities.keys() if quantities[q]['type'] == 'float'
-]
-
-with open(join(static_dir, "presets.yml"), 'r') as f:
-    presets = yaml.load(f)
-
-for k in presets.keys():
-    if 'clr' not in list(presets[k].keys()):
-        presets[k]['clr'] = presets['default']['clr']
+quantities = collections.OrderedDict([(q['label'], q) for q in quantities_list])
