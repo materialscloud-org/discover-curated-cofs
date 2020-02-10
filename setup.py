@@ -6,7 +6,7 @@ from setuptools import setup
 if __name__ == '__main__':
     # Provide static information in setup.json
     # such that it can be discovered automatically
-    setup(packages=["detail", "figure"],
+    setup(packages=["detail", "figure", "select-figure"],
           name="discover-curated-cofs",
           author="Leopold Talirz",
           author_email="leopold.talirz@epfl.ch",
@@ -20,12 +20,11 @@ if __name__ == '__main__':
               "jsmol-bokeh-extension~=0.2.1",
               "pandas~=0.24.2",
               "requests~=2.21.0",
-              "panel~=0.6.4",
-              "param~=1.9.2",
+              "panel~=0.8",
+              "param~=1.9.3",
               "jupyter",
               "graphviz~=0.13",
-          ],
-          extras_require={
-              "pre-commit":
-              ["pre-commit==1.17.0", "prospector==1.2.0", "pylint==2.4.0"]
-          })
+              "pre-commit",
+              "yapf==0.28.0",
+              "pylint>=2.4.0"
+          ])
