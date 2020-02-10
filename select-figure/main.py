@@ -3,6 +3,8 @@
 
 import os
 import pandas
+import panel as pn
+from panel.interact import interact
 
 from aiida import load_profile
 load_profile()
@@ -58,7 +60,7 @@ def get_table():
     # get nodes (once to make it efficient): load group, get uuid if existing, make a dicts label:uuid
     # note: this works for pe_out because if it has pe_out it has also the previous two!
     qb = QueryBuilder()
-    qb.append(Group, project=['label'], filters={'label': {'like': 'curated-cof_%_v%'}}, tag='curated-cof')
+    qb.append(Group, project=['label'], filters={'label': {'like': 'curated-cof\_%\_v%'}}, tag='curated-cof')
     qb.append(Node, project=['uuid'], filters={'extras.curated-cof_tag': 'orig_cif'}, with_group='curated-cof')
     uuid_dict_orig = {v[0].split("_")[1]: v[-1] for v in qb.all()}
     version_dict = {v[0].split("_")[1]: v[0].split("_")[-1] for v in qb.all()}
@@ -95,16 +97,14 @@ def get_table():
             detail += [detail_link(label)]
         except KeyError:
             detail += ["N/A"]
+
     df['Article'] = pandas.Series(paper_link, index=df.index)
     df['Original Structure'] = pandas.Series(orig_cif, index=df.index)
     df['Optimized Structure'] = pandas.Series(opt_cif, index=df.index)
     df['CCS Workflow'] = pandas.Series(detail, index=df.index)
     df['Vers.'] = pandas.Series(version, index=df.index)
+    df.index += 1  # start indexing from 1, for better human reading
     return df[['CURATED-COFs ID', 'Article', 'Original Structure', 'Optimized Structure', 'CCS Workflow', 'Vers.']]
-
-
-"""Buttons"""
-import panel as pn
 
 
 def fake_button(link, label):
@@ -118,9 +118,6 @@ buttons.append(fake_button(link="https://github.com/danieleongari/CURATED-COFs",
 buttons.append(
     fake_button(link="https://archive.materialscloud.org/file/2019.0034/v2/cifs_cellopt_Dec19.zip",
                 label="Optimized Structures (DDEC)"))
-
-import panel as pn
-from panel.interact import interact
 
 pn.extension()
 
