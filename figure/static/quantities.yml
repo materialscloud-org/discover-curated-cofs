@@ -4,7 +4,7 @@
 - key: PE
   dict: pe_out
   label: CO2 parasitic energy
-  descr: Parassitic energy for carbon capture and sequestration from a coal power plant
+  descr: Parasitic energy for carbon capture and sequestration from a coal power plant
   unit: MJ/kg
   scale: log
 
