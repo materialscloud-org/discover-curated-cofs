@@ -3,7 +3,6 @@ import panel as pn
 from detail.query import get_group_as_dict
 from bokeh.io import curdoc
 import os
-#import gc; gc.set_debug(gc.DEBUG_LEAK)
 
 load_profile()
 
@@ -50,24 +49,6 @@ def get_title(text, uuid=None):
     return title
 
 
-class PlainSVG(pn.pane.SVG):
-    """Drop-in replacement for pn.pane.SVG that outputs plain SVG (not base64-encoded).
-
-    Note: links encoded with xlink:href are not displayed in base64-encoded SVGs.
-    """
-
-    def _get_properties(self):
-        p = super(PlainSVG, self)._get_properties()
-        data = self._img()
-
-        if self.object is None:
-            return dict(p, text='<img></img>')
-        return dict(p, text=data)
-
-
-pn.extension()
-
-
 # pylint: disable=import-outside-toplevel
 class DetailView():
 
@@ -108,11 +89,12 @@ class DetailView():
 
     def graph(self):
         from detail.graph import get_graph
-        column = pn.Column(PlainSVG(get_graph(self.group_dict['group'], self.group_dict)))
+        column = pn.Column(pn.pane.SVG(get_graph(self.group_dict['group'], self.group_dict)))
         column.append("CURATED-COF {}, version: {}".format(self.group_dict['cof_label'], self.group_dict['version']))
         return column
 
 
+pn.extension()
 explorer = DetailView()
 
 tabs = pn.Tabs()
