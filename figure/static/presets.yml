@@ -1,7 +1,0 @@
-# Presets
-# Keys: x, y, clr
----
-default:
-  x: henry_coefficient_average_co2
-  y: PE
-  clr: AV_Volume_fraction
