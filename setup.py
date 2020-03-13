@@ -20,7 +20,7 @@ if __name__ == '__main__':
               "jsmol-bokeh-extension~=0.2.1",
               "pandas~=0.24.2",
               "requests~=2.21.0",
-              "panel~=0.8",
+              "panel~=0.8.1",
               "param~=1.9.3",
               "jupyter",
               "graphviz~=0.13",
