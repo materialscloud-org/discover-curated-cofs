@@ -2,9 +2,10 @@
 import config
 import panel as pn
 import param
-import config
 from collections import OrderedDict
 import bokeh.models as bmd
+import bokeh.plotting as bpl
+from bokeh.palettes import Plasma256
 
 from aiida import load_profile
 load_profile()
@@ -13,8 +14,8 @@ load_profile()
 def update_legends(p, q_list, hover, tap):
     hover.tooltips = [
         ("name", "@name"),
-        (q_list[0]["label"], "@color {}".format(q_list[0]["unit"])),
-        (q_list[1]["label"], "@color {}".format(q_list[1]["unit"])),
+        (q_list[0]["label"], "@x {}".format(q_list[0]["unit"])),
+        (q_list[1]["label"], "@y {}".format(q_list[1]["unit"])),
         (q_list[2]["label"], "@color {}".format(q_list[2]["unit"])),
     ]
 
@@ -32,7 +33,7 @@ def get_plot(inp_x, inp_y, inp_clr):
     # dump None lists that make bokeh crash! TODO: improve!
     results = []
     for l in results_wnone:
-        if not None in l:
+        if None not in l:
             results.append(l)
 
     # prepare data for plotting
@@ -52,9 +53,6 @@ def get_plot(inp_x, inp_y, inp_clr):
     data = {'x': x, 'y': y, 'color': clrs, 'name': cof_label}
 
     # create bokeh plot
-    import bokeh.plotting as bpl
-    from bokeh.palettes import Plasma256
-
     source = bmd.ColumnDataSource(data=data)
 
     hover = bmd.HoverTool(tooltips=[])
