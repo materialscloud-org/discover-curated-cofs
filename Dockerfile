@@ -15,21 +15,32 @@ WORKDIR /app
 RUN wget https://sourceforge.net/projects/jmol/files/Jmol/Version%2014.29/Jmol%2014.29.22/Jmol-14.29.22-binary.zip/download --output-document jmol.zip
 RUN unzip jmol.zip && cd jmol-14.29.22 && unzip jsmol.zip
 
-# Install discover section
+# Container vars
 ENV AIIDA_PATH /app
 ENV PYTHONPATH /app
-WORKDIR /app/discover-cofs
+
+# AiiDA profile vars
+ENV AIIDA_PROFILE generic
+ENV AIIDADB_HOST host.docker.internal
+ENV AIIDADB_PORT 5432
+ENV AIIDADB_ENGINE postgresql_psycopg2
+ENV AIIDADB_NAME generic_db
+ENV AIIDADB_USER db_user
+ENV AIIDADB_PASS ""
+ENV AIIDADB_BACKEND django
+ENV default_user_email info@materialscloud.org
+
+
+WORKDIR /app/
 
 COPY figure ./figure
 COPY detail ./detail
-COPY data ./data
 COPY select-figure ./select-figure
 RUN ln -s /app/jmol-14.29.22/jsmol ./detail/static/jsmol
 COPY setup.py ./
 RUN pip install -e .
 RUN reentry scan -r aiida
-COPY .docker/serve-app.sh /opt/
-COPY .docker/config.json $AIIDA_PATH/.aiida/
+COPY serve-app.sh /opt/
 
 # start bokeh server
 EXPOSE 5006
