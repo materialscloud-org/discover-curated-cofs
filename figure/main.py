@@ -10,8 +10,27 @@ from bokeh.palettes import Plasma256
 from aiida import load_profile
 load_profile()
 
+TAG_KEY = "tag4"
 
-def update_legends(p, q_list, hover, tap):
+
+def get_data_aiida(q_list):
+    """Query the AiiDA database for a list of quantities."""
+    from aiida.orm.querybuilder import QueryBuilder
+    from aiida.orm import Dict, Group
+
+    qb = QueryBuilder()
+    qb.append(Group, project=['label'], filters={'label': {'like': r'curated-cof\_%\_v%'}}, tag='g')
+
+    for q in q_list:
+        qb.append(Dict,
+                  project=['attributes.{}'.format(q['key'])],
+                  filters={'extras.{}'.format(TAG_KEY): q['dict']},
+                  with_group='g')
+
+    return qb.all()
+
+
+def update_legends(p, q_list, hover):
     hover.tooltips = [
         ("name", "@name"),
         (q_list[0]["label"], "@x {}".format(q_list[0]["unit"])),
@@ -26,8 +45,6 @@ def update_legends(p, q_list, hover, tap):
 
 def get_plot(inp_x, inp_y, inp_clr):
     """Returns a Bokeh plot of the input values, and a message with the number of COFs found."""
-    # query for results
-    from figure.query import get_data_aiida
     q_list = [config.quantities[label] for label in [inp_x, inp_y, inp_clr]]
     results_wnone = get_data_aiida(q_list)  #returns [inp_x_value, inp_y_value, inp_clr_value, cof-id]
     # dump None lists that make bokeh crash! TODO: improve!
@@ -80,11 +97,11 @@ def get_plot(inp_x, inp_y, inp_clr):
     p_new.title.align = 'center'
     p_new.title.text_font_size = '10pt'
     p_new.title.text_font_style = 'italic'
-    update_legends(p_new, q_list, hover, tap)
-    tap.callback = bmd.OpenURL(url="detail?id=@name")
+    update_legends(p_new, q_list, hover)
+    tap.callback = bmd.OpenURL(url="detail?mat_id=@name")
 
     # Plot vertical line for comparison with amine-based technology (PE=1MJ/kg)
-    if inp_y == 'CO2 parasitic energy':
+    if inp_y == 'CO2 parasitic energy (coal)':
         hline = bmd.Span(location=1, dimension='width', line_dash='dashed', line_color='grey', line_width=3)
         p_new.add_layout(hline)
         hline_descr = bmd.Label(x=30, y=1, x_units='screen', text_color='grey', text='amine-based sep.')
@@ -105,8 +122,8 @@ plot_dict = OrderedDict(((config.quantities[q]['label'], q) for q in config.quan
 
 class StructurePropertyVisualizer(param.Parameterized):
 
-    x = param.Selector(objects=plot_dict, default='Henry coefficient (CO2)')
-    y = param.Selector(objects=plot_dict, default='CO2 parasitic energy')
+    x = param.Selector(objects=plot_dict, default='CO2 Henry coefficient')
+    y = param.Selector(objects=plot_dict, default='CO2 parasitic energy (coal)')
     color = param.Selector(objects=OrderedDict(plot_dict), default='Geometric Void Fraction')
     msg = pn.pane.HTML("")
     _plot = None  # reference to current plot
