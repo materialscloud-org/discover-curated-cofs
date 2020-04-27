@@ -1,62 +1,331 @@
 # Quantities to be parsed from AiiDA
 
-# co2capture properties
+# appl_pecoal 
+
+- key: henry_coefficient_average
+  dict: isot_co2
+  label: CO2 Henry coefficient
+  unit: mol/kg/Pa
+  scale: log
+  id: henry_coefficient_average_isot_co2_out_mol_kg_pa
+
+- key: adsorption_energy_widom_average
+  dict: isot_co2
+  label: CO2 adsorption energy
+  unit: kJ/mol
+  id: adsorption_energy_widom_average_isot_co2_out_kj_mol
+
+- key: henry_coefficient_average
+  dict: isot_n2
+  label: N2 Henry coefficient
+  unit: mol/kg/Pa
+  scale: log
+  id: henry_coefficient_average_isot_n2_out_mol_kg_pa
+
+- key: adsorption_energy_widom_average
+  dict: isot_n2
+  label: N2 adsorption energy
+  unit: kJ/mol
+  id: adsorption_energy_widom_average_isot_n2_out_kj_mol
+
 - key: PE
-  dict: pe_out
-  label: CO2 parasitic energy
+  dict: appl_pecoal
+  label: CO2 parasitic energy (coal)
   descr: Parasitic energy for carbon capture and sequestration from a coal power plant
   unit: MJ/kg
   scale: log
+  id: pe_pe_out_mj_kg
 
 - key: WCg
-  dict: pe_out
-  label: Gravimetric working capacity
+  dict: appl_pecoal
+  label: Gravimetric working capacity (coal)
   unit: kg CO2 / kg
+  id: wcg_pe_out_kg_co2_kg
 
 - key: WCv
-  dict: pe_out
-  label: Volumetric working capacity
+  dict: appl_pecoal
+  label: Volumetric working capacity (coal)
   unit: kg CO2 / m^3
+  id: wcv_pe_out_kg_co2_m
 
 - key: Pur
-  dict: pe_out
-  label: Final CO2 purity
+  dict: appl_pecoal
+  label: Final CO2 purity (coal)
   unit: mol/mol
+  id: pur_pe_out_mol_mol
+
+# appl_peng
+
+- key: PE
+  dict: appl_peng
+  label: CO2 parasitic energy (nat. gas)
+  descr: Parasitic energy for carbon capture and sequestration from a coal power plant
+  unit: MJ/kg
+  scale: log
+  id: pe_pe_out_mj_kg
+
+- key: WCg
+  dict: appl_peng
+  label: Gravimetric working capacity (nat. gas)
+  unit: kg CO2 / kg
+  id: wcg_appl_peng_kg_co2_kg
+
+- key: WCv
+  dict: appl_peng
+  label: Volumetric working capacity (nat. gas)
+  unit: kg CO2 / m^3
+  id: wcv_appl_peng_kg_co2_m
+
+- key: Pur
+  dict: appl_peng
+  label: Final CO2 purity (nat. gas)
+  unit: mol/mol
+  id: pur_appl_peng_mol_mol
+
+# appl_ch4storage
 
 - key: henry_coefficient_average
-  dict: isot_co2_out
-  label: Henry coefficient (CO2)
+  dict: isot_ch4
+  label: CH4 Henry coefficient
   unit: mol/kg/Pa
   scale: log
+  id: henry_coefficient_average_isot_ch4_out_mol_kg_pa
+
+- key: adsorption_energy_widom_average
+  dict: isot_ch4
+  label: CH4 adsorption energy
+  unit: kJ/mol
+  id: adsorption_energy_widom_average_isot_ch4_out_kj_mol
+
+- key: enthalpy_of_adsorption_5p8bar_average
+  dict: appl_ch4storage
+  label: Enthalphy of Adsorption @ 5.8 bar, 298K
+  unit: kJ/mol
+  id: enthalpy_of_adsorption_5p8bar_average_ch4storage_out_kj_mol
+
+- key: enthalpy_of_adsorption_65bar_average
+  dict: appl_ch4storage
+  label: Enthalphy of Adsorption @ 65bar/298K
+  unit: kJ/mol
+  id: enthalpy_of_adsorption_65bar_average_ch4storage_out_kj_mol
+
+- key: wc_65bar_cm3stp/cm3_average
+  dict: appl_ch4storage
+  label: Working capacity vol. (5.8-65bar/298K)
+  unit: cm^3_STP/cm^3
+  id: wc_65bar_cm3stp_cm3_average_ch4storage_out_cm^3_stp_cm^3
+
+- key: wc_65bar_mol/kg_average
+  dict: appl_ch4storage
+  label: Working capacity mol. (5.8-65bar/298K)
+  unit: mol/kg
+  id: wc_65bar_mol_kg_average_ch4storage_out_mol_kg
+
+- key: wc_65bar_fraction
+  dict: appl_ch4storage
+  label: Working capacity fract. (5.8-65bar/298K)
+  unit: '-'
+  id: wc_65bar_fraction_ch4storage_out_
+
+- key: wc_65bar_wt%_average
+  dict: appl_ch4storage
+  label: Working capacity wt% (5.8-65bar/298K)
+  unit: g/g*100
+  id: wc_65bar_wt%_average_ch4storage_out_g_g*100
+
+# o2 Storage
 
 - key: henry_coefficient_average
-  dict: isot_n2_out
-  label: Henry coefficient (N2)
+  dict: isot_o2
+  label: O2 Henry coefficient
   unit: mol/kg/Pa
   scale: log
+  id: henry_coefficient_average_isot_o2_out_mol_kg_pa
+
+- key: adsorption_energy_widom_average
+  dict: isot_o2
+  label: O2 adsorption energy
+  unit: kJ/mol
+  id: adsorption_energy_widom_average_isot_o2_out_kj_mol
+
+- key: enthalpy_of_adsorption_5bar_average
+  dict: appl_o2storage
+  label: Enthalphy of Adsorption @ 5 bar, 298K
+  unit: kJ/mol
+  id: enthalpy_of_adsorption_5bar_average_o2storage_out_kj_mol
+
+- key: enthalpy_of_adsorption_140bar_average
+  dict: appl_o2storage
+  label: Enthalphy of Adsorption @ 140bar/298K
+  unit: kJ/mol
+  id: enthalpy_of_adsorption_140bar_average_o2storage_out_kj_mol
+
+- key: wc_140bar_cm3stp/cm3_average
+  dict: appl_o2storage
+  label: Working capacity vol. (5-140bar/298K)
+  unit: cm^3_STP/cm^3
+  id: wc_140bar_cm3stp_cm3_average_o2storage_out_cm
+
+- key: wc_140bar_mol/kg_average
+  dict: appl_o2storage
+  label: Working capacity mol. (5-140bar/298K)
+  unit: mol/kg
+  id: wc_140bar_mol_kg_average_o2storage_out_mol_kg
+
+- key: wc_140bar_fraction
+  dict: appl_o2storage
+  label: Working capacity fract. (5-140bar/298K)
+  unit: '-'
+  id: wc_140bar_fraction_o2storage_out_
+
+- key: wc_140bar_wt%_average
+  dict: appl_o2storage
+  label: Working capacity wt% (5-140bar/298K)
+  unit: g/g*100
+  id: wc_140bar_wt%_average_o2storage_out_g_g*100
+
+# appl_03_xekrsel
+
+- key: henry_coefficient_average
+  dict: kh_xe
+  label: Xe Henry coefficient
+  unit: mol/kg/Pa
+  scale: log
+  id: henry_coefficient_average_kh_xe_out_mol_kg_pa
+
+- key: adsorption_energy_widom_average
+  dict: kh_xe
+  label: Xe adsorption energy
+  unit: kJ/mol
+  id: adsorption_energy_widom_average_kh_xe_out_kj_mol
+
+- key: henry_coefficient_average
+  dict: kh_kr
+  label: Kr Henry coefficient
+  unit: mol/kg/Pa
+  scale: log
+  id: henry_coefficient_average_kh_kr_out_mol_kg_pa
+
+- key: adsorption_energy_widom_average
+  dict: kh_kr
+  label: Kr adsorption energy
+  unit: kJ/mol
+  id: adsorption_energy_widom_average_kh_kr_out_kj_mol
+
+- key: selectivity_average
+  dict: appl_xekrsel
+  label: Xe/Kr selectivity @ 298K
+  unit: "-"
+  id: selectivity_average_xekrsel_out_
+
+# h2 storage
+
+- key: case-a_g/L_average
+  dict: appl_h2storage
+  label: Working capacity g/L (5-100bar/298-198K)
+  unit: g/L
+  id: case_a_g_l_average_h2storage_out_g_l
+
+- key: case-b_g/L_average
+  dict: appl_h2storage
+  label: Working capacity g/L (5-100bar/77K)
+  unit: g/L
+  id: case_b_g_l_average_h2storage_out_g_l
+
+- key: case-c_g/L_average
+  dict: appl_h2storage
+  label: Working capacity g/L (1-100bar/77K)
+  unit: g/L
+  id: case_c_g_l_average_h2storage_out_g_l
+
+- key: case-a_wt%_average
+  dict: appl_h2storage
+  label: Working capacity wt% (5-100bar/298-198K)
+  unit: g/g*100
+  id: case_a_wt%_average_h2storage_out_g_g*100
+
+- key: case-b_wt%_average
+  dict: appl_h2storage
+  label: Working capacity wt% (5-100bar/77K)
+  unit: g/g*100
+  id: case_b_wt%_average_h2storage_out_g_g*100
+
+- key: case-c_wt%_average
+  dict: appl_h2storage
+  label: Working capacity wt% (1-100bar/77K)
+  unit: g/g*100
+  id: case_c_wt%_average_h2storage_out_g_g*100
+
+# h2s selectivity
+
+- key: henry_coefficient_average
+  dict: kh_h2s
+  label: H2S Henry coefficient
+  unit: mol/kg/Pa
+  scale: log
+  id: henry_coefficient_average_kh_h2s_out_mol_kg_pa
+
+- key: adsorption_energy_widom_average
+  dict: kh_h2s
+  label: H2S adsorption energy
+  unit: kJ/mol
+  id: adsorption_energy_widom_average_kh_h2s_out_kj_mol
+
+- key: henry_coefficient_average
+  dict: kh_h2o
+  label: H2O Henry coefficient
+  unit: mol/kg/Pa
+  scale: log
+  id: henry_coefficient_average_kh_h2o_out_mol_kg_pa
+
+- key: adsorption_energy_widom_average
+  dict: kh_h2o
+  label: H2O adsorption energy
+  unit: kJ/mol
+  id: adsorption_energy_widom_average_kh_h2o_out_kj_mol
+
+- key: selectivity_average
+  dict: appl_h2sh2osel
+  label: H2S/H2O selectivity @ 298K
+  unit: "-"
+  id: selectivity_average_h2sh2osel_out_
+
+# ch4 selectivity (NOTE: ch4 properties already under ch4storage, n2 under pecoal)
+
+- key: selectivity_average
+  dict: appl_ch4n2sel
+  label: CH4/N2 selectivity @ 298K
+  unit: "-"
+  id: selectivity_average_ch4n2sel_out_
 
 # geometric properties
+
 - key: AV_Volume_fraction
-  dict: opt_zeopp_out
+  dict: opt_zeopp
   label: Geometric Void Fraction
   unit: cm^3/cm^3
 
+- key: POAV_cm^3/g
+  dict: opt_zeopp
+  label: Accessible Pore Volume
+  unit: cm^3/g
+
 - key: 'ASA_m^2/g'
-  dict: opt_zeopp_out
-  label: Accessible surface area
+  dict: opt_zeopp
+  label: Accessible Surface Area
   unit: m^2/g
 
 - key: Density
-  dict: opt_zeopp_out
+  dict: opt_zeopp
   label: Density
   unit: kg/m^3
 
 - key: Largest_free_sphere
-  dict: opt_zeopp_out
+  dict: opt_zeopp
   label: Largest Free Sphere Diameter
   unit: Angstrom
 
 - key: Largest_included_sphere
-  dict: opt_zeopp_out
+  dict: opt_zeopp
   label: Largest Included Sphere Diameter
   unit: Angstrom
