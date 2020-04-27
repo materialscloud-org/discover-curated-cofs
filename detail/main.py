@@ -6,6 +6,7 @@ from aiida import load_profile
 load_profile()
 
 TAG_KEY = "tag4"
+GROUP_DIR = "discover_curated_cofs/"
 
 
 def get_mat_id():
@@ -54,7 +55,7 @@ def get_mat_dict(mat_id):
     from aiida.orm.querybuilder import QueryBuilder  #pylint: disable=import-outside-toplevel
     from aiida.orm import Group, Node  #pylint: disable=import-outside-toplevel
     qb = QueryBuilder()
-    qb.append(Group, filters={'label': {'like': 'curated-cof_{}_v%'.format(mat_id)}}, tag='group')
+    qb.append(Group, filters={'label': {'like': GROUP_DIR + mat_id}}, tag='group')
     qb.append(Node, project=['extras.{}'.format(TAG_KEY), '*'], with_group='group')
 
     mat_dict = {}

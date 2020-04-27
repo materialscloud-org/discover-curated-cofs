@@ -11,6 +11,7 @@ from aiida import load_profile
 load_profile()
 
 TAG_KEY = "tag4"
+GROUP_DIR = "discover_curated_cofs/"
 
 
 def get_data_aiida(q_list):
@@ -19,7 +20,7 @@ def get_data_aiida(q_list):
     from aiida.orm import Dict, Group
 
     qb = QueryBuilder()
-    qb.append(Group, project=['label'], filters={'label': {'like': r'curated-cof\_%\_v%'}}, tag='g')
+    qb.append(Group, project=['label'], filters={'label': {'like': GROUP_DIR + "%"}}, tag='g')
 
     for q in q_list:
         qb.append(Dict,
@@ -32,7 +33,7 @@ def get_data_aiida(q_list):
 
 def update_legends(p, q_list, hover):
     hover.tooltips = [
-        ("name", "@name"),
+        ("COF ID", "@mat_id"),
         (q_list[0]["label"], "@x {}".format(q_list[0]["unit"])),
         (q_list[1]["label"], "@y {}".format(q_list[1]["unit"])),
         (q_list[2]["label"], "@color {}".format(q_list[2]["unit"])),
@@ -46,8 +47,9 @@ def update_legends(p, q_list, hover):
 def get_plot(inp_x, inp_y, inp_clr):
     """Returns a Bokeh plot of the input values, and a message with the number of COFs found."""
     q_list = [config.quantities[label] for label in [inp_x, inp_y, inp_clr]]
-    results_wnone = get_data_aiida(q_list)  #returns [inp_x_value, inp_y_value, inp_clr_value, cof-id]
-    # dump None lists that make bokeh crash! TODO: improve!
+    results_wnone = get_data_aiida(q_list)  #returns [inp_x_value, inp_y_value, inp_clr_value, group.label]
+
+    # dump None lists that make bokeh crash
     results = []
     for l in results_wnone:
         if None not in l:
@@ -65,9 +67,9 @@ def get_plot(inp_x, inp_y, inp_clr):
     x = list(map(float, x))
     y = list(map(float, y))
     clrs = list(map(float, clrs))
-    cof_label = [x.split("_")[1] for x in group_label]
+    mat_id = [x.split("/")[1] for x in group_label]
 
-    data = {'x': x, 'y': y, 'color': clrs, 'name': cof_label}
+    data = {'x': x, 'y': y, 'color': clrs, 'mat_id': mat_id}
 
     # create bokeh plot
     source = bmd.ColumnDataSource(data=data)
@@ -98,7 +100,7 @@ def get_plot(inp_x, inp_y, inp_clr):
     p_new.title.text_font_size = '10pt'
     p_new.title.text_font_style = 'italic'
     update_legends(p_new, q_list, hover)
-    tap.callback = bmd.OpenURL(url="detail?mat_id=@name")
+    tap.callback = bmd.OpenURL(url="detail?mat_id=@mat_id")
 
     # Plot vertical line for comparison with amine-based technology (PE=1MJ/kg)
     if inp_y == 'CO2 parasitic energy (coal)':

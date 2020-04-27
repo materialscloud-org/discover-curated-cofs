@@ -16,6 +16,7 @@ except:
     this_dir = ''
 
 TAG_KEY = "tag4"
+GROUP_DIR = "discover_curated_cofs/"
 
 
 def provenance_link(uuid, label=None):
@@ -49,12 +50,12 @@ def get_db_nodes_dict():
     curated nodes as value."""
 
     qb = QueryBuilder()
-    qb.append(Group, filters={'label': {'like': r'curated-cof%'}}, tag='curated_groups', project=['label'])
-    qb.append(Node, filters={'extras': {'has_key': TAG_KEY}}, with_group='curated_groups', project=['*'])
+    qb.append(Group, filters={'label': {'like': GROUP_DIR + "%"}}, tag='g', project=['label'])
+    qb.append(Node, filters={'extras': {'has_key': TAG_KEY}}, with_group='g', project=['*'])
 
     db_nodes_dict = {}
     for q in qb.all():
-        mat_label = q[0].split("_")[1]
+        mat_label = q[0].split("/")[1]
         if mat_label not in db_nodes_dict:
             db_nodes_dict[mat_label] = {}
         n = q[1]
