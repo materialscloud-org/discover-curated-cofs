@@ -33,7 +33,7 @@ def provenance_link(uuid, label=None):
 def detail_link(mat_id):
     """Return representation of provenance link."""
     logo_url = 'select-figure/static/images/co2-128.png'
-    return "<a href='detail?id={}' target='_blank'><img src='{}' style='width: 20px;  height: auto;'></a>".format(
+    return "<a href='detail?mat_id={}' target='_blank'><img src='{}' style='width: 20px;  height: auto;'></a>".format(
         mat_id, logo_url)
 
 

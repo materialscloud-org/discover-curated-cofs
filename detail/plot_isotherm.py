@@ -27,9 +27,8 @@ def plot_isotherm(**kwargs):
     plotcolor = {'co2': 'red', 'n2': 'blue'}
     plotlabel = {'co2': 'CO₂', 'n2': u'N₂'}
 
-    version = kwargs.pop('version')
     for gas in ['co2', 'n2']:
-        isot_out = kwargs['pm_' + gas]
+        isot_out = kwargs['isot_' + gas]
 
         if isot_out['is_porous']:
             p = isot_out['isotherm']["pressure"]  #(bar)
