@@ -1,0 +1,11 @@
+max-line-length: 120
+
+pylint:
+  disable:
+    - logging-format-interpolation 
+    - too-many-function-args
+    - bare-except
+
+pep8:
+  disable:
+    - E722 # bare-except
