@@ -20,6 +20,7 @@ if __name__ == '__main__':
               "panel~=0.8.1",
               "param~=1.9.3",
               "graphviz~=0.13",
+              "pandas~=1.0.5",
           ],
           extras_require={
             "pre-commit": [
