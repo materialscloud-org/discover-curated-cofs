@@ -7,7 +7,7 @@ import bokeh.models as bmd
 import bokeh.plotting as bpl
 from bokeh.palettes import Plasma256
 
-from aiida import load_profile
+from figure.config import load_profile
 load_profile()
 
 TAG_KEY = "tag4"

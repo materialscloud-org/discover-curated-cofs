@@ -121,3 +121,9 @@ img.default-figure {
 .container:hover .hover-text {
    opacity: 1.0;
 }
+
+/* provenance links */
+img.provenance-logo {
+    width: 20px;
+    height: auto;
+}

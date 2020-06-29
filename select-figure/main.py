@@ -5,11 +5,6 @@ import pandas as pd
 import panel as pn
 from functools import lru_cache
 
-from aiida.orm.querybuilder import QueryBuilder
-from aiida.orm import Node, Group
-from aiida import load_profile
-load_profile()
-
 try:
     this_dir = os.path.dirname(os.path.abspath(__file__)) + '/'
 except:
@@ -17,6 +12,9 @@ except:
 
 TAG_KEY = "tag4"
 GROUP_DIR = "discover_curated_cofs/"
+EXPLORE_URL = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
+AIIDA_LOGO_URL = "select-figure/static/images/aiida-128.png"
+CO2_LOGO_URL = 'select-figure/static/images/co2-128.png'
 
 
 def provenance_link(uuid, label=None):
@@ -25,17 +23,14 @@ def provenance_link(uuid, label=None):
     if label is None:
         label = "Browse provenance\n" + str(uuid)
 
-    logo_url = "select-figure/static/images/aiida-128.png"
-    explore_url = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
-    return "<a href='{url}/details/{uuid}' target='_blank'><img src={logo_url} title='{label}' style='width: 20px;  height: auto;'></a>".format(  # noqa
-        url=explore_url, uuid=str(uuid), label=label, logo_url=logo_url)
+    return "<a href='{url}/details/{uuid}' target='_blank'><img class='provenance-logo' src={logo_url} title='{label}'></a>".format(  # noqa
+        url=EXPLORE_URL, uuid=str(uuid), label=label, logo_url=AIIDA_LOGO_URL)
 
 
 def detail_link(mat_id):
-    """Return representation of provenance link."""
-    logo_url = 'select-figure/static/images/co2-128.png'
-    return "<a href='detail?mat_id={}' target='_blank'><img src='{}' style='width: 20px;  height: auto;'></a>".format(
-        mat_id, logo_url)
+    """Return representation of workflow link."""
+    return "<a href='detail?mat_id={}' target='_blank'><img class='provenance-logo' src='{}'></a>".format(
+        mat_id, CO2_LOGO_URL)
 
 
 def doi_link(mat_dict):
@@ -49,6 +44,10 @@ def doi_link(mat_dict):
 def get_db_nodes_dict():
     """Given return a dictionary with all the curated materials having the material label as key, and a dict of
     curated nodes as value."""
+    from aiida.orm.querybuilder import QueryBuilder
+    from aiida.orm import Node, Group
+    from figure.config import load_profile
+    load_profile()
 
     qb = QueryBuilder()
     qb.append(Group, filters={'label': {'like': GROUP_DIR + "%"}}, tag='g', project=['label'])
@@ -65,6 +64,7 @@ def get_db_nodes_dict():
     return db_nodes_dict
 
 
+@lru_cache()
 def get_table():
     """Get the entries for the right table of select-figure."""
 

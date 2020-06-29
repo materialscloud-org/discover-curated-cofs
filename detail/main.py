@@ -2,7 +2,7 @@ import os
 import panel as pn
 from bokeh.io import curdoc
 
-from aiida import load_profile
+from figure.config import load_profile
 load_profile()
 
 TAG_KEY = "tag4"

@@ -44,4 +44,8 @@ def update_config():
     return config
 
 
-AIIDA_CONFIG = update_config()
+def load_profile():
+    import aiida
+
+    update_config()
+    aiida.load_profile()
