@@ -3,7 +3,7 @@
 import os
 import pandas as pd
 import panel as pn
-#from panel.interact import interact
+from functools import lru_cache
 
 from aiida.orm.querybuilder import QueryBuilder
 from aiida.orm import Node, Group
@@ -45,6 +45,7 @@ def doi_link(mat_dict):
     return "<a href='https://doi.org/{}' target='_blank'>{}</a>".format(doi, name)
 
 
+@lru_cache()
 def get_db_nodes_dict():
     """Given return a dictionary with all the curated materials having the material label as key, and a dict of
     curated nodes as value."""
