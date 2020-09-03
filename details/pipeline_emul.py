@@ -2,13 +2,15 @@
 import collections
 import yaml
 import re
+import os
 from os.path import join, dirname, realpath
 from frozendict import frozendict
 from functools import lru_cache
 from aiida.orm.querybuilder import QueryBuilder
-from aiida.orm import Node, Dict, Group
+from aiida.orm import Node, Dict, Group, WorkChainNode
 
 CONFIG_DIR = join(dirname(realpath(__file__)), "static")
+EXPLORE_URL = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
 
 TAG_KEY = 'tag4'
 
@@ -88,6 +90,73 @@ def get_data_aiida(quantitites):
 
     return qb.all()
 
+
+def get_mat_nodes_dict(mat_id):
+    """Given a MAT_ID return a dictionary with all the tagged nodes for that material."""
+
+    qb = QueryBuilder()
+    qb.append(Group, filters={'label': {'like': r'curated-___\_{}\_v_'.format(mat_id)}}, tag='curated_groups')
+    qb.append(Node, filters={'extras': {'has_key': TAG_KEY}}, with_group='curated_groups')
+
+    mat_nodes_dict = {}
+    for q in qb.all():
+        n = q[-1]  # if more groups are present with different versions, take the last: QB sorts groups by label
+        mat_nodes_dict[n.extras[TAG_KEY]] = n
+
+    return mat_nodes_dict
+
+
+@lru_cache(maxsize=8)
+def get_isotherm_nodes(mat_id):
+    """Query the AiiDA database, to get all the isotherms (Dict output of IsothermWorkChain, with GCMC calculations).
+    Returning a dictionary like: {'co2: [Dict_0, Dict_1], 'h2': [Dict_0, Dict_1, Dict_2]}
+    """
+
+    # Get all the Isotherms
+    qb = QueryBuilder()
+    qb.append(Group, filters={'label': {'like': r'curated-___\_{}\_v_'.format(mat_id)}}, tag='mat_group')
+    qb.append(Dict, filters={'extras.{}'.format(TAG_KEY): {'like': r'isot\_%'}}, with_group='mat_group')
+
+    gas_dict = {}
+    for x in qb.all():
+        node = x[0]
+        gas = node.extras[TAG_KEY].split("_")[1]
+        if gas in gas_dict:
+            gas_dict[gas].append(node)
+        else:
+            gas_dict[gas] = [node]
+
+    # Quite diry way to get all the isotherms from an IsothermMultiTemp
+    qb = QueryBuilder()
+    qb.append(Group, filters={'label': {'like': r'curated-___\_{}\_v_'.format(mat_id)}}, tag='mat_group')
+    qb.append(Dict,
+              filters={'extras.{}'.format(TAG_KEY): {
+                           'like': r'isotmt\_%'
+                       }},
+              with_group='mat_group',
+              tag='isotmt_out',
+              project=['extras.{}'.format(TAG_KEY)])
+    qb.append(WorkChainNode, with_outgoing='isotmt_out', tag='isotmt_wc')
+    qb.append(WorkChainNode,
+              edge_filters={'label': {
+                  'like': 'run_isotherm_%'
+              }},
+              with_incoming='isotmt_wc',
+              tag='isot_wc')
+    qb.append(Dict, edge_filters={'label': 'output_parameters'}, with_incoming='isot_wc', project=['*'])
+
+    for x in qb.all():
+        node = x[1]
+        gas = x[0].split("_")[1]
+        if gas in gas_dict:
+            gas_dict[gas].append(node)
+        else:
+            gas_dict[gas] = [node]
+
+    return gas_dict
+
+
+# Get color palette
 
 myRdYlGn = (  # modified from Turbo256
     '#5dfb6f',
