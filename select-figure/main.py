@@ -102,17 +102,21 @@ def get_table():
     return df
 
 
-def fake_button(link, label):
+def fake_button(link, label, button_type):
     return """<span><a href="{link}" target="_blank">
-        <button class="bk bk-btn bk-btn-primary" type="button">{label}</button></a></span>""".format(link=link,
-                                                                                                     label=label)
+        <button class="bk bk-btn bk-btn-{bt}" type="button">{label}</button></a></span>""".format(link=link,
+                                                                                                  label=label,
+                                                                                                  bt=button_type)
 
 
 buttons = pn.Row()
-buttons.append(fake_button(link="https://github.com/danieleongari/CURATED-COFs", label="GitHub repository"))
+buttons.append(
+    fake_button(link="https://github.com/danieleongari/CURATED-COFs", label="GitHub repository", button_type="primary"))
 buttons.append(
     fake_button(link="https://archive.materialscloud.org/file/2019.0034/v2/cifs_cellopt_Dec19.zip",
-                label="Optimized Structures (DDEC)"))
+                label="Optimized Structures (DDEC)",
+                button_type="primary"))
+buttons.append(fake_button(link="results", label="More Applications...", button_type="danger"))  # red button
 
 pn.extension()
 
