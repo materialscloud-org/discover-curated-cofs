@@ -6,9 +6,11 @@ Use this app to generate interactive visualizations like [these](https://www.mat
 for atomic structures and their properties.
 
 ### UPDATE (September 2020)
-Now this package contains also some extra pages copied from `nanoporous_screening` to display different applications for
-COFs. This will be used to produce a permanent reference for the ACS Central Science's Outlook.
+Now this package contains the `results` and `details` pages copied from `nanoporous_screening` to display different 
+applications for COFs. This will be used to produce a permanent reference for the ACS Central Science's Outlook. 
 
+Not to have a dependency to the `nanoporous_screening/pipeline` package, the needed functions are copied in the 
+`pipeline_emul.py` files in the `results` and `details` directories (two identical files).
 
 ## Inner working
 
