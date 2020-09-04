@@ -99,7 +99,7 @@
     In this model we consider the separation of xenon and krypton from the flue gas of used nuclear fuel reporcessing utilities.
     In particular, we seek the best materials that can selectivity extract xenon from diluted concentaration, 
     exploting the larger diameter of Xe (3.92 Angs) with respect to Kr (3.68 Angs). 
-    The selectivity here, is defined as the ratio between the Henry coefficients (k<sub>H<\sub>) of the two gasses,
+    The selectivity here, is defined as the ratio between the Henry coefficients (k<sub>H</sub>) of the two gasses,
     i.e., the affinity of the gas molecule with the bare material at null pressure.
     <br>
     Using this metric, SBMOF-1 was found from computational screenings to have a Xe/Kr selectivity as high as 70.6,
