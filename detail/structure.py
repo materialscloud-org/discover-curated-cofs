@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=unsubscriptable-object, too-many-locals
 
+
 def structure_jsmol(cif_str):
     from jsmol_bokeh_extension import JSMol
     import bokeh.models as bmd
@@ -24,8 +25,7 @@ load data "cifstring"
 {}
 
 end "cifstring"
-""".format(cif_str)
-    )
+""".format(cif_str))
 
     applet = JSMol(
         width=600,

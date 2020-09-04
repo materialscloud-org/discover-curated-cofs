@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from bokeh.plotting import figure
 import bokeh.models as bmd
-from details.pipeline_emul import gasses, get_isotherm_nodes
+from pipeline_config import gasses, get_isotherm_nodes
 from details.utils import get_provenance_url, get_provenance_link
 
 

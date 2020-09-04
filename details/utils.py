@@ -1,5 +1,5 @@
 from bokeh.io import curdoc
-from details.pipeline_emul import applications, quantities, EXPLORE_URL
+from pipeline_config import applications, quantities, EXPLORE_URL
 import panel as pn
 
 AIIDA_LOGO_PATH = "details/static/aiida-128.png"

@@ -8,7 +8,7 @@ from details.isotherms import plot_isotherms, get_widom_df
 from details.dft_info import plot_energy_steps
 from details.structure import structure_jsmol
 from details.utils import get_mat_id, get_details_title, get_geom_table, get_appl_table, get_title
-from details.pipeline_emul import get_mat_nodes_dict
+from pipeline_config import get_mat_nodes_dict
 
 load_profile()
 

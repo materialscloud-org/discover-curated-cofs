@@ -44,7 +44,7 @@ delete_css_groups()
 # Query for all the CURATED-COFs
 qb = QueryBuilder()
 qb.append(Group, filters={'label': {'like': r'curated-cof\_%\_v%'}})
-all_full_groups = qb.all(flat=True)
+all_full_groups = qb.all(flat=True)  #
 
 # Create groups for each and fill them with CSS nodes
 print("Creating CCS-groups, with tagged nodes:", css_nodes)

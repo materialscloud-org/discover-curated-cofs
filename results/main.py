@@ -4,7 +4,7 @@ import bokeh.plotting as bpl
 import bokeh.models as bmd
 from bokeh.io import curdoc
 import panel as pn
-from results.pipeline_emul import myRdYlGn, get_data_aiida, quantities, applications
+from pipeline_config import myRdYlGn, get_data_aiida, quantities, applications
 from aiida import load_profile
 load_profile()
 
