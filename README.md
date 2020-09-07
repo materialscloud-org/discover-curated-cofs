@@ -5,6 +5,13 @@
 Use this app to generate interactive visualizations like [these](https://www.materialscloud.org/discover/cofs#mcloudHeader)
 for atomic structures and their properties.
 
+### UPDATE (September 2020)
+Now this package contains the `results` and `details` pages copied from `nanoporous_screening` to display different 
+applications for COFs. This will be used to produce a permanent reference for the ACS Central Science's Outlook. 
+
+Not to have a dependency to the `nanoporous_screening/pipeline` package, the needed functions are copied in the 
+`pipeline_emul.py` files in the `results` and `details` directories (two identical files).
+
 ## Inner working
 
 For each COF we create a group, e.g., `discover_curated_cofs/05001N2` that contains all the nodes that are relevant for that structure.

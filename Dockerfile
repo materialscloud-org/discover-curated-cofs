@@ -36,6 +36,9 @@ WORKDIR /app/
 COPY figure ./figure
 COPY detail ./detail
 COPY select-figure ./select-figure
+COPY pipeline_config ./pipeline_config
+COPY details ./details
+COPY results ./results
 RUN ln -s /app/jmol-14.29.22/jsmol ./detail/static/jsmol
 COPY setup.py ./
 RUN pip install -e .
