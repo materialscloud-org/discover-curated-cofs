@@ -118,6 +118,13 @@ def get_plot(appl):  #pylint: disable=too-many-locals
     return p, msg
 
 
+def fake_button(link, label, button_type):
+    return """<span><a href="{link}" target="_blank">
+        <button class="bk bk-btn bk-btn-{bt}" type="button">{label}</button></a></span>""".format(link=link,
+                                                                                                  label=label,
+                                                                                                  bt=button_type)
+
+
 def on_click_highlight(event):  # pylint: disable=unused-argument
     label = inp_label.value
 
@@ -140,8 +147,11 @@ pn.extension()
 
 inp_label = pn.widgets.TextInput(name='Insert the name of a material', value="COF-5")
 btn_label = pn.widgets.Button(name='Highlight', button_type='primary')
-
 btn_label.on_click(on_click_highlight)
+btn_info = fake_button(link="info", label="Info & Methods", button_type="primary")
+btn_goback = fake_button(link="https://www.materialscloud.org/discover/curated-cofs",
+                         label="Go Back to CCS",
+                         button_type="danger")
 
 # Setting the layout of the page
 head_hp = 160  # hp: height in px
@@ -161,7 +171,7 @@ gspec[0:head_hg, 0:12] = pn.pane.HTML("""
 </ul>
 """)
 gspec[0:head_hg, 12:17] = pn.Column(inp_label, btn_label)
-gspec[0:head_hg, 19:24] = pn.Column()
+gspec[0:head_hg, 19:24] = pn.Column(btn_info, btn_goback)
 
 # applications: plot on the left, description on the right
 plots = {title: get_plot(val) for title, val in applications.items()}
