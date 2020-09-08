@@ -149,9 +149,7 @@ inp_label = pn.widgets.TextInput(name='Insert the name of a material', value="CO
 btn_label = pn.widgets.Button(name='Highlight', button_type='primary')
 btn_label.on_click(on_click_highlight)
 btn_info = fake_button(link="info", label="Info & Methods", button_type="primary")
-btn_goback = fake_button(link="https://www.materialscloud.org/discover/curated-cofs",
-                         label="Go Back to CCS",
-                         button_type="danger")
+btn_goback = fake_button(link="select-figure", label="Back to CCS", button_type="danger")
 
 # Setting the layout of the page
 head_hp = 160  # hp: height in px

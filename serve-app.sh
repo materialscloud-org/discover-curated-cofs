@@ -3,7 +3,7 @@ set -x
 
 # This script is executed whenever the docker container is (re)started.
 #===============================================================================
-panel serve figure detail select-figure results details \
+panel serve figure detail select-figure results details info \
     --port 5006                 \
     --allow-websocket-origin "*" \
     --prefix "$BOKEH_PREFIX" \
