@@ -113,9 +113,11 @@ buttons = pn.Row()
 buttons.append(
     fake_button(link="https://github.com/danieleongari/CURATED-COFs", label="GitHub repository", button_type="primary"))
 buttons.append(
-    fake_button(link="https://archive.materialscloud.org/file/2019.0034/v2/cifs_cellopt_Dec19.zip",
-                label="Optimized Structures (DDEC)",
-                button_type="primary"))
+    fake_button(
+        link=
+        "https://archive.materialscloud.org/record/file?filename=cifs_cellopt_Jun20.zip&file_id=f1843d6a-06de-45c5-94d0-fd24925aa030&record_id=519",
+        label="Optimized Structures (DDEC)",
+        button_type="primary"))
 buttons.append(fake_button(link="results", label="More Applications...", button_type="danger"))  # red button
 
 pn.extension()
