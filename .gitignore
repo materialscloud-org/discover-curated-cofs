@@ -8,3 +8,4 @@ jmol.zip
 .vscode
 .docker/config.json
 *.prof
+.idea/
