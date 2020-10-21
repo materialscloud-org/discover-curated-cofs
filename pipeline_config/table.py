@@ -29,31 +29,36 @@ def detail_link(mat_id):
 
 def doi_link(mat_dict):
     """Return the DOI link of the article."""
-    name = mat_dict['orig_cif'].extras['name_conventional']
-    doi = mat_dict['orig_cif'].extras['doi_ref']
+    name = mat_dict['name_conventional']
+    doi = mat_dict['doi_ref']
     return "<a href='https://doi.org/{}' target='_blank'>{}</a>".format(doi, name)
 
 
 @lru_cache()
 def get_db_nodes_dict():
     """Given return a dictionary with all the curated materials having the material label as key, and a dict of
-    curated nodes as value."""
+    curated nodes as value.
+    IMPROVED FOR SPEED!
+    """
     from aiida.orm.querybuilder import QueryBuilder
     from aiida.orm import Node, Group
     from figure.config import load_profile
     load_profile()
 
     qb = QueryBuilder()
-    qb.append(Group, filters={'label': {'like': GROUP_DIR + "%"}}, tag='g', project=['label'])
-    qb.append(Node, filters={'extras': {'has_key': TAG_KEY}}, with_group='g', project=['*'])
+    qb.append(Group, filters={'label': {'like': GROUP_DIR + "%"}}, tag='g', project=['label', 'extras'])
+    qb.append(Node, filters={'extras': {'has_key': TAG_KEY}}, with_group='g', project=[f'extras.{TAG_KEY}', 'uuid'])
 
     db_nodes_dict = {}
-    for q in qb.all():
+    for q in qb.all():  # q = [group-label, group-extras, node-tag, node-uuid]
         mat_label = q[0].split("/")[1]
         if mat_label not in db_nodes_dict:
-            db_nodes_dict[mat_label] = {}
-        n = q[1]
-        db_nodes_dict[mat_label][n.extras[TAG_KEY]] = n
+            db_nodes_dict[mat_label] = {
+                'name_conventional': q[1]['name_conventional'],
+                'doi_ref': q[1]['doi_ref'],
+                'workflow_version': q[1]['workflow_version'],
+            }
+        db_nodes_dict[mat_label][q[2]] = q[3]
 
     return db_nodes_dict
 
@@ -74,12 +79,12 @@ def get_table():
         new_row = {
             'CURATED-COFs ID': mat_id,
             'Article': doi_link(mat_dict),
-            'Original Structure': provenance_link(mat_dict['orig_cif'].uuid),
-            'Vers.': mat_dict['orig_cif'].extras['workflow_version'],
+            'Original Structure': provenance_link(mat_dict['orig_cif']),
+            'Vers.': mat_dict['workflow_version'],
         }
 
         if 'opt_cif_ddec' in mat_dict:
-            new_row['Optimized Structure'] = provenance_link(mat_dict['opt_cif_ddec'].uuid)
+            new_row['Optimized Structure'] = provenance_link(mat_dict['opt_cif_ddec'])
         else:
             new_row['Optimized Structure'] = "N/A"
 
