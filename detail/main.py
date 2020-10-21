@@ -1,12 +1,7 @@
 import os
 import panel as pn
 from bokeh.io import curdoc
-
-from figure.config import load_profile
-load_profile()
-
-TAG_KEY = "tag4"
-GROUP_DIR = "discover_curated_cofs/"
+from pipeline_config import get_mat_dict
 
 
 def get_mat_id():
@@ -46,23 +41,6 @@ def get_title(text, uuid=None):
         title.append(provenance_link(uuid))
 
     return title
-
-
-def get_mat_dict(mat_id):
-    """Given a curated-cof label, queries the group and returns a dictionary with tags as keys and nodes as values.
-    If multiple version are available qb.all()[0][0] shuld take the last one computed.
-    """
-    from aiida.orm.querybuilder import QueryBuilder  #pylint: disable=import-outside-toplevel
-    from aiida.orm import Group, Node  #pylint: disable=import-outside-toplevel
-    qb = QueryBuilder()
-    qb.append(Group, filters={'label': {'like': GROUP_DIR + mat_id}}, tag='group')
-    qb.append(Node, project=['extras.{}'.format(TAG_KEY), '*'], with_group='group')
-
-    mat_dict = {}
-    for k, v in qb.all():
-        mat_dict[k] = v
-
-    return mat_dict
 
 
 # pylint: disable=import-outside-toplevel

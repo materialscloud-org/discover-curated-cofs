@@ -4,7 +4,7 @@ import os
 from aiida.orm.querybuilder import QueryBuilder
 from aiida.orm import Group, CifData
 
-from figure.config import load_profile
+from pipeline_config import load_profile
 load_profile()
 
 TAG_KEY = "tag4"

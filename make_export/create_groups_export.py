@@ -9,14 +9,14 @@ from aiida.orm.querybuilder import QueryBuilder
 from aiida.orm import Group
 from aiida.tools.importexport.dbexport import export  # Updated to AiiDA v1.3.0
 
-from figure.config import load_profile
+from pipeline_config import load_profile
 load_profile()
 
 TAG_KEY = "tag4"
 GROUP_DIR = "discover_curated_cofs/"
 EXPORT_FILE_NAME = "export_discovery_cof_{}.aiida".format(datetime.date.today().strftime(r'%d%b%y'))
 
-EXPORT = True
+EXPORT = False
 CLEAR = False
 
 dis_nodes = [  # only selected nodes
@@ -63,7 +63,8 @@ for full_group in all_groups:
             dis_group.add_nodes(node)
             left_nodes.remove(node.extras[TAG_KEY])
             if node.extras[TAG_KEY] == 'orig_cif':  #to change at a certain point!
-                for extra_key in ['doi_ref', 'workflow_version', 'name_conventional']:
+                dis_group.set_extra('mat_id', mat_id)
+                for extra_key in ['doi_ref', 'workflow_version', 'name_conventional', 'class_material']:
                     extra_val = node.extras[extra_key]
                     dis_group.set_extra(extra_key, extra_val)
 

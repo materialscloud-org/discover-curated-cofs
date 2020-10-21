@@ -148,8 +148,6 @@ pn.extension()
 inp_label = pn.widgets.TextInput(name='Insert the name of a material', value="COF-5")
 btn_label = pn.widgets.Button(name='Highlight', button_type='primary')
 btn_label.on_click(on_click_highlight)
-btn_info = fake_button(link="info", label="Info & Methods", button_type="primary")
-btn_goback = fake_button(link="select-figure", label="Back to CCS", button_type="danger")
 
 # Setting the layout of the page
 head_hp = 160  # hp: height in px
@@ -166,10 +164,11 @@ gspec[0:head_hg, 0:12] = pn.pane.HTML("""
 <ul>
   <li>Color: from best materials (green) to worst (red)
   <li>Insert the name of any material in this box to see it highlighted
+  <li>Read about the <a href="info">Info & Methods</a> used to produce these results
+  <li>The project continues on <a href="https://matscreen.com/">MatScreen.com</a>
 </ul>
 """)
 gspec[0:head_hg, 12:17] = pn.Column(inp_label, btn_label)
-gspec[0:head_hg, 19:24] = pn.Column(btn_info, btn_goback)
 
 # applications: plot on the left, description on the right
 plots = {title: get_plot(val) for title, val in applications.items()}
