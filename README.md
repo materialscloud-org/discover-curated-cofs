@@ -18,15 +18,7 @@ Currently `GROUP_DIR = "discover_curated_cofs/"` and `TAG_KEY = "tag4"`, but the
 These groups are generated using the utility `make_export/create_groups_export.py` or they can be imported from
 the latest databases stored on [Materials Cloud](https://archive.materialscloud.org/record/2020.107).
 
-## Getting started
-
-### Prerequisites
-
- * [git](https://git-scm.com/)
- * [python](https://www.python.org/) >= 2.7
- * [nodejs](https://nodejs.org/en/) >= 6.10
-
-### Installation and run
+## Installation and run
 
 After activating your AiiDA environment:
 ```
