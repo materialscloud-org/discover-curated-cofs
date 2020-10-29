@@ -9,11 +9,9 @@ from aiida.orm.querybuilder import QueryBuilder
 from aiida.orm import Group
 from aiida.tools.importexport.dbexport import export  # Updated to AiiDA v1.3.0
 
-from pipeline_config import load_profile
+from pipeline_config import load_profile, TAG_KEY, GROUP_DIR
 load_profile()
 
-TAG_KEY = "tag4"
-GROUP_DIR = "discover_curated_cofs/"
 EXPORT_FILE_NAME = "export_discovery_cof_{}.aiida".format(datetime.date.today().strftime(r'%d%b%y'))
 
 EXPORT = False

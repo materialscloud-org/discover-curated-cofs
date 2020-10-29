@@ -17,8 +17,6 @@ EXPLORE_URL = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explo
 AIIDA_LOGO_URL = "select-figure/static/images/aiida-128.png"
 CO2_LOGO_URL = 'select-figure/static/images/co2-128.png'
 
-TAG_KEY = 'tag4'
-
 
 # Load and update profile for dockers
 def update_config():
@@ -111,7 +109,9 @@ gasses = collections.OrderedDict([(q['label'], q) for q in gasses_list])
 # Get queries
 #@lru_cache(maxsize=128)
 def get_data_aiida(quantitites):
-    """Query the AiiDA database for a list of quantities (other appl results)."""
+    """Query the AiiDA database for a list of quantities (other appl results).
+    Return list of entries like [mat_id, mat_name, mat_class, quantity-1, quantity-2, ..., quantity-n].
+    """
 
     qb = QueryBuilder()
     qb.append(Group,
