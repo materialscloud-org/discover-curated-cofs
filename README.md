@@ -2,8 +2,8 @@
 
 # Discover CURATED-COFs
 
-App for generating the interactive page of https://www.materialscloud.org/discover/curated-cofs.
-Built from the [Structure-Property-Visualizer]https://github.com/materialscloud-org/structure-property-visualizer).
+App showcasing screening of the CURATED-COFs, live at https://www.materialscloud.org/discover/curated-cofs.
+Based on the [Structure-Property-Visualizer]https://github.com/materialscloud-org/structure-property-visualizer).
 
 ## Inner working
 

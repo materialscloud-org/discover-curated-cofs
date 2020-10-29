@@ -50,14 +50,15 @@ Note that for the most recent calculations, the [Force Field Builder](https://ai
 The available force fields are stored in [this file](https://github.com/lsmo-epfl/aiida-lsmo/blob/master/aiida_lsmo/calcfunctions/ff_data.yaml), together with their references, to be parsed by the Force Field Builder utility.
 
 ## Reproducing previous plots
-These results are periodically updated with more COFs or some fixes (e.g., removing duplicates and correcting structures
-where we discover some wrong chemistry). To reproduce the exact same figure as in the 
-[ACS Central Science' Outlook](https://pubs.acs.org/doi/abs/10.1021/acscentsci.0c00988)
-please refer to the [version 6 of the associated Materials Cloud Archive](https://doi.org/10.24435/materialscloud:kd-wj).
-In particular you need to import the database 
+The results are updated periodically to include new COFs or fixes (e.g., removing duplicates, correcting structures
+where we discover wrong chemistry). To reproduce the exact same figure as in the 
+[ACS Central Science Outlook](https://pubs.acs.org/doi/abs/10.1021/acscentsci.0c00988)
+please refer to the dataset linked from the paper ([version 6 of the Materials Cloud Archive record](https://doi.org/10.24435/materialscloud:kd-wj).
+
+In particular import the database 
 [export_discovery_cof_07Sep20.aiida](https://archive.materialscloud.org/record/file?record_id=519&file_id=46659e55-46d2-40ea-b1c9-0df0e1b676fa&filename=export_discovery_cof_07Sep20.aiida)
 and install the [version v0.3.1 of the discover-curated-cofs app](https://github.com/lsmo-epfl/discover-curated-cofs/tree/v0.3.1).
 
 ## Visit MatScreen.com
 The project continues on [www.MatScreen.com](https://matscreen.com/), including more nanoporous crystals (MOFs and zeolites), 
-and more screenings for different applications.
+and screenings for a wider range of applications.
