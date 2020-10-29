@@ -6,29 +6,7 @@ from collections import OrderedDict
 import bokeh.models as bmd
 import bokeh.plotting as bpl
 from bokeh.palettes import Plasma256
-
-from figure.config import load_profile
-load_profile()
-
-TAG_KEY = "tag4"
-GROUP_DIR = "discover_curated_cofs/"
-
-
-def get_data_aiida(q_list):
-    """Query the AiiDA database for a list of quantities."""
-    from aiida.orm.querybuilder import QueryBuilder
-    from aiida.orm import Dict, Group
-
-    qb = QueryBuilder()
-    qb.append(Group, project=['label'], filters={'label': {'like': GROUP_DIR + "%"}}, tag='g')
-
-    for q in q_list:
-        qb.append(Dict,
-                  project=['attributes.{}'.format(q['key'])],
-                  filters={'extras.{}'.format(TAG_KEY): q['dict']},
-                  with_group='g')
-
-    return qb.all()
+from pipeline_config import get_data_aiida
 
 
 def update_legends(p, q_list, hover):
@@ -47,7 +25,7 @@ def update_legends(p, q_list, hover):
 def get_plot(inp_x, inp_y, inp_clr):
     """Returns a Bokeh plot of the input values, and a message with the number of COFs found."""
     q_list = [config.quantities[label] for label in [inp_x, inp_y, inp_clr]]
-    results_wnone = get_data_aiida(q_list)  #returns [inp_x_value, inp_y_value, inp_clr_value, group.label]
+    results_wnone = get_data_aiida(q_list)  #returns ***
 
     # dump None lists that make bokeh crash
     results = []
@@ -58,18 +36,17 @@ def get_plot(inp_x, inp_y, inp_clr):
     # prepare data for plotting
     nresults = len(results)
     if not results:
-        results = [[0, 0, 0, 'no data']]
+        results = [['x', 'x', 'x', 0, 0, 0]]
         msg = "No matching COFs found."
     else:
         msg = "{} COFs found.<br> <b>Click on any point for details!</b>".format(nresults)
 
-    group_label, x, y, clrs = zip(*results)
+    mat_id, mat_name, mat_class, x, y, clrs = zip(*results)  # returned ***
     x = list(map(float, x))
     y = list(map(float, y))
     clrs = list(map(float, clrs))
-    mat_id = [x.split("/")[1] for x in group_label]
 
-    data = {'x': x, 'y': y, 'color': clrs, 'mat_id': mat_id}
+    data = {'x': x, 'y': y, 'color': clrs, 'mat_id': mat_id, 'mat_name': mat_name, 'mat_class': mat_class}
 
     # create bokeh plot
     source = bmd.ColumnDataSource(data=data)

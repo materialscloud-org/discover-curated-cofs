@@ -17,11 +17,10 @@ def get_mat_id():
     return mat_id
 
 
-def get_details_title(mat_node):
+def get_details_title(mat_dict):
     """Get title for the Detail page."""
-    title = "# Detail section for {} ({} {}) v{}".format(mat_node.extras['name_conventional'],
-                                                         mat_node.extras['class_material'].upper(), mat_node.label,
-                                                         mat_node.extras['workflow_version'])
+    title = "# Detail section for {} (COF {}) v{}".format(mat_dict['name_conventional'], mat_dict['mat_id'],
+                                                          mat_dict['workflow_version'])
     return title
 
 
@@ -64,7 +63,7 @@ def get_geom_table(zeopp):
     return md_str
 
 
-def get_appl_table(mat_nodes_dict):
+def get_appl_table(mat_dict):
     """Return table of application performance data
     
     :param dict mat_nodes_dict:  dictionary of all relevant nodes for the material
@@ -79,7 +78,7 @@ def get_appl_table(mat_nodes_dict):
             q_unit = quantities[appl_dict[propr]]['unit']
 
             try:
-                q_val = mat_nodes_dict[q_dict][q_key]
+                q_val = mat_dict[q_dict][q_key]
                 #quick fix to show all values nicely enough
                 if abs(float(q_val)) > 0.01:
                     q_val = round(q_val, 3)
@@ -92,7 +91,7 @@ def get_appl_table(mat_nodes_dict):
 
             # If the node exists (even for nonporous mat/appl) get the aiida-link
             try:
-                q_uuid = mat_nodes_dict[q_dict].uuid
+                q_uuid = mat_dict[q_dict].uuid
                 html_str += get_provenance_link(q_uuid)
             except:
                 pass

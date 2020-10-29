@@ -3,7 +3,7 @@
 import panel as pn
 # note: the table code was moved inside pipeline_config, since bokeh1 does not support "from . import ..." and
 # select-figure is not a valid package name (also from select_figure import does not work).
-from pipeline_config.table import get_table
+from pipeline_config import get_table
 
 
 def fake_button(link, label, button_type):

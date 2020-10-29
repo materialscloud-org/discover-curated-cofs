@@ -16,9 +16,8 @@ def get_graph(mat_dict):
     in groups, ansd would be difficult to maintain.
     """
 
-    link_paper = "https://doi.org/" + mat_dict['orig_cif'].extras['doi_ref']
-    link_github = "https://github.com/danieleongari/CURATED-COFs/blob/master/cifs/{}.cif".format(
-        mat_dict['orig_cif'].label)
+    link_paper = "https://doi.org/" + mat_dict['doi_ref']
+    link_github = "https://github.com/danieleongari/CURATED-COFs/blob/master/cifs/{}.cif".format(mat_dict['mat_id'])
 
     g = Digraph("Workflow's graph")
 

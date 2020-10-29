@@ -1,84 +1,43 @@
 [![Build Status](https://travis-ci.org/materialscloud-org/structure-property-visualizer.svg?branch=master)](https://travis-ci.org/materialscloud-org/structure-property-visualizer)
 
-# Structure-Property-Visualizer
+# Discover CURATED-COFs
 
-Use this app to generate interactive visualizations like [these](https://www.materialscloud.org/discover/cofs#mcloudHeader)
-for atomic structures and their properties.
-
-### UPDATE (September 2020)
-Now this package contains the `results` and `details` pages copied from `nanoporous_screening` to display different 
-applications for COFs. This will be used to produce a permanent reference for the ACS Central Science's Outlook. 
-
-Not to have a dependency to the `nanoporous_screening/pipeline` package, the needed functions are copied in the 
-`pipeline_emul.py` files in the `results` and `details` directories (two identical files).
+App showcasing screening of the CURATED-COFs, live at https://www.materialscloud.org/discover/curated-cofs.
+Based on the [Structure-Property-Visualizer]https://github.com/materialscloud-org/structure-property-visualizer).
 
 ## Inner working
 
 For each COF we create a group, e.g., `discover_curated_cofs/05001N2` that contains all the nodes that are relevant for that structure.
-These nodes have the extra `TAG_KEY`, which indicates the content of that node: e.g., `orig_cif`, `opt_cif_ddec`, `isot_n2`, ...
+These nodes have the extra `TAG_KEY`, which indicates the content of the node:
+```
+'orig_cif', 'orig_zeopp', 'dftopt', 'opt_cif_ddec', 'opt_zeopp', # CIF structures, DFT optimization, and pore analysis
+'isot_co2', 'isot_n2', 'isotmt_h2', 'isot_ch4','isot_o2', 'kh_xe', 'kh_kr', 'kh_h2s', 'kh_h2o', # results of Isotherm work chain
+'appl_pecoal', 'appl_peng', 'appl_h2storage', 'appl_ch4storage', 'appl_o2storage', 'appl_xekrsel', 'appl_h2sh2osel' # post-processing applications
+```
 Currently `GROUP_DIR = "discover_curated_cofs/"` and `TAG_KEY = "tag4"`, but they may vary in the future.
+These groups are generated using the utility `make_export/create_groups_export.py` or they can be imported from
+the latest databases stored on [Materials Cloud](https://archive.materialscloud.org/record/2020.107).
 
-## Re-implementation based on Panel
+## Installation and run
 
-Use as jupyter notebook:
+After activating your AiiDA environment:
 ```
-jupyter notebook
-# open figure/main.ipynb
-```
-
-Use with panel:
-```
-panel serve detail/ figure/
-```
-
-## Features
-
- * interactive scatter plots via [bokeh server](https://bokeh.pydata.org/en/1.0.4/)
- * interactive structure visualization via [jsmol](https://chemapps.stolaf.edu/jmol/docs/)
- * simple input: provide CIF/XYZ files with structures and CSV file with their properties
- * simple deployment on [materialscloud.org](https://www.materialscloud.org/discover/menu) through [Docker containers](http://docker.com)
- * driven by database backend:
-   1. [sqlite](https://www.sqlite.org/index.html) database (default)
-   1. [AiiDA](http://www.aiida.net/) database backend (less tested)
-
-## Getting started
-
-### Prerequisites
-
- * [git](https://git-scm.com/)
- * [python](https://www.python.org/) >= 2.7
- * [nodejs](https://nodejs.org/en/) >= 6.10
-
-### Installation
-
-```
-git clone https://github.com/materialscloud-org/structure-property-visualizer.git
-cd structure-property-visualizer
+git clone https://github.com/lsmo-epfl/discover-curated-cofs.git
+cd discover-curated-cofs
 pip install -e .     # install python dependencies
 ./prepare.sh         # download test data (run only once)
 ```
 
-### Running the app
-
+Download the latest database from [Materials Cloud](https://archive.materialscloud.org/record/2020.107)
+and import it in AiiDA:
 ```
-bokeh serve --show figure detail select-figure   # run app
+verdi import export_discovery_cof_xxx.aiida
 ```
 
-## Customizing the app
-
-### Input data
- * a set of structures in `data/structures`
-   * Allowed file extensions: `cif`, `xyz`
- * a CSV file `data/properties.csv` with their properties
-   * has a column `name` whose value `<name>` links each row to a file in `structures/<name>.<extension>`.
- * adapt `import_db.py` accordingly and run it to create the database
-
-### Plots
-
-The plots can be configured using a few YAML files in `figure/static`:
- * `columns.yml`: defines metadata for columns of CSV file
- * `filters.yml`: defines filters available in plot
- * `presets.yml`: defines presets for axis + filter settings
+Finally, visualize the app:
+```
+bokeh serve --show detail details figure results select-figure
+```
 
 ## Docker deployment
 
