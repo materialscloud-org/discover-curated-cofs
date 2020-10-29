@@ -165,7 +165,7 @@ def get_isotherm_nodes(mat_id):
 
     # Get all the Isotherms
     qb = QueryBuilder()
-    qb.append(Group, filters={'label': {'like': r'curated-___\_{}\_v_'.format(mat_id)}}, tag='mat_group')
+    qb.append(Group, filters={'label': {'==': GROUP_DIR + mat_id}}, tag='mat_group')
     qb.append(Dict, filters={'extras.{}'.format(TAG_KEY): {'like': r'isot\_%'}}, with_group='mat_group')
 
     gas_dict = {}
@@ -179,7 +179,7 @@ def get_isotherm_nodes(mat_id):
 
     # Quite diry way to get all the isotherms from an IsothermMultiTemp
     qb = QueryBuilder()
-    qb.append(Group, filters={'label': {'like': r'curated-___\_{}\_v_'.format(mat_id)}}, tag='mat_group')
+    qb.append(Group, filters={'label': {'==': GROUP_DIR + mat_id}}, tag='mat_group')
     qb.append(Dict,
               filters={'extras.{}'.format(TAG_KEY): {
                            'like': r'isotmt\_%'
