@@ -5,8 +5,6 @@ import bokeh.models as bmd
 from bokeh.io import curdoc
 import panel as pn
 from pipeline_config import myRdYlGn, get_data_aiida, quantities, applications
-from aiida import load_profile
-load_profile()
 
 
 def get_mat_id():
