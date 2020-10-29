@@ -11,7 +11,7 @@ if __name__ == '__main__':
           description="A Materials Cloud DISCOVER section for CURATED COFs.",
           license="MIT",
           classifiers=["Programming Language :: Python"],
-          version="0.2.1",
+          version="1.0.0",
           install_requires=[
               "aiida-core~=1.5.0",
               "bokeh~=1.4.0",
