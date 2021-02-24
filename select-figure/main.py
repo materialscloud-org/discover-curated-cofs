@@ -19,14 +19,18 @@ buttons.append(
 buttons.append(
     fake_button(
         link=
-        "https://archive.materialscloud.org/record/file?filename=cifs_cellopt_Jun20.zip&file_id=f1843d6a-06de-45c5-94d0-fd24925aa030&record_id=519",
+        "https://archive.materialscloud.org/deposit/records/file?file_id=e597475b-23cd-4bca-9f6b-005e706087e4&filename=cifs_cellopt_Feb21.zip",
         label="Optimized Structures (DDEC)",
         button_type="primary"))
+buttons.append(fake_button(link="figure", label="Interactive Plot", button_type="primary"))
 buttons.append(fake_button(link="results", label="More Applications...", button_type="danger"))  # red button
 
 pn.extension()
 
 t = pn.Column()
 t.append(buttons)
-t.append(get_table().to_html(escape=False))
+
+html_table = get_table().to_html(escape=False, classes='table table-striped table-hover')
+
+t.append(pn.pane.HTML(html_table, style={'border': '3px solid black', 'border-radius': '10px', 'padding': '0px'}))
 t.servable()
