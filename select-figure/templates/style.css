@@ -12,8 +12,6 @@
 }
 
 div.grid-item {
-  /*  max-height:10000000px; */
-  overflow:scroll;
 }
 
 div.content {
