@@ -19,7 +19,7 @@ if __name__ == '__main__':
               "requests~=2.21.0",
               "panel~=0.8.1",
               "param~=1.9.3",
-              "graphviz~=0.13",
+              "graphviz~=0.13.2",
               "pandas~=1.0.5",
               "pyjanitor~=0.20.2",
           ],
