@@ -23,5 +23,6 @@ if __name__ == '__main__':
               "pyjanitor~=0.20.2",
               "jinja2~=3.0.0",
               "frozendict~=2.3.2",
+              "numpy~=1.23.1",
           ],
           extras_require={"pre-commit": ["pre-commit==1.17.0", "prospector==1.2.0", "pylint==2.4.0"]})
