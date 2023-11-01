@@ -44,6 +44,10 @@ RUN ln -s /app/jmol-14.29.22/jsmol ./detail/static/jsmol
 RUN ln -s /app/jmol-14.29.22/jsmol ./details/static/jsmol
 COPY setup.py ./
 RUN pip install -e .
+# NOTE This container requires graphviz~=0.13.2 that conflicts with aiida-core
+# Just force-install this version and hope nothing breaks...
+RUN pip install graphviz~=0.13.2
+
 COPY serve-app.sh /opt/
 
 # start bokeh server
