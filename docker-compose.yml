@@ -10,7 +10,7 @@ services:
     environment:
       BOKEH_PREFIX: /curated-cofs
       EXPLORE_URL: "https://dev-www.materialscloud.org/explore/curated-cofs" 
-    volumes:
-     - '/tmp:/app/.aiida/repository/curated-cofs'
+    # volumes:
+    #  - '/tmp:/app/.aiida/repository/curated-cofs'
     ports:
       - '5006:5006'

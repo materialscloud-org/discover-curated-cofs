@@ -41,10 +41,9 @@ bokeh serve --show detail details figure results select-figure
 
 ## Docker deployment
 
+The Dockerfile already contains the whole AiiDA database (downloads it from Materials Cloud Archive). Therefore, you can just start with
+
 ```
-pip install -e .
-./prepare.sh
-docker-compose build
 docker-compose up
-# open http://localhost:3245/cofs/select-figure
+# open http://localhost:5006/curated-cofs/select-figure
 ```

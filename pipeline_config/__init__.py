@@ -65,7 +65,7 @@ def update_config():
 def load_profile():
     import aiida
 
-    update_config()
+    # update_config()
     aiida.load_profile()
 
 
