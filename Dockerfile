@@ -20,18 +20,20 @@ ENV AIIDA_PATH /app
 ENV PYTHONPATH /app
 
 # AiiDA profile vars
-ENV AIIDA_PROFILE generic
-ENV AIIDADB_HOST host.docker.internal
-ENV AIIDADB_PORT 5432
-ENV AIIDADB_ENGINE postgresql_psycopg2
-ENV AIIDADB_NAME generic_db
-ENV AIIDADB_USER db_user
-ENV AIIDADB_PASS ""
-ENV AIIDADB_BACKEND django
-ENV default_user_email info@materialscloud.org
-
+# ENV AIIDA_PROFILE generic
+# ENV AIIDADB_HOST host.docker.internal
+# ENV AIIDADB_PORT 5432
+# ENV AIIDADB_ENGINE postgresql_psycopg2
+# ENV AIIDADB_NAME generic_db
+# ENV AIIDADB_USER db_user
+# ENV AIIDADB_PASS ""
+# ENV AIIDADB_BACKEND django
+# ENV default_user_email info@materialscloud.org
 
 WORKDIR /app/
+
+# Download the aiida file from Materials Cloud Archive
+RUN wget -O export_discovery_cof_Jul22.aiida "https://archive.materialscloud.org/record/file?record_id=1959&filename=export_discovery_cof_Jul22.aiida"
 
 COPY figure ./figure
 COPY detail ./detail
@@ -49,6 +51,8 @@ RUN pip install -e .
 RUN pip install graphviz~=0.13.2
 
 COPY serve-app.sh /opt/
+
+RUN verdi profile setup core.sqlite_zip -p curated-cofs -n --filepath ./export_discovery_cof_Jul22.aiida
 
 # start bokeh server
 EXPOSE 5006
