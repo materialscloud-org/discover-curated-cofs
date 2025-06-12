@@ -43,7 +43,6 @@ COPY details ./details
 COPY results ./results
 COPY info ./info
 RUN ln -s /app/jmol-14.29.22/jsmol ./detail/static/jsmol
-RUN ln -s /app/jmol-14.29.22/jsmol ./details/static/jsmol
 COPY setup.py ./
 RUN pip install -e .
 # NOTE This container requires graphviz~=0.13.2 that conflicts with aiida-core

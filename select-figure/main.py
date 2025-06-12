@@ -19,7 +19,7 @@ buttons.append(
 buttons.append(
     fake_button(
         link=
-        "https://archive.materialscloud.org/deposit/records/file?file_id=e597475b-23cd-4bca-9f6b-005e706087e4&filename=cifs_cellopt_Feb21.zip",
+        "https://archive.materialscloud.org/record/file?record_id=1959&filename=cifs_cellopt_Jul22.zip",
         label="Optimized Structures (DDEC)",
         button_type="primary"))
 buttons.append(fake_button(link="figure", label="Interactive Plot", button_type="primary"))

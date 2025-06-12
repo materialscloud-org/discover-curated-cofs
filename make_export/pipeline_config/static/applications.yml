@@ -1,0 +1,137 @@
+# Applications
+
+- title: CO<sub>2</sub> capture and sequestration (coal power plant)
+  x: Gravimetric working capacity (coal)
+  y: CO2 parasitic energy (coal)
+  wx: 100
+  wy: -1
+  descr: >
+    In this model we consider a dry flue gas outlet of a coal power plant (14% CO<sub>2</sub>, 86% N<sub>2</sub>)
+    processed to obtain a CO<sub>2</sub> rich mixture, that is later compressed to 150 bar for underground storage. 
+    The operative cost of this process is the parasitic energy per kg of CO<sub>2</sub> sequestrated. 
+    This metric can be used to compare the performance of physical separation in porous materials with the performance 
+    of ammine-based scrubbing processes, which have a parasitic energy around 1 MJ/kg. 
+    The second key performance parameter is the working capacity, where a larger one will require for less cycles
+    and/or adsorbent material to achieve a same productivity.
+    <br>
+    The model for the temperature-pressure swing adsorption has been previously used to screen
+    zeolites <a href="https://doi.org/10.1038/nmat3336" target="_blank">[Smit2012]</a>,
+    MOFs <a href="https://doi.org/10.1039/C4EE02636E" target="_blank">[Smit2014]</a>,
+    and COFs <a href="https://doi.org/10.1021/acscentsci.9b00619" target="_blank">[Smit2019]</a>.
+    High-performing materials for physical adsorption separations are characterized by low parasitic energy but also
+    high working capacity, which allows to use less material to process the same amount of mixture.
+
+- title: CO<sub>2</sub> capture and sequestration (natural gas power plant)
+  x: Gravimetric working capacity (nat. gas)
+  y: CO2 parasitic energy (nat. gas)
+  wx: 100
+  wy: -1
+  descr: >
+    Similar to the CO<sub>2</sub> sequestration process, but considering the flue gas from the combustion of natural gas,
+    which has a 4% concentration of CO<sub>2</sub> over nitrogen.
+
+- title: H<sub>2</sub> storage at near-ambient temperature
+  x: Geometric Void Fraction
+  y: Working capacity g/L (5-100bar/298-198K)
+  wx: 0
+  wy: 1
+  descr: >
+    For hydrogen storage at near-ambient temperature, we consider a working capacity for loading at 100bar/198K (-75°C)
+    and discharge at 5bar/298K.
+    The performance for this applications can be compared with the record value of 23.0 g/L, obtained experimentally
+    for MOF Ni<sub>2</sub>(<i>m</i>-dobdc) <a href="https://doi.org/10.1021/acs.chemmater.8b03276" target="_blank">[Long2018]</a>.
+    Current technologies for H<sub>2</sub>-fuel vehicles use compression up to 700 bar 
+    that guarantee a working capacity of 37 g/L at ambient temperature.
+    The <a href="https://www.energy.gov/eere/fuelcells/doe-technical-targets-onboard-hydrogen-storage-light-duty-vehicles" target="_blank">US DOE technical target for onboard storage for vehicles</a>
+    is set to 30 g/L.
+
+- title: H<sub>2</sub> cryogenic storage (77K)
+  x: Working capacity g/L (1-100bar/77K)
+  y: Working capacity g/L (5-100bar/77K)
+  wx: 1
+  wy: 1
+  descr: >
+    For hydrogen cryogenic storage (77K) we consider a working capacity for loading at 100bar and discharge at 5 (or 1) bar.
+    Previous screening on MOFs, gave the following top performer values:
+    <ul>
+        <li> up to 50 g/L (simulations, 100-2 bar, <a href="https://doi.org/10.1021/acs.jpcc.6b08729" target="_blank">Snurr2016</a>)
+        <li> 36 g/L (Zn-MFU-4<i>l</i>, experimental 100-2 bar, <a href="https://doi.org/10.1039/C8ME00050F" target="_blank">Snurr2019</a>)
+        <li> 40 g/L (hMOF-5059389, simulations, 100-1bar,  <a href="https://doi.org/10.1021/acs.chemmater.6b04933" target="_blank">Smit2017</a>)
+        <li> 35.5 g/L (PCN-610/NU-100, experimental, 100-5bar, <a href="https://doi.org/10.1038/s41467-019-09365-w" target="_blank">Siegel2019</a>)
+    </ul>
+
+- title: Methane storage at ambient temperature
+  x: Geometric Void Fraction
+  y: Working capacity vol. (5.8-65bar/298K)
+  wx: 0
+  wy: 1
+  descr: >
+    The Advanced Project Agency-Energy (ARPA-E) of the American Departement of Energy (DOE) sets the target for adsorbed methane
+    storage at 315 vSTP/v (i.e., volume of methane at ambient pressure/temperature per volume of adsorbent), for 
+    a loading pressure of 65 bar and a discharge pressure of 5.8 bar.
+    Such a high deliverable capacity would be able to outperform compressed storage at 250 bar (energy density of 9 MJ/L), 
+    already considering a packing loss of 25% for the adsorbent.
+    <br>
+    Previous screenings of >650,000 materials (MOFs, COFs and zeolites) showed that this target is well above the top performers. 
+    However, one can still achieve methane storage up to 200 vSTP/v (for comparison, an empty tank at the same conditions can store only 62 vSTP/v) 
+    <a href="https://doi.org/10.1039/C4EE03515A" target="_blank">[Smit2015]</a>.
+
+- title: Oxygen storage at ambient temperature
+  x: Geometric Void Fraction
+  y: Working capacity vol. (5-140bar/298K)
+  wx: 0
+  wy: 1
+  descr: >
+    Oxygen is typically stored in tanks at 200 bar, with a volumentric working capacity of ca. 189 vSTP/v,
+    considering the discharge at 5bar.
+    The screening study of <a href="https://doi.org/10.1038/s41467-018-03892-8" target="_blank">Fairen-Jimenez et al.</a>
+    allowed to find that the MOF UMCM-152 is able to store 249 vSTP/v of O<sub>2</sub> in the 5-140 bar range at 298K.
+    Experimental measurements on the synthesized material confirmed the accuracy of computational simulations, 
+    proclaming UMCM-152 a world-recor holding materials for oxygen storage.
+
+
+- title: Xe/Kr separation
+  x: Xe adsorption energy
+  y: Xe/Kr selectivity @ 298K
+  wx: 0
+  wy: 1
+  descr: >
+    In this model we consider the separation of xenon and krypton from the flue gas of used nuclear fuel reporcessing utilities.
+    In particular, we seek the best materials that can selectivity extract xenon from diluted concentaration, 
+    exploting the larger diameter of Xe (3.92 Angs) with respect to Kr (3.68 Angs). 
+    The selectivity here, is defined as the ratio between the Henry coefficients (k<sub>H</sub>) of the two gasses,
+    i.e., the affinity of the gas molecule with the bare material at null pressure.
+    <br>
+    Using this metric, SBMOF-1 was found from computational screenings to have a Xe/Kr selectivity as high as 70.6,
+    and it was proved experimentally to be an excellent material for xenon extraction,
+    <a href="https://doi.org/10.1038/ncomms11831" target="_blank">[Smit2016]</a>.
+
+
+- title: H<sub>2</sub>S separation
+  x: H2S Henry coefficient
+  y: H2S/H2O selectivity @ 298K
+  wx: -1
+  wy: 10
+  descr: >
+    The removal of hydrogen sulfide (H<sub>2</sub>S) from different stream mixtures 
+    (e.g., natural gas or post-combustion flue gas) 
+    is of key importance due to its highly toxic and corrosive characteristics. 
+    The low concentrations of H<sub>2</sub>S and its similarity with water requires to find materials with high 
+    H<sub>2</sub>S selectivity: in the scientific literature metal oxides, MOFs, zeolites, carbons and 
+    composite materials have been evaluated for this purpose 
+    (see <a href="https://doi.org/10.1021/acs.chemrev.7b00095" target="_blank">[Siepmann2017]</a>).
+    <br>
+    For this evaluation, we rank nanoporous materials according to their H<sub>2</sub>S/H<sub>2</sub>O selectivity at
+    infinite dilution of both molecules in the stream mixture.
+
+
+# - title: CH<sub>4</sub> separation from air
+#   x: CH4 Henry coefficient
+#   y: CH4/N2 selectivity @ 298K
+#   wx: -1
+#   wy: 10
+#   descr: >
+#     As reported in recent studies, methane is estimated to be <i>the dominant anthropogenic greenhouse gas after CO<sub>2</sub></i> <a href="https://doi.org/10.1038/s41893-019-0299-x" target="_blank">[Jackson2019]</a>.
+#     Indeed, it is <i>84 times more potent than CO<sub>2</sub> over the first 20 years after release</i> but its concentration in air 200-times lower than CO<sub>2</sub>.
+#     This makes methane capture particularly challenging and calls for materials with exceptional methane selectivity over nitrogen.
+#     [DEPRECATED]: it is not much realistic to consider N2 in diluted concentration.
