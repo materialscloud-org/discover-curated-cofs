@@ -13,7 +13,7 @@ from aiida.orm import Node, Dict, Group, WorkChainNode
 TAG_KEY = "tag4"
 GROUP_DIR = "discover_curated_cofs/"
 CONFIG_DIR = join(dirname(realpath(__file__)), "static")
-EXPLORE_URL = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
+EXPLORE_URL = os.getenv('EXPLORE_URL', "https://www.materialscloud.org/explore/curated-cofs")
 AIIDA_LOGO_URL = "select-figure/static/images/aiida-128.png"
 CO2_LOGO_URL = 'select-figure/static/images/co2-128.png'
 

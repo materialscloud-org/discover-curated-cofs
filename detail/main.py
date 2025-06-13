@@ -23,7 +23,7 @@ def provenance_link(uuid, label=None):
         label = "Browse provenance\n" + uuid
 
     logo_url = "detail/static/images/aiida-128.png"
-    explore_url = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
+    explore_url = os.getenv('EXPLORE_URL', "https://www.materialscloud.org/explore/curated-cofs")
     return pn.pane.HTML(
         "<a href='{url}/details/{uuid}' target='_blank'><img src={logo_url} title='{label}' style='width: 20px;  height: auto;'></a>"
         .format(url=explore_url, uuid=uuid, label=label, logo_url=logo_url),
