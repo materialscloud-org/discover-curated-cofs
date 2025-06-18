@@ -3,7 +3,7 @@
 import os
 from graphviz import Digraph
 
-EXPLORE_URL = os.getenv('EXPLORE_URL', "https://dev-www.materialscloud.org/explore/curated-cofs")
+EXPLORE_URL = os.getenv('EXPLORE_URL', "https://www.materialscloud.org/explore/curated-cofs")
 
 
 def get_aiida_link(mat_dict, extra_tag):
